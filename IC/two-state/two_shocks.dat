@@ -1,0 +1,9 @@
+/* right and left shocks emerging from the solution to Woodward and Collela blast wave problem */
+/* left facing shock (travelling very slowly to the right), a right travelling contact discontinuity and a right travelling shock wave. */
+filetype = two-state
+rho_L = 5.99924
+u_L   = 19.5975
+p_L   = 460.894
+rho_R = 5.99242
+u_R   = -6.19633
+p_R   = 46.0950

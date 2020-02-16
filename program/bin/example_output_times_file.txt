@@ -1,0 +1,5 @@
+/* example file for output times */
+/* you need to specify it via toutfile = path/to/file in the paramfile so it will be used*/
+1.0
+2.232
+3

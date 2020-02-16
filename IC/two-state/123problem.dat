@@ -1,0 +1,9 @@
+/* 123 problem initial conditions */
+/* two strong rarefactions and a trivial stationary contact discontinuity */
+filetype = two-state
+rho_L = 1.0
+u_L   = -2.0
+p_L   = 0.4
+rho_R = 1.0
+u_R   = 2.0
+p_R   = 0.4

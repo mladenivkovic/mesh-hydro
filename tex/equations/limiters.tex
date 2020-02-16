@@ -1,0 +1,39 @@
+\section{Slope and Flux Limiters}
+
+
+
+\subsection{Slope Limiters}
+
+
+Slope limiters are employed because issues arise around numerical schemes because of their discrete nature.
+For example, a non-limited piecewise linear advection scheme will produce oscillations around jump discontinuities.
+So the idea is to compute the slope in way that is useful for us based on the current situation of the gas state that we're solving for.
+
+The choice of the slope can be expressed via a function $\phi(r)$ (see eqns. \ref{eq:advection_phi1}, \ref{eq:advection_phi2}) with 
+
+\begin{align*}
+	r^n_{i-\half} &= \begin{cases}
+		\frac{\U_{i-1}^n - \U_{i-2}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } \V  \geq 0 \\
+		\frac{\U_{i+1}^n - \U_{i}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } \V  \leq 0 \\
+	\end{cases}
+\end{align*}.
+
+
+Possible limiters are:
+\begin{flalign}
+	\text{Minmod} 								&&\quad \phi(r) &= \mathrm{minmod}(1, r)\\
+	\text{Superbee} 							&&\quad \phi(r) &= \max(0, \min(1, 2r), \min(2, r)) \\
+	\text{MC (monotonized cenral-difference)} 	&&\quad \phi(r) &= \max(0, \min ((1+r)/2, 2, 2r))\\
+	\text{van Leer}								&&\quad \phi(r) &= \frac{r + |r|}{1 + |r|}
+\end{flalign}
+
+where
+
+\begin{align}
+	\mathrm{minmod}(a, b) = 
+		\begin{cases}
+			a	& \quad \text{ if } |a| < |b| \text{ and } ab > 0\\
+			b	& \quad \text{ if } |a| > |b| \text{ and } ab > 0\\
+			0	& \quad \text{ if } ab \leq 0\\
+		\end{cases}		
+\end{align}

@@ -1,0 +1,12 @@
+*.run.xml
+*.bbl
+*.blg
+*.out
+*-blx.bib
+*.aux
+*.log
+*.nav
+*.synctex.gz
+*.o
+*.pyc
+**/__pycache__

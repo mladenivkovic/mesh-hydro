@@ -1,0 +1,5 @@
+godunov
+hydro
+paramfile.txt
+*.png
+defines.mk

@@ -1,0 +1,8 @@
+/* right vacuum initial conditions */
+filetype = two-state
+rho_R = 0
+u_R   = 1
+p_R   = 0
+rho_L = 0.124
+u_L   = 0.5
+p_L   = 1

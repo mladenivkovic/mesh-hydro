@@ -1,0 +1,8 @@
+/* vacuum generating initial conditions */
+filetype = two-state
+rho_L = 1
+u_L   = -6
+p_L   = 1
+rho_R = 1
+u_R   = 6
+p_R   = 1
