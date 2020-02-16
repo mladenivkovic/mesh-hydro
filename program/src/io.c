@@ -431,7 +431,6 @@ void io_read_toutfile(){
   /* open file */
   FILE *par = fopen(pars.toutfilename, "r");
 
-  char valuestr[MAX_LINE_SIZE] ;
   char tempbuff[MAX_LINE_SIZE] ;
 
   int nlines = 0;

@@ -5,10 +5,6 @@ include defines.mk
 
 
 
-
-
-
-
 #==============================
 # Preprocessing defines
 #==============================
@@ -112,7 +108,7 @@ endif
 SRCDIR=../src
 
 #include paths. Will be followed in that order.
-VPATH=$(SRCDIR):$(SRCDIR)/limiter:$(SRCDIR)/hydro:$(SRCDIR)/riemann
+VPATH=$(SRCDIR):$(SRCDIR)/limiter:$(SRCDIR)/solver:$(SRCDIR)/riemann
 
 #include directories for headers
 # IDIR=$(VPATH)
@@ -168,12 +164,14 @@ CC=gcc -I$(IDIR) -static
 
 
 # flags for gcc compiler
-# CFLAGS= -g -O0 -Wall -pedantic -std=c11 -Wextra -Werror -fsignaling-nans  -ffinite-math-only -fno-signed-zeros -Warray-bounds # debug
-CFLAGS= -O3  		 	   # performance
+CFLAGS= -g -O0 -pedantic -std=c11 \
+		-fsignaling-nans -ffinite-math-only -fno-signed-zeros \
+		-Wextra -Werror -Warray-bounds -Wno-unused-parameter
+# CFLAGS= -O3
 
 CFLAGS += $(DEFINES)
 
-LDFLAGS= -lm -fopenmp
+LDFLAGS= -lm
 
 
 

@@ -33,12 +33,30 @@ void solver_step(float *t, float* dt, int step, int* write_output){
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
 
-    solver_init_step();
-    solver_get_dt(dt);
-    /* check this here in case you need to limit time step for output */
-    *write_output = io_is_output_step(*t, dt, step); 
-    solver_compute_fluxes(dt);
-    solver_advance_step(dt);
+  solver_init_step();
+  solver_get_dt(dt);
+  /* check this here in case you need to limit time step for output */
+  *write_output = io_is_output_step(*t, dt, step); 
+
+#if NDIM == 1
+  solver_compute_fluxes(dt, /*dimension =*/0);
+  solver_advance_step(dt);
+
+#elif NDIM == 2
+#ifndef STRANG_SPLITTING
+  solver_compute_fluxes(/*dimension =*/0);
+  solver_advance_step(dt);
+#else
+  int dimension = step % 2; /* gives 0 or 1, switching each step */
+  solver_compute_fluxes(dt, dimension);
+  solver_advance_step(dt);
+  cell_reset_fluxes();
+  dimension = (dimension + 1) % 2; /* 1 -> 0 or 0 -> 1 */
+  solver_compute_fluxes(dt, dimension);
+  solver_advance_step(dt);
+  /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
+#endif
+#endif
 }
 
 
@@ -128,11 +146,13 @@ void solver_get_dt(float* dt){
 
 
 
-void solver_compute_fluxes(float* dt){
+void solver_compute_fluxes(float* dt, int dimension){
   /* ------------------------------------------------------
    * Computes the actual *net* fluxes between cells
    * Here we compute F^{n+1/2}_{i-1/2} - F^{n+1/2}_{i+1/2}
    * and store it in cell.flux
+   * dimension: 0 for x, 1 for y. Only used with Strang
+   * splitting.
    * ------------------------------------------------------ */
 
   debugmessage("Called solver_compute_fluxes");
@@ -155,9 +175,40 @@ void solver_compute_fluxes(float* dt){
     solver_compute_cell_pair_flux(c, uw, dw, dt, /*dimension=*/0);
   }
 
-
 #elif NDIM == 2
+#ifdef STRANG_SPLITTING
 
+  if (dimension == 0){
+    for (int i = BC; i < pars.nx + BC; i++){
+      for (int j = BC; j < pars.nx + BC; j++){
+        c = &(grid[i][j]);
+        if (c->prim.ux > 0) {
+          dw = c;
+          uw = &(grid[i - 1][j]);
+        } else {
+          dw = &(grid[i + 1][j]);
+          uw = c;
+        }
+        solver_compute_cell_pair_flux(c, uw, dw, dt, dimension);
+      }
+    }
+  } else if (dimension == 1){
+    for (int i = BC; i < pars.nx + BC; i++){
+      for (int j = BC; j < pars.nx + BC; j++){
+        c = &(grid[i][j]);
+        if (c->prim.uy > 0) {
+          dw = c;
+          uw = &(grid[i][j-1]);
+        } else {
+          dw = &(grid[i][j+1]);
+          uw = c;
+        }
+        solver_compute_cell_pair_flux(c, uw, dw, dt, dimension);
+      }
+    }
+
+  }
+#else
   for (int i = BC; i < pars.nx + BC; i++){
     for (int j = BC; j < pars.nx + BC; j++){
       c = &(grid[i][j]);
@@ -168,7 +219,7 @@ void solver_compute_fluxes(float* dt){
         dw = &(grid[i + 1][j]);
         uw = c;
       }
-      solver_compute_cell_pair_flux(c, uw, dw, dt, /*dimension=*/0);
+      solver_compute_cell_pair_flux(c, uw, dw, /*dimension=*/0);
       if (c->prim.uy > 0) {
         dw = c;
         uw = &(grid[i][j-1]);
@@ -176,11 +227,11 @@ void solver_compute_fluxes(float* dt){
         dw = &(grid[i][j+1]);
         uw = c;
       }
-      solver_compute_cell_pair_flux(c, uw, dw, dt, /*dimension=*/1);
+      solver_compute_cell_pair_flux(c, uw, dw, /*dimension=*/1);
     }
   }
-
-#endif
+#endif /* strang splitting */
+#endif /* ndim */
 }
 
 

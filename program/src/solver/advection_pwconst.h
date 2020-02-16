@@ -16,7 +16,7 @@ void solver_advection_check_global_velocity();
 
 void solver_init_step();
 void solver_get_dt(float* dt);
-void solver_compute_fluxes();
+void solver_compute_fluxes(int dimension);
 void solver_advance_step(float* dt);
 
 void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dimension);

@@ -7,8 +7,8 @@ EXEC = hydro
 
 # how many dimensions to compile for
 # Choices: 1, 2
-NDIM = 1
-# NDIM = 2
+# NDIM = 1
+NDIM = 2
 
 
 # set which Riemann solver to use.
@@ -20,8 +20,8 @@ RIEMANN = NONE
 # set which hydro solver to use.
 # Choices: GODUNOV_UPWIND, ADVECTION_PWCONST, ADVECTION_PWLIN
 # SOLVER=GODUNOV_UPWIND
-SOLVER = ADVECTION_PWCONST
-# SOLVER = ADVECTION_PWLIN
+# SOLVER = ADVECTION_PWCONST
+SOLVER = ADVECTION_PWLIN
 
 # set which flux limiter to use.
 # Choices: NONE, MINMOD, SUPERBEE, VANLEER, MC
@@ -69,7 +69,6 @@ endif
 
 # transform defines into integers where needed
 ifeq ($(strip $(SOLVER)), ADVECTION_PWCONST)
-# ifeq ($(strip $(SOLVER)), ADVECTION_PWCONST)
 SOLVERINT = 1
 endif
 ifeq ($(strip $(SOLVER)), ADVECTION_PWLIN)
@@ -196,12 +195,14 @@ CC=gcc -I$(IDIR) -static
 
 
 # flags for gcc compiler
-# CFLAGS= -g -O0 -Wall -pedantic -std=c11 -Wextra -Werror -fsignaling-nans  -ffinite-math-only -fno-signed-zeros -Warray-bounds # debug
-CFLAGS= -O3  		 	   # performance
+CFLAGS= -g -O0 -pedantic -std=c11 \
+		-fsignaling-nans -ffinite-math-only -fno-signed-zeros \
+		-Wextra -Werror -Warray-bounds -Wno-unused-parameter
+# CFLAGS= -O3
 
 CFLAGS += $(DEFINES)
 
-LDFLAGS= -lm -fopenmp
+LDFLAGS= -lm
 
 
 
