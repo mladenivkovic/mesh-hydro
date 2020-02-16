@@ -185,12 +185,13 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
 
 
 
-def plot_2D_density_only(rho, fname):
+def plot_2D_density_only(rho, fname, t=None):
     """
     Create a plot from 2D data. Plots density only.
 
     rho:         np arrays of physical quantities
     fname:       filename of the data you are plotting. Will be used to generate image filename
+    t:           time of simulation, optional. Will be put on the plot to label it.
     """
 
     fig = plt.figure(figsize=(6, 5))
@@ -214,6 +215,14 @@ def plot_2D_density_only(rho, fname):
     cax = divider.append_axes("right", size="5%", pad=0.05)
     fig.colorbar(im1, cax=cax)
 
+    if t is not None:
+        if isinstance(t, str):
+            text = t
+        elif isinstance(t, float):
+            text = r"$t = ${0:.3f}".format(t)
+        else:
+            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+        plt.figtext(0.05, 0.95, text)
 
 
     figname = get_figname(fname, case="density")
