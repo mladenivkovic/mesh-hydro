@@ -4,7 +4,6 @@ include defines.mk
 EXEC = hydro  
 
 
-
 #==============================
 # Preprocessing defines
 #==============================
@@ -164,8 +163,10 @@ CC=gcc -I$(IDIR) -static
 
 
 # flags for gcc compiler
-# CFLAGS= -g -O0 -Wall -pedantic -std=c11 -Wextra -Werror -fsignaling-nans  -ffinite-math-only -fno-signed-zeros -Warray-bounds # debug
-CFLAGS= -O3  		 	   # performance
+CFLAGS= -g -O0 -pedantic -std=c11 \
+		-fsignaling-nans -ffinite-math-only -fno-signed-zeros \
+		-Wextra -Werror -Warray-bounds -Wno-unused-parameter
+# CFLAGS= -O3
 
 CFLAGS += $(DEFINES)
 

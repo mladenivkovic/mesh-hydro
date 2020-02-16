@@ -26,6 +26,7 @@ genparamfile() {
     echo ""                 >> $f
     echo "verbose = 2"      >> $f
     echo "nx = 100"         >> $f
+    echo "nstep_log = 100"  >> $f
     echo "nsteps = $1"      >> $f
     echo "tmax = $2"        >> $f
     echo "foutput = $3"     >> $f
@@ -102,14 +103,14 @@ errexit $?
 
 # positive velocity
 # genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 10 0 1.0 advection-1D-pwconst 0.5
+genparamfile 0 10 0 1.0 advection-1D-pwconst 0.8
 
 ./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
 errexit $?
 $plotdir/plot_all_density.py advection-1D-pwconst-0000.out
 
 # negative velocity
-genparamfile 0 10 0 1.0 advection-1D-pwconst-negvel 0.5
+genparamfile 0 10 0 1.0 advection-1D-pwconst-negvel 0.8
 ./hydro paramfile.txt ./IC/advection-1D-negvel.dat | tee -a output.log
 errexit $?
 $plotdir/plot_all_density.py advection-1D-pwconst-negvel-0000.out
@@ -126,17 +127,32 @@ errexit $?
 
 # positive velocity
 # genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 1 0 0 advection-2D-pwconst 0.1
-
+genparamfile 0 1 0 0 advection-2D-pwconst 0.8
 ./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
 errexit $?
 $plotdir/plot_density.py advection-2D-pwconst-0001.out
 
 # negative velocity
-genparamfile 0 1 0 0 advection-2D-pwconst-negvel 0.1
+genparamfile 0 1 0 0 advection-2D-pwconst-negvel 0.8
 ./hydro paramfile.txt ./IC/advection-2D-negvel.dat | tee -a output.log
 errexit $?
 $plotdir/plot_density.py advection-2D-pwconst-negvel-0001.out
+
+# x only
+genparamfile 0 1 0 0 advection-2D-pwconst-x 0.8
+./hydro paramfile.txt ./IC/advection-2D-x.dat | tee -a output.log
+errexit $?
+$plotdir/plot_density.py advection-2D-pwconst-x-0001.out
+
+# y only
+genparamfile 0 1 0 0 advection-2D-pwconst-y 0.8
+./hydro paramfile.txt ./IC/advection-2D-y.dat | tee -a output.log
+errexit $?
+$plotdir/plot_density.py advection-2D-pwconst-y-0001.out
+
+
+
+
 
 
 
@@ -151,14 +167,14 @@ errexit $?
 
 # positive velocity
 # genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 10 0 1.0 advection-1D-pwlin 0.5
+genparamfile 0 10 0 1.0 advection-1D-pwlin 0.8
 
 ./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
 errexit $?
 $plotdir/plot_all_density.py advection-1D-pwlin-0000.out
 
 # negative velocity
-genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.5
+genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.8
 ./hydro paramfile.txt ./IC/advection-1D-negvel.dat | tee -a output.log
 errexit $?
 $plotdir/plot_all_density.py advection-1D-pwlin-negvel-0000.out
@@ -175,18 +191,29 @@ errexit $?
 
 # positive velocity
 # genparamfile nsteps tmax foutput dt_out basename
-genparamfile 0 1 0 0 advection-2D-pwlin 0.1
+genparamfile 0 1 0 0 advection-2D-pwlin 0.8
 
 ./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
 errexit $?
 $plotdir/plot_density.py advection-2D-pwlin-0001.out
 
 # negative velocity
-genparamfile 0 1 0 0 advection-2D-pwlin-negvel 0.1
+genparamfile 0 1 0 0 advection-2D-pwlin-negvel 0.8
 ./hydro paramfile.txt ./IC/advection-2D-negvel.dat | tee -a output.log
 errexit $?
 $plotdir/plot_density.py advection-2D-pwlin-negvel-0001.out
 
+# x only
+genparamfile 0 1 0 0 advection-2D-pwlin-x 0.8
+./hydro paramfile.txt ./IC/advection-2D-x.dat | tee -a output.log
+errexit $?
+$plotdir/plot_density.py advection-2D-pwlin-x-0001.out
+
+# y only
+genparamfile 0 1 0 0 advection-2D-pwlin-y 0.8
+./hydro paramfile.txt ./IC/advection-2D-y.dat | tee -a output.log
+errexit $?
+$plotdir/plot_density.py advection-2D-pwlin-y-0001.out
 
 
 
@@ -204,18 +231,11 @@ for LIMITER in MINMOD SUPERBEE MC VANLEER; do
 
     # positive velocity
     # genparamfile nsteps tmax foutput dt_out basename ccfl
-    genparamfile 0 10 0 1.0 advection-1D-$LIMITER 0.5
+    genparamfile 0 10 0 1.0 advection-1D-$LIMITER 0.8
 
     ./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
     errexit $?
     $plotdir/plot_all_density.py advection-1D-$LIMITER-0000.out
-
-    # negative velocity
-    genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.5
-    ./hydro paramfile.txt ./IC/advection-1D-negvel.dat | tee -a output.log
-    errexit $?
-    $plotdir/plot_all_density.py advection-1D-$LIMITER-negvel-0000.out
-
 done
 
 
@@ -235,7 +255,7 @@ for LIMITER in MINMOD SUPERBEE MC VANLEER; do
 
     # positive velocity
     # genparamfile nsteps tmax foutput dt_out basename ccfl
-    genparamfile 0 1 0 0 advection-2D-$LIMITER 0.1
+    genparamfile 0 1 0 0 advection-2D-$LIMITER 0.8
 
     ./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
     errexit $?
