@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Generating PDF..."
+pdflatex -jobname=equations_and_implementation_details equations_and_implementation_details.tex
+bibtex equations_and_implementation_details
+pdflatex -jobname=equations_and_implementation_details equations_and_implementation_details.tex
+pdflatex -jobname=equations_and_implementation_details equations_and_implementation_details.tex

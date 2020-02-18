@@ -1,6 +1,5 @@
 TeX directory contents
 ======================================
 
-
-- `./equations`: The implemented equations
-- `./implementation_details`: notes on implementation details
+Documents what equations have been implemented and some details.
+Use `./run.sh` to build the pdf, or whatever latex command you prefer.
