@@ -135,9 +135,17 @@ void solver_get_dt(float* dt){
   
   *dt = pars.ccfl / ( uxdx + uydy );
 
-#endif
-  if (*dt <= 0.0) throw_error("Got weird time step? dt=%12.8f");
+#endif /* NDIM == 2 */
 
+  if (pars.force_dt > 0){
+    if (*dt > pars.force_dt){
+      *dt = pars.force_dt;
+    } else{
+      throw_error("I require a smaller timestep dt=%g than force_dt=%g is demanding.",
+        *dt, pars.force_dt);
+    }
+  }
+  if (*dt <= 0.0) throw_error("Got weird time step? dt=%12.8f");
 }
 
 

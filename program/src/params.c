@@ -26,6 +26,7 @@ void params_init_defaults(){
 
   pars.nsteps = 1;
   pars.tmax = 0;
+  pars.force_dt = 0;
 
   pars.ccfl = 0.9;
   pars.nx = 100;
@@ -142,12 +143,19 @@ void params_print_log(){
   log_message("Verbose?                     ");
   if (pars.verbose > 0) printbool(pars.verbose);
   if (pars.verbose > 0) printf("\n");
+  if (pars.nstep_log > 0){
+    log_message("Will write logs every %d steps\n", pars.nstep_log);
+  }
 
   log_message("tmax:                        %g\n", pars.tmax);
   log_message("nsteps:                      %d\n", pars.nsteps);
 
   log_message("nx:                          %d\n", pars.nx);
   log_message("C_cfl:                       %g\n", pars.ccfl);
+
+  if (pars.force_dt > 0){
+    log_message("Forcing time step size to: %g\n", pars.force_dt);
+  }
 
   log_message("boundary conditions:         ");
   if (pars.verbose > 0) {
@@ -173,9 +181,6 @@ void params_print_log(){
     } else {
       log_message("dt_out:                      %d\n", pars.dt_out);
     }
-  }
-  if (pars.nstep_log > 0){
-    log_message("Will write logs every %d steps\n", pars.nstep_log);
   }
   log_message("output file basename:        %s\n", pars.outputfilename);
   log_message("-----------------------------------------------------------------------------------------\n");

@@ -86,10 +86,22 @@ The parameter file is written in plain text in the format
 
 Accepted names, their datatypes and default values are:
 
+
+### Behaviour Options and Parameters
+
 | name          |  default value    | type  | description                                                                   |
 |---------------|-------------------|-------|-------------------------------------------------------------------------------|
 | `verbose`     | = 0               | `int` | How talkative the code should be. 0 = quiet, 1 = talky, 2 = no secrets, 3 = debugging        |
 |               |                   |       |                                                                               |
+| `nstep_log`   | = 0               | `int` | Write log messages only ever `nstep_log` steps. If 0, will write every step.  |
+|               |                   |       |                                                                               |
+
+
+
+### Simulation Related Options and Parameters
+
+| name          |  default value    | type  | description                                                                   |
+|---------------|-------------------|-------|-------------------------------------------------------------------------------|
 | `nx`          | = 100             | `int` | Number of cells to use if you're running with a two-state type IC file. Otherwise, it needs to be specified in the initial conditions.  If you're not using a two-state IC, the value will be overwritten by the value given in the IC file.  |
 |               |                   |       |                                                                               |
 | `ccfl`        | = 0.9             |`float`| courant factor; `dt = ccfl * dx / vmax`                                       |
@@ -100,19 +112,24 @@ Accepted names, their datatypes and default values are:
 |               |                   |       |                                                                               |
 | `boundary`    | = 0               | `int` | Boundary conditions  0: periodic. 1: reflective. 2: transmissive.             |
 |               |                   |       |                                                                               |
+| `force_dt`    | = 0               |`float`| force a time step size. If a smaller time step is required, the sim will stop.|
+|               |                   |       |                                                                               |
+
+
+
+### Output related Options and Parameters
+
+
+| name          |  default value    | type  | description                                                                   |
+|---------------|-------------------|-------|-------------------------------------------------------------------------------|
 | `foutput`     | = 0               | `int` | Frequency of writing outputs in number of steps. If = 0, will only write initial and final steps.  |
 |               |                   |       |                                                                               |
 | `dt_out`      | = 0               |`float`| Frequency of writing outputs in time intervals. Code will always write initial and final steps as well.  |
 |               |                   |       |                                                                               |
 | `toutfile`    | None              |`string`| File name containing desired times (in code units) of output. Syntax of the file: One float per line with increasing value.  |
 |               |                   |       |                                                                               |
-| `nstep_log`   | = 0               | `int` | Write log messages only ever `nstep_log` steps. If 0, will write every step.  |
-|               |                   |       |                                                                               |
 | `basename`    | None              |`string`| Basename for outputs.  If not given, a basename will be generated based on compilation parameters and IC filename.       |
 |               |                   |       |                                                                               |
-
-
-
 
 
 

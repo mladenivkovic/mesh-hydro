@@ -20,6 +20,7 @@ typedef struct {
   int nx;                               /* number of mesh points */
   int nxtot;                            /* number of mesh points, including boundary cells */
   float dx;                             /* cell size */
+  float force_dt;                       /* force a time step size (except if you need to write an output) */
   
   int twostate_ic;                      /* whether IC are left/right state only */
   int ndim_ic;                          /* dimension of IC file */

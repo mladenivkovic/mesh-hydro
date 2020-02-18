@@ -391,6 +391,8 @@ void io_read_paramfile(){
       pars.nsteps = atoi(varvalue);
     } else if (strcmp(varname, "tmax") == 0){
       pars.tmax = atof(varvalue);
+    } else if (strcmp(varname, "force_dt") == 0){
+      pars.force_dt = atof(varvalue);
     } else if (strcmp(varname, "nx") == 0){
       pars.nx = atoi(varvalue);
     } else if (strcmp(varname, "foutput") == 0){
