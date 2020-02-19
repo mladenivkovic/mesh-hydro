@@ -18,10 +18,18 @@ You can pick between:
 	- TRRS	(Two Rarefaction approximate Riemann Solver)
 	- TSRS	(Two Shock approximate Riemann Solver)
 - Limiters:
+    - Slope limiters:
+        - No limiter
+        - minmod
+        - superbee
+        - monotonized centered difference (MC)
+        - van Leer
 - number of dimensions:
 	- 1 or 2
 
 at compile time by setting the corresponding values in the Makefile.
+
+To see what the code is able to do, you can for example run the test script in `./program/test` and have a look at the resulting `./program/test/test_results.pdf`
 
 
 
