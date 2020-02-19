@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     for fname in filelist:
 
-        ndim, rho, u, p, t = read_output(fname)
+        ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:
             plot_1D_density_only(rho, fname, dots=dots, t=t, draw_legend=True)

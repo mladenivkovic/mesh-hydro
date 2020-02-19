@@ -41,7 +41,7 @@ if __name__ == "__main__":
     fig = None
     for f in filelist:
 
-        ndim, rho, u, p, t = read_output(f)
+        ndim, rho, u, p, t, step = read_output(f)
 
         if ndim != 1:
             print("I can't overplot 2D stuff...")

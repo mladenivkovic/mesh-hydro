@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
   float mtot_init = cell_get_total_mass(); /* for checks every step */
 
   log_extra("Writing initial output");
-  io_write_output(&outcount, t);
+  io_write_output(&outcount, step, t);
 
 
   /* -------------------- 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]){
 
     /* write output if you have to */
     if (write_output){
-      io_write_output(&outcount, t);
+      io_write_output(&outcount, step, t);
     }
 
     /* announce */
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]){
   }
 
   /* if you haven't written the output in the final step, do it now */
-  if (!write_output){ io_write_output(&outcount, t); }
+  if (!write_output){ io_write_output(&outcount, step, t); }
 
 
   all_end = clock();
