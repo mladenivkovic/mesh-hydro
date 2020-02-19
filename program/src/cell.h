@@ -8,13 +8,14 @@
 
 
 #include "gas.h"
+#include "defines.h"
 
 typedef struct{
 
   int id;
 
-  float x;     /* x position of cell center */
-  float y;     /* y position of cell center */
+  MYFLOAT x;     /* x position of cell center */
+  MYFLOAT y;     /* y position of cell center */
 
   pstate prim;  /* primitive state vector */
   cstate cons;  /* conserved state vector */
@@ -40,7 +41,7 @@ void cell_copy_boundary_data(cell* real, cell* ghost);
 void cell_copy_boundary_data_reflective(cell* real, cell* ghost);
 void cell_reset_fluxes();
 
-float cell_get_total_mass();
+MYFLOAT cell_get_total_mass();
 
 void cell_print_grid(char field[4]);
 void cell_print_grid_part(char field[4], int* limits);

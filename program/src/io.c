@@ -292,10 +292,10 @@ void io_read_ic_arbitrary(int skip){
     check_number_of_columns(tempbuff, 3);
     sscanf(tempbuff, "%f %f %f\n", &rho, &u, &p);
 
-    grid[i].prim.rho = rho;
-    grid[i].prim.ux = u;
-    grid[i].prim.uy = 0;
-    grid[i].prim.p = p;
+    grid[i].prim.rho = (MYFLOAT) rho;
+    grid[i].prim.ux = (MYFLOAT) u;
+    grid[i].prim.uy = (MYFLOAT) 0;
+    grid[i].prim.p = (MYFLOAT) p;
 
     i += 1;
 
@@ -304,10 +304,10 @@ void io_read_ic_arbitrary(int skip){
     check_number_of_columns(tempbuff, 4);
     sscanf(tempbuff, "%f %f %f %f\n", &rho, &ux, &uy, &p);
 
-    grid[i][j].prim.rho = rho;
-    grid[i][j].prim.ux = ux;
-    grid[i][j].prim.uy = uy;
-    grid[i][j].prim.p = p;
+    grid[i][j].prim.rho = (MYFLOAT) rho;
+    grid[i][j].prim.ux = (MYFLOAT) ux;
+    grid[i][j].prim.uy = (MYFLOAT) uy;
+    grid[i][j].prim.p = (MYFLOAT) p;
 
     i += 1;
     if (i == pars.nx+BC){
@@ -436,7 +436,7 @@ void io_read_toutfile(){
   char tempbuff[MAX_LINE_SIZE] ;
 
   int nlines = 0;
-  float past_value = 0;
+  MYFLOAT past_value = 0;
   float value = 0;
 
   /* get how many lines we have */
@@ -462,7 +462,7 @@ void io_read_toutfile(){
 
   /* Now allocate the array and read in the stuff */
   
-  pars.outputtimes = malloc(nlines * sizeof(float));
+  pars.outputtimes = malloc(nlines * sizeof(MYFLOAT));
   pars.noutput_tot = nlines;
   nlines = 0;
 
@@ -473,7 +473,8 @@ void io_read_toutfile(){
     remove_trailing_comments(tempbuff);
     if (line_is_empty(tempbuff)) continue;
 
-    sscanf(tempbuff, "%f\n", &pars.outputtimes[nlines]);
+    sscanf(tempbuff, "%f\n", &value);
+    pars.outputtimes[nlines] = (MYFLOAT) value;
     nlines += 1;
 
   }
@@ -484,7 +485,7 @@ void io_read_toutfile(){
 
 
 
-void io_write_output(int *outstep, int step,  float t){
+void io_write_output(int *outstep, int step,  MYFLOAT t){
   /*----------------------------------------*/
   /* Write output of step at time t.    
    *
@@ -550,7 +551,7 @@ void io_write_output(int *outstep, int step,  float t){
 
 
 
-int io_is_output_step(float t, float *dt, int step){
+int io_is_output_step(MYFLOAT t, MYFLOAT *dt, int step){
   /* ----------------------------------------------- 
    * Check whether we should be writing an output in
    * this time step. Returns 1 if true, 0 otherwise.
@@ -577,7 +578,8 @@ int io_is_output_step(float t, float *dt, int step){
     int nnew = floor((t + *dt) / pars.dt_out);
 
     if (nnew > nold){
-      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  nnew*pars.dt_out - t, t +  nnew*pars.dt_out - t);
+      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", 
+        (MYFLOAT) *dt, (MYFLOAT) nnew*pars.dt_out - t, (MYFLOAT) t + nnew*pars.dt_out - t);
       *dt = nnew*pars.dt_out - t;
       return(1);
     }
@@ -585,7 +587,7 @@ int io_is_output_step(float t, float *dt, int step){
 
   if (pars.use_toutfile){
     if (pars.noutput >= pars.noutput_tot) return(0); /* final output will be dumped anyhow */
-    float tnext = pars.outputtimes[pars.noutput];
+    MYFLOAT tnext = pars.outputtimes[pars.noutput];
     if ( t + *dt >= tnext ){
       debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  tnext - t, tnext);
       *dt = tnext - t;

@@ -37,7 +37,7 @@ void solver_init_step(){
 
 
 
-void solver_get_dt(float* dt){
+void solver_get_dt(MYFLOAT* dt){
   /* ---------------------------------------------- 
    * Computes the maximal allowable time step size
    * ---------------------------------------------- */
@@ -58,7 +58,7 @@ void solver_compute_fluxes(){
 
 
 
-void solver_advance_step(float* dt){
+void solver_advance_step(MYFLOAT* dt){
   /* ---------------------------------------------
    * Integrate the equations for one time step
    * --------------------------------------------- */

@@ -10,11 +10,11 @@
 #define ADVECTION_H
 
 void solver_init_step();
-void solver_get_dt(float* dt);
+void solver_get_dt(MYFLOAT* dt);
 void solver_compute_fluxes();
-void solver_advance_step(float* dt);
+void solver_advance_step(MYFLOAT* dt);
 
 void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dimension);
-void solver_update_state(cell* c, float dtdx);
+void solver_update_state(cell* c, MYFLOAT dtdx);
 
 #endif

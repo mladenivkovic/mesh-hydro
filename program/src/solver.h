@@ -19,6 +19,6 @@
 #endif
 
 
-void solver_step(float* t, float* dt, int step,  int* write_output);
+void solver_step(MYFLOAT* t, MYFLOAT* dt, int step,  int* write_output);
 
 #endif

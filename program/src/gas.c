@@ -40,7 +40,7 @@ void gas_init_cstate(cstate *s){
 
 
 
-float gas_soundspeed(pstate* s){
+MYFLOAT gas_soundspeed(pstate* s){
   /*-----------------------------------------*/
   /* compute sound speed of ideal gas        */
   /*-----------------------------------------*/
@@ -52,7 +52,7 @@ float gas_soundspeed(pstate* s){
 
 
 
-float gas_energy(pstate* s){
+MYFLOAT gas_energy(pstate* s){
   /*-----------------------------------------*/
   /* compute total energy of a state         */
   /*-----------------------------------------*/

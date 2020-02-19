@@ -10,8 +10,8 @@
 #define MINMOD_H
 
 
-void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel);
-float limiter_minmod(float a, float b);
+void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, MYFLOAT vel);
+MYFLOAT limiter_minmod(MYFLOAT a, MYFLOAT b);
 
 
 #endif

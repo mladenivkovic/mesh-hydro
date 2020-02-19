@@ -10,8 +10,8 @@
 #define VAN_LEER_H
 
 
-void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel);
-float limiter_vanleer(float r);
+void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, MYFLOAT vel);
+MYFLOAT limiter_vanleer(MYFLOAT r);
 
 
 #endif

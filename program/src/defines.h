@@ -26,6 +26,13 @@
  * this line unless you know what you're
  * doing                                  */
 
+
+/* precision */
+// #define MYFLOAT float
+// #define FFORMAT f
+#define MYFLOAT double
+#define FFORMAT lf
+
 /* File related stuff */
 
 #define MAX_FNAME_SIZE 200    /* limit for file name size */

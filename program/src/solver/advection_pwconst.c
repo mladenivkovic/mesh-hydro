@@ -26,7 +26,7 @@ extern params pars;
 
 
 
-void solver_step(float *t, float* dt, int step, int* write_output){
+void solver_step(MYFLOAT *t, MYFLOAT* dt, int step, int* write_output){
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -83,7 +83,7 @@ void solver_init_step(){
 
 
 
-void solver_get_dt(float* dt){
+void solver_get_dt(MYFLOAT* dt){
   /* ---------------------------------------------- 
    * Computes the maximal allowable time step size
    * find max velocity present, then apply Ccfl
@@ -93,11 +93,11 @@ void solver_get_dt(float* dt){
 
 
 #if NDIM == 1
-  float umax = 0;
+  MYFLOAT umax = 0;
 
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i < pars.nx + BC; i++){
-    float uxabs = fabs(grid[i].prim.ux);
+    MYFLOAT uxabs = fabs(grid[i].prim.ux);
     if (uxabs > umax){
       umax = uxabs;
     }
@@ -112,15 +112,15 @@ void solver_get_dt(float* dt){
 
 #elif NDIM == 2
 
-  float uxmax = 0;
-  float uymax = 0;
+  MYFLOAT uxmax = 0;
+  MYFLOAT uymax = 0;
 
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i < pars.nx + BC; i++){
     for (int j = BC; j < pars.nx + BC; j++){
-      float uxabs = fabs(grid[i][j].prim.ux);
+      MYFLOAT uxabs = fabs(grid[i][j].prim.ux);
       if (uxabs > uxmax) uxmax = uxabs;
-      float uyabs = fabs(grid[i][j].prim.uy);
+      MYFLOAT uyabs = fabs(grid[i][j].prim.uy);
       if (uyabs > uymax) uymax = uyabs;
     }
   }
@@ -130,8 +130,8 @@ void solver_get_dt(float* dt){
   uymax = fabs(grid[BC][BC].prim.uy);
 #endif
 
-  float uxdx = uxmax / pars.dx; /* ux_max / dx */
-  float uydy = uymax / pars.dx; /* uy_max / dy */
+  MYFLOAT uxdx = uxmax / pars.dx; /* ux_max / dx */
+  MYFLOAT uydy = uymax / pars.dx; /* uy_max / dy */
   
   *dt = pars.ccfl / ( uxdx + uydy );
 
@@ -281,14 +281,14 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dimension){
 
 
 
-void solver_advance_step(float* dt){
+void solver_advance_step(MYFLOAT* dt){
   /* ---------------------------------------------
    * Integrate the equations for one time step
    * --------------------------------------------- */
 
   debugmessage("Called solver_advance_step with dt = %f", *dt);
 
-  float dtdx = *dt / pars.dx;
+  MYFLOAT dtdx = *dt / pars.dx;
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++){
@@ -307,7 +307,7 @@ void solver_advance_step(float* dt){
 
 
 
-void solver_update_state(cell *c, float dtdx){
+void solver_update_state(cell *c, MYFLOAT dtdx){
     /* ------------------------------------------------------
      * Update the state using the fluxes in the cell and dt
      * dtdx: dt / dx
@@ -334,15 +334,15 @@ void solver_advection_check_global_velocity(){
    * -----------------------------------------------------*/
 
 #if NDIM == 1
-  float ux = grid[BC].prim.ux;
+  MYFLOAT ux = grid[BC].prim.ux;
   for (int i = BC; i < pars.nx + BC; i++ ){
     if (grid[i].prim.ux != ux) {
       throw_error("The velocities are not identical everywhere. u[%d] = %12.6f; u[%d] = %12.6f\n", BC, ux, i, grid[i].prim.ux);
     }
   }
 #elif NDIM == 2
-  float ux = grid[BC][BC].prim.ux;
-  float uy = grid[BC][BC].prim.uy;
+  MYFLOAT ux = grid[BC][BC].prim.ux;
+  MYFLOAT uy = grid[BC][BC].prim.uy;
   for (int i = BC; i < pars.nx + BC; i++ ){
     for (int j = BC; j < pars.nx + BC; j++ ){
       if (grid[i][j].prim.ux != ux) {

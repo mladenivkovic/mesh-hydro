@@ -258,13 +258,13 @@ void cell_reset_fluxes(){
 
 
 
-float cell_get_total_mass(){
+MYFLOAT cell_get_total_mass(){
   /* -----------------------------------
    * Compute the total "mass" currently
    * on the grid.
    * ----------------------------------- */
 
-  float mtot = 0;
+  MYFLOAT mtot = 0;
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++){

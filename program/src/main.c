@@ -98,12 +98,12 @@ int main(int argc, char* argv[]){
   /* Initialize counters and time */
   int step = 0;         /* step counter */
   int outcount = 0;     /* number of the output that we're writing */
-  float t = 0;          /* time */
-  float dt = 0;         /* time step size */
+  MYFLOAT t = 0;          /* time */
+  MYFLOAT dt = 0;         /* time step size */
 
   int write_output = 0; /* whether the time step was reduced because we need to write an output */
 
-  float mtot_init = cell_get_total_mass(); /* for checks every step */
+  MYFLOAT mtot_init = cell_get_total_mass(); /* for checks every step */
 
   log_extra("Writing initial output");
   io_write_output(&outcount, step, t);
@@ -137,7 +137,7 @@ int main(int argc, char* argv[]){
     if (pars.nstep_log == 0 || step % pars.nstep_log == 0) {
       log_message("%10d t = %12.6f dt = %12.6f m_tot = %12.6f step took %12.6fs\n",
                   step, t, dt, cell_get_total_mass()/mtot_init, 
-                  (float)(step_end - step_start) / CLOCKS_PER_SEC);
+                  (MYFLOAT)(step_end - step_start) / CLOCKS_PER_SEC);
     }
   }
 
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]){
   printf("\n");
   printf("  Finished clean. Yay!\n");
   printf("  Total runtime was %12.6fs, mtot = %12.6f, nsteps = %12d\n", 
-              (float)(all_end - all_start)/CLOCKS_PER_SEC, cell_get_total_mass()/mtot_init, step);
+              (MYFLOAT)(all_end - all_start)/CLOCKS_PER_SEC, cell_get_total_mass()/mtot_init, step);
 
   return(0);
 }

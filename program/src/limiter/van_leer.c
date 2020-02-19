@@ -32,7 +32,7 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
    * Remember: slope_i = 1/dx * phi(r_{i+1/2}) * (U_{i+1} - U_{i})
    * ------------------------------------------------------------------------ */
   int i, j;
-  float vel = 0;
+  MYFLOAT vel = 0;
   pstate r, phi;
   /* cell left, right; */
   pstate Uim1, Ui, Uip1, Uip2;  /*U_i-1, U_i-2, U_i, U_i+1 */ 
@@ -91,7 +91,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
    * Remember: slope_{i-1} = 1/dx * phi(r_{i-1/2}) * (U_i - U_{i-1})
    * ------------------------------------------------------------------------ */
   int i, j;
-  float vel = 0;
+  MYFLOAT vel = 0;
   pstate r, phi;
   pstate Uim1, Uim2, Ui, Uip1;  /*U_i-1, U_i-2, U_i, U_i+1 */
 
@@ -142,7 +142,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
 
 
 
-void limiter_get_r(pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* Uim2, pstate* r, float vel){
+void limiter_get_r(pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* Uim2, pstate* r, MYFLOAT vel){
 
   /* Also check whether you might compute junk by dividing by zero.
    * If you have, return something ridiculously high with the correct sign. */
@@ -197,11 +197,11 @@ void limiter_get_r(pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* Uim2, pstate*
 
 
 
-float limiter_vanleer(float r){
+MYFLOAT limiter_vanleer(MYFLOAT r){
   /* -----------------------------------------------------
    * Computes the phi(r) for the superbee slope limiter
    * ----------------------------------------------------- */
 
-  float phi = (r + fabs(r))/(1 + fabs(r));
+  MYFLOAT phi = (r + fabs(r))/(1 + fabs(r));
   return(phi);
 }

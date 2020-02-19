@@ -7,21 +7,23 @@
 #ifndef GAS_H
 #define GAS_H
 
+#include "defines.h"
+
 /* primitive state */
 typedef struct {
-  float rho;  /* density */
-  float ux;   /* velocity in x direction */
-  float uy;   /* velocity in y direction */
-  float p;    /* pressure */
+  MYFLOAT rho;  /* density */
+  MYFLOAT ux;   /* velocity in x direction */
+  MYFLOAT uy;   /* velocity in y direction */
+  MYFLOAT p;    /* pressure */
 } pstate;
 
 
 /* conserved state */
 typedef struct {
-  float rho;    /* density */
-  float rhoux;  /* specific momentum in x direction */
-  float rhouy;  /* specific momentum in x direction */
-  float E;      /* specific energy */
+  MYFLOAT rho;    /* density */
+  MYFLOAT rhoux;  /* specific momentum in x direction */
+  MYFLOAT rhouy;  /* specific momentum in x direction */
+  MYFLOAT E;      /* specific energy */
 } cstate; 
 
 
@@ -29,8 +31,8 @@ typedef struct {
 void gas_init_pstate(pstate *p);
 void gas_init_cstate(cstate *c);
 
-float gas_soundspeed(pstate* s);
-float gas_energy(pstate* s);
+MYFLOAT gas_soundspeed(pstate* s);
+MYFLOAT gas_energy(pstate* s);
 
 
 #endif

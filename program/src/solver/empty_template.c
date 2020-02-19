@@ -26,7 +26,7 @@ extern params pars;
 
 
 
-void solver_step(float *t, float* dt, int step, int* write_output){
+void solver_step(MYFLOAT *t, MYFLOAT* dt, int step, int* write_output){
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -56,7 +56,7 @@ void solver_init_step(){
 
 
 
-void solver_get_dt(float* dt){
+void solver_get_dt(MYFLOAT* dt){
   /* ---------------------------------------------- 
    * Computes the maximal allowable time step size
    * ---------------------------------------------- */
@@ -78,7 +78,7 @@ void solver_compute_fluxes(){
 
 
 
-void solver_advance_step(float* dt){
+void solver_advance_step(MYFLOAT* dt){
   /* ---------------------------------------------
    * Integrate the equations for one time step
    * --------------------------------------------- */
