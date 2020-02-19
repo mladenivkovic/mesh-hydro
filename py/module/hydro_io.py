@@ -59,6 +59,7 @@ def read_output(fname):
                     both ux and uy
         p:          numpy array for pressure
         t:          time of the output
+        step:       current step of the simulation
     """
 
     check_file_exists(fname)
@@ -68,6 +69,7 @@ def read_output(fname):
     nx = None
     ndim = None
     t = None
+    step = None
 
 
     linecount = 0
@@ -79,6 +81,7 @@ def read_output(fname):
             print("got nx:", nx)
             print("got ndim", ndim)
             print("got t:", t)
+            print("got step:", step)
             quit(1)
 
         line = f.readline()
@@ -97,10 +100,12 @@ def read_output(fname):
                 ndim = int(value)
             elif nstr == "t":
                 t = float(value)
+            elif nstr == "nsteps":
+                step = int(value)
             else:
                 raise ValueError("Unknown name: '{0}'".format(name))
 
-        if nx is not None and ndim is not None and t is not None:
+        if nx is not None and ndim is not None and t is not None and step is not None:
             break
 
  
@@ -120,7 +125,7 @@ def read_output(fname):
 
 
 
-    return ndim, rho, u, p, t
+    return ndim, rho, u, p, t, step
 
 
 

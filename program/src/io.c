@@ -484,10 +484,14 @@ void io_read_toutfile(){
 
 
 
-void io_write_output(int *outstep, float t){
-  /*------------------------------------*/
-  /* Write output of step at time t.    */
-  /*------------------------------------*/
+void io_write_output(int *outstep, int step,  float t){
+  /*----------------------------------------*/
+  /* Write output of step at time t.    
+   *
+   * outstep: Current output number
+   * step:  Current step of the simulation
+   * t:     Current time of the simulation
+   *----------------------------------------*/
 
   if (*outstep>9999) throw_error("I'm not made to write outputs > 9999\n");
 
@@ -513,6 +517,7 @@ void io_write_output(int *outstep, float t){
   fprintf(outfilep, "# ndim = %2d\n", NDIM);
   fprintf(outfilep, "# nx = %10d\n", pars.nx);
   fprintf(outfilep, "# t = %12.6lf\n", t);
+  fprintf(outfilep, "# nsteps = %12d\n", step);
 
 #if NDIM == 1
   fprintf(outfilep, "# %12s %12s %12s %12s\n", "x", "rho", "u", "p");

@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     for fname in filelist:
 
-        ndim, rho, u, p, t = read_output(fname)
+        ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:
             plot_1D(rho, u, p, fname, dots=dots)

@@ -21,7 +21,7 @@ dots = False    # overplot dots on 1D plot
 if __name__ == "__main__":
     
     fname = get_only_cmdlinearg()
-    ndim, rho, u, p, t = read_output(fname)
+    ndim, rho, u, p, t, step = read_output(fname)
 
 
     if ndim == 1:
