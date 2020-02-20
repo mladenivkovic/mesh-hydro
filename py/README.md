@@ -41,3 +41,11 @@ Not meant to be run, but contain functions that other scripts call.
 - `hydro_io.py`:          reading/writing routines.
 - `hydro_plotting.py`:    Plotting routines.
 - `hydro_utils.py`:       misc small utilities.
+
+
+
+Evaluations
+------------------
+
+Contains plotting, comparing, and evaluation scripts for different tasks.
+E.g. compute and plot the convergence of a class of methods depending on grid spacing, dt, ...
