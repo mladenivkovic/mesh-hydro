@@ -1,2 +1,94 @@
 \newpage
 \section{Dimensional Splitting}
+
+
+To go from one to multiple dimensions, it is tempting to just extend the one dimensional discretisation.
+For example, starting with the conservation law
+
+\begin{equation}
+	\deldt{\U} + \deldx{\F(\U)} + \frac{\del}{\del y} \mathbf{G}(\U) = 0
+\end{equation}
+
+
+and just apply Godunov's finite volume method:
+
+\begin{equation}
+	\U_{i,j}^{n+1} = 
+					\U_{i,j}^n 
+					+ \frac{\Delta t}{\Delta x} \left( \F_{i - \half, j} - \F_{i + \half, j}\right) 
+					+ \frac{\Delta t}{\Delta x} \left( \mathbf{G}_{i ,j - \half} - \mathbf{G}_{i, j + \half}\right) 
+\end{equation}
+
+
+However, this is a bit of a problem.
+The upwinding here is not complete.
+Consider the 2D advection equation
+
+\begin{equation}
+	\deldt{q} + u\deldx{q} + v \frac{\del}{\del y} q = 0
+\end{equation}
+
+Now suppose we have advecting velocities $u = v = 1$, i.e. the advection velocity is along the diagonal.
+Then our method reads 
+
+\begin{equation}
+	q_{i,j}^{n+1} = 
+					q_{i,j}^n 
+					+ u \frac{\Delta t}{\Delta x} \left( q_{i - \half, j} - q_{i + \half, j}\right) 
+					+ v \frac{\Delta t}{\Delta x} \left( q_{i ,j - \half} - q_{i, j + \half}\right) 
+\end{equation}
+
+This expression doesn't involve $q_{i-1, j-1}$ at all, but that's actually the value that should be advected to $q_{i, j}$ in the next timestep!
+
+
+One way of doing things is to actually formulate more sophisticated unsplit methods that involve the appropriate stencils.
+We shan't do that here though.
+We make use of dimensional splitting. 
+Instead of solving
+
+\begin{equation}
+	\begin{cases}
+		\text{PDE: } & \deldt{\U} + \deldx{\F(\U)} + \frac{\del}{\del y} \mathbf{G}(\U) = 0\\
+		\text{IC: } & \U(x, y, t^n) = \U^n
+	\end{cases}
+\end{equation}
+
+we do it in 2 (3 for 3D) steps:
+
+Step 1: We obtain a intermediate result $\U^{n+\half}$ by solving the ``x - sweep'' over the full time interval $\Delta t$ :
+\begin{equation}
+	\begin{cases}
+		\text{PDE: } & \deldt{\U} + \deldx{\F(\U)} = 0\\
+		\text{IC: } &  \U^n
+	\end{cases}
+\end{equation}
+
+and then we evolve the solution to the final $\U^{n+1}$ by solving the ``y - sweep'' over the full time interval $\Delta t$ :
+
+\begin{equation}
+	\begin{cases}
+		\text{PDE: } & \deldt{\U} + \frac{\del}{\del y} \mathbf{G}(\U) = 0\\
+		\text{IC: } & \U^{n+\half} \\
+	\end{cases}
+\end{equation}
+
+using the 1D methods that are described.
+
+What's even better is that it can be shown (see \cite{leveque_2002}) that by switching the order of the sweeps every timestep (and keeping the time step interval $\Delta t$ constant) leads to a second order accurate method in time.
+This is called ``Strang splitting''.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

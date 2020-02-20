@@ -15,9 +15,6 @@
 /* keep one global velocity, and keep it constant */
 #define ADVECTION_KEEP_VELOCITY_CONSTANT
 
-/* use strang splitting for 2D runs */
-#define STRANG_SPLITTING
-
 
 
 

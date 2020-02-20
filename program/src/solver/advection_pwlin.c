@@ -43,10 +43,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_advance_step(dt);
 
 #elif NDIM == 2
-#ifndef STRANG_SPLITTING
-  solver_compute_fluxes(/*dimension =*/0);
-  solver_advance_step(dt);
-#else
+
   int dimension = step % 2; /* gives 0 or 1, switching each step */
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt);
@@ -55,7 +52,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt);
   /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
-#endif
+
 #endif
 }
 
@@ -184,7 +181,6 @@ void solver_compute_fluxes(float* dt, int dimension){
   }
 
 #elif NDIM == 2
-#ifdef STRANG_SPLITTING
 
   if (dimension == 0){
     for (int i = BC; i < pars.nx + BC; i++){
@@ -216,29 +212,6 @@ void solver_compute_fluxes(float* dt, int dimension){
     }
 
   }
-#else
-  for (int i = BC; i < pars.nx + BC; i++){
-    for (int j = BC; j < pars.nx + BC; j++){
-      c = &(grid[i][j]);
-      if (c->prim.ux > 0) {
-        dw = c;
-        uw = &(grid[i - 1][j]);
-      } else {
-        dw = &(grid[i + 1][j]);
-        uw = c;
-      }
-      solver_compute_cell_pair_flux(c, uw, dw, /*dimension=*/0);
-      if (c->prim.uy > 0) {
-        dw = c;
-        uw = &(grid[i][j-1]);
-      } else {
-        dw = &(grid[i][j+1]);
-        uw = c;
-      }
-      solver_compute_cell_pair_flux(c, uw, dw, /*dimension=*/1);
-    }
-  }
-#endif /* strang splitting */
 #endif /* ndim */
 }
 
