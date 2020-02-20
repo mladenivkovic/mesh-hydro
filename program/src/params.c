@@ -24,7 +24,7 @@ void params_init_defaults(){
 
   pars.verbose = 0;
 
-  pars.nsteps = 1;
+  pars.nsteps = 0;
   pars.tmax = 0;
   pars.force_dt = 0;
 
