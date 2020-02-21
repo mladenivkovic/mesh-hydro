@@ -1,0 +1,652 @@
+\section{Advection}
+
+
+
+%=======================================
+\subsection{Piecewise Constant}
+%=======================================
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-1D-pwconst-density-only-overplotted.png}
+	{fig:advection-pwconst-four-shapes-fixed-positive-vel}
+	{
+		Piecewise constant advection with positive fixed global velocity $v_x = 1$. $C_{CFL} = 0.9$,  $nx = 500$
+	}
+
+\quickfigcap
+	{figures/advection/advection-1D-pwconst-LOWCFL.png}
+	{fig:advection-pwconst-four-shapes-fixed-positive-vel-LOWCFL}
+	{
+		Piecewise constant advection with positive fixed global velocity $v_x = 1$. 
+		$C_{CFL} = 0.1$,  $nx = 500$
+	}
+
+
+
+\quickfigcap
+	{figures/advection/advection-1D-CFL1-density-only-overplotted.png}
+	{fig:advection-pwconst-four-shapes-fixed-positive-vel-CFL1}
+	{
+		Piecewise constant advection with positive fixed global velocity $v_x = 1$. 
+		$C_{CFL} = 1.0$, $nx = 500$
+	}
+
+
+\quickfigcap
+	{figures/advection/advection-1D-pwconst-negative-velocity-density-only-overplotted.png}
+	{fig:advection-pwconst-four-steps-fixed-negative-vel}
+	{
+		Piecewise constant advection with NEGATIVE fixed global velocity $v_x = -1$. 
+		$C_{CFL} = 0.9$, $nx = 100$
+	}
+
+
+
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-x-no-strang}
+	{
+		Piecewise constant advection with fixed global velocity $v_x = 1, v_y = 0$. $C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		This is 2D \textbf{without} Strang splitting, done naively.
+	}
+	
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-x}
+	{
+		Piecewise constant advection with fixed global velocity $v_x = 1, v_y = 0$. $C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		\textbf{With} Strang splitting.
+	}
+
+
+
+
+
+	
+	
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-uy-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-y-no-strang}
+	{
+		Piecewise constant advection with fixed global velocity $v_x = 0,  v_y = 1$. 
+		$C_{CFL} = 0.9$, $nx = 100$, $t=1$. 
+		ICs were a step function.
+		\textbf{Without} Strang splitting, done naively.
+	}
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-uy-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-y}
+	{
+		Piecewise constant advection with fixed global velocity $v_x = 0,  v_y = 1$. 
+		$C_{CFL} = 0.9$, $nx = 100$, $t=1$. 
+		ICs were a step function.
+		\textbf{With} Strang splitting.
+	}
+
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-uy-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-xy-no-strang}
+	{
+		Piecewise constant advection with fixed global velocity $v_x = v_y = 1$.
+		$C_{CFL} = 0.9$, $nx = 100$, $t=1$. 
+		ICs were a step function. 
+		This is 2D \textbf{without} Strang splitting, done naively.
+	}
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-uy-ADVECTION_PWCONST-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwconst-step-2D-fixed-positive-vel-xy}
+	{	
+		Piecewise constant advection with fixed global velocity $v_x = v_y = 1$. 
+		$C_{CFL} = 0.9$, $nx = 100$, $t=1$. 
+		ICs were a step function.
+		This is 2D \textbf{with} Strang splitting.
+	}
+
+
+
+
+
+
+
+
+%=======================================
+\subsection{Piecewise Linear}
+%=======================================
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-1D-pwlin-density-only-overplotted.png}
+	{fig:advection-pwlin-four-shapes-fixed-positive-vel}
+	{
+		Piecewise linear advection with positive fixed global velocity $v_x = 1$. 
+		$C_{CFL} = 0.9$,  $nx = 100$
+	}
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-x-no-strang}
+	{
+		Piecewise linear advection with fixed global velocity $v_x = 1, v_y = 0$. 
+		$C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		\textbf{Without} Strang splitting.
+	}
+
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-x}
+	{
+		Piecewise linear advection with fixed global velocity $v_x = 1, v_y = 0$. 
+		$C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		\textbf{With} Strang splitting.
+	}
+
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-uy-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-y-no-strang}
+	{
+		Piecewise linear advection with fixed global velocity $v_x = 0,  v_y = 1$. 
+		$C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		\textbf{Without} Strang splitting.
+	}
+	
+	
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-uy-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-y}
+	{
+		Piecewise linear advection with fixed global velocity $v_x = 0,  v_y = 1$. 
+		$C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function.
+		\textbf{With} Strang splitting.
+	}
+	
+	
+	
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-uy-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only-NO-STRANG-SPLITTING.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-xy-no-strang}
+	{	
+		Piecewise linear advection with fixed global velocity $v_x = v_y = 1$. $C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function. 
+		Note that despite of the strong oscillations, the total density is conserved! 
+		(Unless the oscillations get too big for floats to handle).
+		\textbf{Without} Strang splitting.
+	}
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-uy-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-xy}
+	{	
+		Piecewise linear advection with fixed global velocity $v_x = v_y = 1$. $C_{CFL} = 0.9$, $nx = 100$. 
+		ICs were a step function. 
+		Note that despite of the strong oscillations, the total density is conserved! 
+		(Unless the oscillations get too big for floats to handle)
+		\textbf{With} Strang splitting.
+	}
+
+
+
+
+
+
+
+
+
+
+\quickfigcap
+	{figures/advection/advection-2D-step-100-ux-uy-ADVECTION_PWLIN-NO_LIMITER-2D-0001-density-only-LOWCFL.png}
+	{fig:advection-pwlin-step-2D-fixed-positive-vel-xy}
+	{
+		Piecewise linear advection with fixed global velocity $v_x = v_y = 1$. 
+		$C_{CFL} = 0.1$, $nx = 100$. 
+		ICs were a step function. 
+		Note the lower CFL condition compared to fig \ref{fig:advection-pwlin-step-2D-fixed-positive-vel-xy-no-strang}.
+		\textbf{Without} Strang splitting.
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Order of Convergence}
+
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dx-gaussian.png}
+	{fig:advection-convergence-dx-gaussian}
+	{
+		Convergence Study with respect to cell size $\Delta x$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps.
+		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
+		Initial conditions was a Gaussian profile.
+	}
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dx-step.png}
+	{fig:advection-convergence-dx-step}
+	{
+		Convergence Study with respect to cell size $\Delta x$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps.
+		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
+		Initial conditions was a step function.
+	}
+	
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dt-gaussian-500.png}
+	{fig:advection-convergence-dt-gaussian}
+	{
+		Convergence Study with respect to time step size $\Delta t$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
+		Initial conditions was a Gaussian profile.
+	}
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dt-step-500.png}
+	{fig:advection-convergence-dt-step}
+	{
+		Convergence Study with respect to time step size $\Delta t$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
+		Initial conditions was a step function.
+	}
+	
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_CFL-gaussian-500.png}
+	{fig:advection-convergence-CFL-gaussian}
+	{
+		Convergence Study with respect to the Courant number $C_{cfl}$ using the $L1$ norm.
+		Points are measurements, the straight lines just connect the dots.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Initial conditions was a Gaussian profile.
+	}
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_CFL-step-500.png}
+	{fig:advection-convergence-CFL-step}
+	{
+		Convergence Study with respect to the Courant number $C_{cfl}$ using the $L1$ norm.
+		Points are measurements, the straight lines just connect the dots.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Initial conditions was a step function.
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Conclusions} \label{chap:advection-conclusions}
+
+\begin{itemize}
+
+
+	\item Advection is diffusive (fig \ref{fig:advection-pwconst-four-shapes-fixed-positive-vel}).
+	
+	
+	
+	
+	\item It is diffusive even if $C_{CFL} = 1$! (fig \ref{fig:advection-pwconst-four-shapes-fixed-positive-vel-CFL1}). 
+            This is most probably because of roundoff/float errors. For high $t$, the whole shape moves a bit to the right even.
+ 
+ 
+            
+    \item Using a lower CFL number leads to stronger diffusion. 
+    	Compare figs. \ref{fig:advection-pwconst-four-shapes-fixed-positive-vel} and \ref{fig:advection-pwconst-four-shapes-fixed-positive-vel-LOWCFL}. Why?
+    
+    	We are solving the 1D advection equation with $c$ being a constant velocity:
+    	\begin{equation}
+    		\frac{\partial u}{\partial t} + c\frac{\partial u}{\partial x} = 0 \label{eq:advection-1D}
+    	\end{equation}
+    
+    	Discretising this equation, we get (using an explicit time scheme and upwind differencing):
+    	
+    	\begin{equation}
+    		\frac{u_i^{n+1} - u_i^n}{\Delta t}+\frac{u_i^n-u_{i-1}^{n}}{\Delta x} = 0 \label{eq:advection-discretized}
+    	\end{equation}
+    	
+    	This is however not an exact expression, but only an approximate one.
+    	If we use a Taylor expansion
+    	\begin{align}
+    		u_i^{n+1} &= u_i^n + \Delta t \frac{\partial u}{\partial t}+\frac{\Delta t^2}{2}\frac{\partial^2 u }{\partial t^2}+O(\Delta t^3) \\
+    		u_{i-1}^{n} &= u_{i}^n - \Delta x \frac{\partial u}{\partial x}+\frac{\Delta x^2}{2}\frac{\partial^2 u }{\partial x^2}+O(\Delta x^3)
+    	\end{align}
+
+		and insert it into eq \ref{eq:advection-discretized}, we get (neglecting third order terms from now on)
+		
+		\begin{align}
+			& \frac{\partial u}{\partial t} + c\frac{\partial u}{\partial x} + \frac{1}{2}\Delta t \frac{\partial^2 u }{\partial t^2} - c \frac{\Delta x}{2} \frac{\partial^2 u }{\partial x^2} = 0
+		\end{align}
+		\begin{align}
+			\Rightarrow \frac{\partial u}{\partial t} + c\frac{\partial u}{\partial x} &= 
+				-\frac{1}{2}\Delta t\frac{\partial^2 u }{\partial t^2} + c \frac{\Delta x}{2} \frac{\partial^2 u }{\partial x^2} \\
+				&= 0 + Err \\
+			Err &= -\frac{1}{2}\Delta t\frac{\partial^2 u }{\partial t^2} + c \frac{\Delta x}{2} \frac{\partial^2 u }{\partial x^2}
+		\end{align}
+		
+		which is the advection equation \ref{eq:advection-1D} plus some error term.
+		
+		Now using eq. \ref{eq:advection-1D} we find:
+		
+		\begin{align}
+    		& \frac{\partial u}{\partial t} + c\frac{\partial u}{\partial x} = 0 \\
+    		1) ~~~ & \frac{\partial^2 u}{\partial t2} + c\frac{\partial^2 u}{\partial t\partial x} = 0 \\
+    		2) ~~~ & \frac{\partial u}{\partial t} = -c \frac{\partial u}{\partial x} \\
+    		\Rightarrow ~~ 3) ~~~ & \frac{\partial^2 u}{\partial t^2} - c^2 \frac{\partial^2 u}{\partial x^2} = 0
+		\end{align}
+		
+		This gives us for the error term:
+		
+		\begin{align}
+			Err &= 
+				-\frac{1}{2}\Delta t\frac{\partial^2 u }{\partial t^2} + c \frac{\Delta x}{2} \frac{\partial^2 u }{\partial x^2} \\
+				&= -\frac{c^2 \Delta t}{2}\frac{\partial^2 u }{\partial x^2} + c \frac{\Delta x}{2} \frac{\partial^2 u }{\partial x^2} \\
+				&= \frac{c\Delta x}{2} \left(1 - \frac{c \Delta t}{\Delta x} \right) \frac{\partial^2 u }{\partial x^2}
+		\end{align}
+		
+		Inserting the CFL condition:
+		\begin{equation}
+			\frac{c \Delta t_{max}}{\Delta x} = C_{cfl} \leq 1
+		\end{equation}
+		
+		we obtain:
+
+		\begin{align}
+			Err &= \frac{c\Delta x}{2} \left(1 - C_{cfl} \right) \frac{\partial^2 u }{\partial x^2} \label{eq:advection-diffusivity-error}
+		\end{align}		
+		
+		
+		The second derivative in space is characteristic for diffusion.
+		But you can immediately see that the diffusion term (coefficient) depends on $C_{cfl}$, and indeed increases with decreasing $C_{cfl}$!
+		
+		
+		
+	\item 2D advection:
+	
+
+		For advection only in x or y direction, respectively, the method reduces to the one dimensional case, and the results are identical when using Strang splitting or the naive case.
+		Compare figs \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-x-no-strang} vs \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-x}, and \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-y-no-strang} vs \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-y}.
+		But when we have both $v_x$ and $v_y$ be non-zero, the naive method (i.e. without Strang splitting, where we just extend the 1D method to 2D and don't think about it) starts getting ``stripes'' perpendicular to the diagonal along which it is being advected along (fig \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-xy-no-strang} vs \ref{fig:advection-pwconst-step-2D-fixed-positive-vel-xy}).
+		The reason is that a) the upwinding is not complete, i.e. the value $u_{i-1, j-1}$ along the diagonal in the naive case never gets properly advected to $u_{i, j}$, and b) the method is diffusive, so the diffused material from $u_{i-1, j}$ and $u_{i, j-1}$ come together in that cell, messing everything up.
+		Letting the code run for longer times actually leads to stripe-like instabilities. 
+		See also fig \ref{fig:advection-pwlin-step-2D-fixed-positive-vel-xy-no-strang}.
+
+
+
+			
+		
+		
+		
+		
+
+
+    \item The piecewise linear scheme can/will introduce oscillations around sharp edges (fig \ref{fig:advection-pwlin-four-shapes-fixed-positive-vel}. 
+            The oscillations can go into the negative regime. 
+            Even though it's unphysical, the total density content remains constant!
+            This is because the scheme is fundamentally conservative.
+            
+            
+            
+    \item On the order of convergence:
+     
+     	
+		\begin{itemize}
+  			\item Dependence on $\Delta x$:
+				
+				For the smooth Gaussian profile IC: The results are nicely as expected, fig. \ref{fig:advection-convergence-dx-gaussian}.
+				The piecewise constant advection is of $\order(\Delta x)$, piecewise linear is of $\order(\Delta x^2)$.
+				Remember that the order of convergence computation on paper gives you only the upper boundary of the error, so a faster convergence is possible, but shouldn't be greater than 1 order than predicted, which we have here.
+				
+				
+				For the step function in fig \ref{fig:advection-convergence-dx-step} we see as expected that the convergence rate drops to $\order(\Delta x)$ because that's what slope limiters do.
+				So then why is the unlimited linear method also dropping to first order?
+				The computations we did on paper for the order estimate assume a smooth initial condition, which we don't have here. 
+				It turns out having a discontinuity drops your order of convergence.
+				
+			
+			
+			\item Dependence on $\Delta t$:
+			
+				Fixing the time step $\Delta t$ is essentially the same as fixing the Courant number $C_{cfl}$ for an already fixed velocity $u$ and grid spacing $\Delta x$.
+				For the order of convergence to be measured w.r.t. $\Delta t$, we must start with a $\Delta t$ that implies a very low $C_{cfl}$.
+				The reason is that $C_{cfl}$ determines the amplitude of the diffusivity, see eqn. \ref{eq:advection-diffusivity-error} and fig. \ref{fig:advection-convergence-CFL-gaussian}
+				So for a good comparison, we need to start with a low enough $C_{cfl}$ such that the difference in diffusivity is negligible.
+				Otherwise, you don't see the power law that emerges.
+				
+				In the following analysis, let's focus on piecewise constant (first order) advection alone.
+				I don't have the theory present for the piecewise linear scheme to back up my findings. 
+				What makes things more difficult is that for the piecewise linear advection, $\Delta t$ also enters the computation of the fluxes between the cells, thus also affects the spatial component. 
+				It is not trivial to separate between the $\Delta x$ and $\Delta x$ dependence in these cases.
+				
+				For the Gaussian profile, fig. \ref{fig:advection-convergence-dt-gaussian}, we get a nice power law with slope $1$, as expected.
+				(The piecewise linear methods get close to $\order(\Delta t ^ {\half})$. 
+				Maybe because they start developing jump discontinuities?
+				Compare fig \ref{fig:limiters-advection}.)
+				For the step profile of the piecewise constant advection, fig. \ref{fig:advection-convergence-dt-step}, we get $\order(\Delta t ^ {\half})$.
+				The reason behind it is that the convergence analysis in theory assumes a smooth initial condition, such that we can use derivatives and Taylor-expansions.
+				The step function is not smooth though.
+				It can be shown that for a jump discontinuity, the error goes as
+				
+				\begin{equation*}
+				     	Err \propto \sqrt{t}
+				\end{equation*}
+				
+				So if we have $N$ steps of equal size $\Delta t)$, if we keep $N$ constant, we get
+				\begin{equation}
+				     	Err \propto \sqrt{\Delta t}
+				\end{equation}
+				
+				See \cite{leveque_2002}, chapter 8.6 for details.
+				
+				which is exactly what we see in  fig. \ref{fig:advection-convergence-dt-step}.
+				
+			
+			\item  Dependence on $C_{CFL}$:
+				
+				Tweaking around $C_{CFL}$ for a fixed $nx$ and advection velocity $u$ is essentially the same as tweaking $\Delta t$.
+				For $C_{cfl}$ comparable to 1 however we see the effects of the increased diffusivity, as described by equation \ref{eq:advection-diffusivity-error}.
+				Indeed, measuring the convergence of $0.1 \leq C_{cfl} \leq 0.9 $ in figs. \ref{fig:advection-convergence-CFL-gaussian} and \ref{fig:advection-convergence-CFL-step} shows that it doesn't behave like a power law at all.
+			
+		\end{itemize}
+
+
+     
+     
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%======================================
+\subsection{Future Debugging Hints}
+%======================================
+
+
+
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0000-density-only.png}
+	{fig:advection-debugging-IC}
+	{Initial conditions used to demonstrate debugging hints. $u = 1$.}
+
+
+\subsubsection{When you're using downwind differencing}
+
+Downwind differencing is unphysical and violently unstable.
+Note how the wave goes in the wrong direction!
+
+
+\quickfigcap
+	{./figures/advection/downwind_differencing_step-0001-density-only.png}
+	{fig:advection-debugging-downwind-1}
+	{Downwind differencing after 1 step.}
+
+\quickfigcap
+	{./figures/advection/downwind_differencing_step-0002-density-only.png}
+	{fig:advection-debugging-downwind-2}
+	{Downwind differencing after 2 steps.}
+
+\quickfigcap
+	{./figures/advection/downwind_differencing_step-0003-density-only.png}
+	{fig:advection-debugging-downwind-3}
+	{Downwind differencing after 3 steps.}
+
+\quickfigcap
+	{./figures/advection/downwind_differencing_step-0005-density-only.png}
+	{fig:advection-debugging-downwind-5}
+	{Downwind differencing after 5 steps.}
+
+\quickfigcap
+	{./figures/advection/downwind_differencing_step-0010-density-only.png}
+	{fig:advection-debugging-downwind-10}
+	{Downwind differencing after 10 steps.}
+
+
+
+
+
+
+
+
+\subsubsection{When the CFL condition is violated}
+
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0001-density-only.png}
+	{fig:advection-debugging-downwind-1}
+	{Violating the CFL condition (here $C_{cfl} = 1.5$) after 1 step.}
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0002-density-only.png}
+	{fig:advection-debugging-downwind-2}
+	{Violating the CFL condition (here $C_{cfl} = 1.5$) after 2 steps.}
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0003-density-only.png}
+	{fig:advection-debugging-downwind-3}
+	{Violating the CFL condition (here $C_{cfl} = 1.5$) after 3 steps.}
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0005-density-only.png}
+	{fig:advection-debugging-downwind-5}
+	{Violating the CFL condition (here $C_{cfl} = 1.5$) after 5 steps.}
+
+\quickfigcap
+	{./figures/advection/too_big_cfl-0010-density-only.png}
+	{fig:advection-debugging-downwind-10}
+	{Violating the CFL condition (here $C_{cfl} = 1.5$) after 10 steps.}
+

@@ -1,0 +1,306 @@
+%==============================================
+% This file contains my definitions and
+% newcommands. Makes things easy to copypaste
+% between projects.
+%==============================================
+
+
+%--------------------------------------------
+% Math Stuff
+%--------------------------------------------
+
+\newcommand{\corresponds}{\mathrel{\widehat{=}}}       % equals with hat
+
+\newcommand {\arctanh}{\mathrm{arctanh}}               % Atanh
+\newcommand{\arccot}{\mathrm{arccot }}                 % Acotanh
+
+\newcommand{\limz}[1]{\lim\limits_{#1 \rightarrow 0}}  % Limes of something towards zero
+
+\newcommand{\bm}{\boldmath}                            % Bold font in math
+\newcommand{\dps}{\displaystyle}                                               
+
+\newcommand{\e}{\mbox{e}}                              % e noncursive in math mode
+
+\newcommand{\del}{\partial}                            % partial diff operator
+\newcommand{\de}{\mathrm{d}}                           % differential d
+\newcommand{\D}{\mathrm{d}}                            % differential d
+\newcommand{\GRAD}{\mathrm{grad}\ }                    % gradient
+\newcommand{\DIV}{\mathrm{div}\ }                      % divergence
+\newcommand{\ROT}{\mathrm{rot}\ }                      % rotation
+
+\newcommand{\CONST}{\mathrm{const.\ }}                 % constant
+\newcommand{\var}{\mathrm{var}}                        % variance
+
+\newcommand{\g}{^\circ}                                % degrees
+\newcommand{\degr}{^\circ}                             % degrees
+
+\newcommand{\msol}{M_\odot}                            % solar mass
+\newcommand{\order}{\mathcal{O}}                       % order, e.g. O(h^2)
+
+
+\newcommand{\x}{\mathbf{x}}                            % x vector
+\newcommand{\xdot}{\dot{\mathbf{x}}}                   % x dot vector
+\newcommand{\xddot}{\ddot{\mathbf{x}}}                 % x doubledot vector
+\newcommand{\R}{\mathbf{r}}                            % r vector
+\newcommand{\rdot}{\dot{\mathbf{r}}}                   % r dot vector
+\newcommand{\rddot}{\ddot{\mathbf{r}}}                 % r doubledot vector
+\newcommand{\vel}{\mathbf{v}}                          % v vector
+\newcommand{\V}{\mathbf{v}}                            % v vector
+\newcommand{\vdot}{\dot{\mathbf{v}}}                   % v dot vector
+\newcommand{\vddot}{\ddot{\mathbf{v}}}                 % v doubledot vector
+
+\newcommand{\dete}{\mathrm{d}t}                        % dt
+\newcommand{\delte}{\del t}                            % partial t
+\newcommand{\dex}{\mathrm{d}x}                         % dx
+\newcommand{\delx}{\del x}                             % partial x
+\newcommand{\der}{\mathrm{d}r}                         % dr
+\newcommand{\delr}{\del r}                             % partial r
+
+
+\newcommand{\deldx}{\frac{\del}{\del x}}				% shortcut partial derivative, in line
+\newcommand{\ddx}{\frac{\de}{\de x}}					% shortcut total derivative, in line
+\newcommand{\DELDX}[1]{\frac{\del  #1}{\del x}}			% shortcut partial derivative, on fraction
+\newcommand{\DDX}[1]{\frac{\de  #1}{\de x}}				% shortcut total derivative, on fraction
+
+\newcommand{\deldvecx}{\frac{\del}{\del \x}}	   		% shortcut partial derivative, in line
+\newcommand{\ddvecx}{\frac{\de}{\de \x}}				% shortcut total derivative, in line
+\newcommand{\DELDVECX}[1]{\frac{\del  #1}{\del \x}}		% shortcut partial derivative, on fraction
+\newcommand{\DDVECX}[1]{\frac{\de  #1}{\de \x}}			% shortcut total derivative, on fraction
+
+\newcommand{\deldr}{\frac{\del}{\del r}}				% shortcut partial derivative, in line
+\newcommand{\ddr}{\frac{\de}{\de r}}					% shortcut total derivative, in line
+\newcommand{\DELDR}[1]{\frac{\del  #1}{\del r}}			% shortcut partial derivative, on fraction
+\newcommand{\DDR}[1]{\frac{\de  #1}{\de r}}				% shortcut total derivative, on fraction
+
+
+
+
+
+
+
+%-----------------------------------------------
+% Work related / project specific math stuff
+%-----------------------------------------------
+
+\newcommand{\Aij}{$\mathbf{A}_{ij}$}	% A_ij
+\newcommand{\Aijm}{\mathbf{A}_{ij}}		% A_ij math
+\newcommand{\U}{\mathbf{U}}				% State vector
+\newcommand{\F}{\mathbf{F}}				% Flux tensor
+\newcommand{\psitilde}{\tilde{\psi}}	% psi tilde
+\newcommand{\half}{1/2}
+
+
+
+
+
+
+
+
+
+%----------------------------------
+% Redefinitions
+%----------------------------------
+
+
+% replace \sum with \sum\limits
+\let\oldsum\sum
+\renewcommand{\sum}{\oldsum\limits}
+
+
+
+
+
+
+%-----------------------------------
+% Shortcuts
+%-----------------------------------
+
+% shortcut for TODO box
+%		usage: \todo{Your text here}
+\newcommand{\todo}[1]{\begin{mdframed}[style=todo,frametitle={TODO}] #1 \end{mdframed}}
+\newcommand{\note}[1]{\begin{mdframed}[style=eyecatcher,frametitle={Note}] #1 \end{mdframed}}
+
+
+% quickly insert a figure without a caption
+% 		usage: \quickfig{filename}{label}
+\newcommand{\quickfig}[2]{
+       \begin{figure}[H]
+               \includegraphics[width=\textwidth]{#1}
+               \caption{\label{#2}}
+       \end{figure}
+}
+
+
+\newcommand{\quickfigcap}[3]{
+       \begin{figure}[H]
+               \includegraphics[width=\textwidth]{#1}
+               \caption{#3\label{#2}}
+       \end{figure}
+}
+
+
+
+
+
+
+
+
+
+%-----------------------------------------------
+% TEXT IN BOXES
+%-----------------------------------------------
+ 
+\usepackage[framemethod=TikZ]{mdframed}
+
+% New Colors (needs to be after usepackage mdframed)
+\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
+\definecolor{caribbeangreen}{rgb}{0.0, 0.8, 0.6}
+\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+
+\mdfdefinestyle{todo}{%
+       %rightline=true,
+       innerleftmargin=10,
+       innerrightmargin=10,
+       %frametitlerule=true,
+       %frametitlerulecolor=black,
+       frametitlebackgroundcolor=babyblueeyes,
+       frametitlerulewidth=2
+}
+
+
+\mdfdefinestyle{eyecatcher}{%
+       %rightline=true,
+       innerleftmargin=10,
+       innerrightmargin=10,
+       %frametitlerule=true,
+       %frametitlerulecolor=black,
+       frametitlebackgroundcolor=bittersweet,
+       frametitlerulewidth=2
+}
+
+
+
+
+
+
+
+
+
+%---------------------------------------------------
+% Journal abbreviations
+%---------------------------------------------------
+
+%  http://adsabs.harvard.edu/abs_doc/aas_macros.sty
+%
+%  These Macros are taken from the AAS TeX macro package version 5.2
+%  and are compatible with the macros in the A&A document class
+%  version 7.0
+%  Include this file in your LaTeX source only if you are not using
+%  the AAS TeX macro package or the A&A document class and need to
+%  resolve the macro definitions in the TeX/BibTeX entries returned by
+%  the ADS abstract service.
+%
+%  If you plan not to use this file to resolve the journal macros
+%  rather than the whole AAS TeX macro package, you should save the
+%  file as ``aas_macros.sty'' and then include it in your LaTeX paper
+%  by using a construct such as:
+%	\documentstyle[11pt,aas_macros]{article}
+%
+%  For more information on the AASTeX and A&A packages, please see:
+%       http://journals.aas.org/authors/aastex.html	
+%       ftp://ftp.edpsciences.org/pub/aa/readme.html
+%  For more information about ADS abstract server, please see:
+%       http://adsabs.harvard.edu/ads_abstracts.html
+%
+
+% Abbreviations for journals.  The object here is to provide authors
+% with convenient shorthands for the most "popular" (often-cited)
+% journals; the author can use these markup tags without being concerned
+% about the exact form of the journal abbreviation, or its formatting.
+% It is up to the keeper of the macros to make sure the macros expand
+% to the proper text.  If macro package writers agree to all use the
+% same TeX command name, authors only have to remember one thing, and
+% the style file will take care of editorial preferences.  This also
+% applies when a single journal decides to revamp its abbreviating
+% scheme, as happened with the ApJ (Abt 1991).
+
+
+\makeatletter
+
+\let\jnl@style=\rm
+\def\ref@jnl#1{{\jnl@style#1}}
+
+\def\aj{\ref@jnl{AJ}}                   % Astronomical Journal
+\def\actaa{\ref@jnl{Acta Astron.}}      % Acta Astronomica
+\def\araa{\ref@jnl{ARA\&A}}             % Annual Review of Astron and Astrophys
+\def\apj{\ref@jnl{ApJ}}                 % Astrophysical Journal
+\def\apjl{\ref@jnl{ApJ}}                % Astrophysical Journal, Letters
+\def\apjs{\ref@jnl{ApJS}}               % Astrophysical Journal, Supplement
+\def\ao{\ref@jnl{Appl.~Opt.}}           % Applied Optics
+\def\apss{\ref@jnl{Ap\&SS}}             % Astrophysics and Space Science
+\def\aap{\ref@jnl{A\&A}}                % Astronomy and Astrophysics
+\def\aapr{\ref@jnl{A\&A~Rev.}}          % Astronomy and Astrophysics Reviews
+\def\aaps{\ref@jnl{A\&AS}}              % Astronomy and Astrophysics, Supplement
+\def\azh{\ref@jnl{AZh}}                 % Astronomicheskii Zhurnal
+\def\baas{\ref@jnl{BAAS}}               % Bulletin of the AAS
+\def\bac{\ref@jnl{Bull. astr. Inst. Czechosl.}}
+                % Bulletin of the Astronomical Institutes of Czechoslovakia 
+\def\caa{\ref@jnl{Chinese Astron. Astrophys.}}
+                % Chinese Astronomy and Astrophysics
+\def\cjaa{\ref@jnl{Chinese J. Astron. Astrophys.}}
+                % Chinese Journal of Astronomy and Astrophysics
+\def\icarus{\ref@jnl{Icarus}}           % Icarus
+\def\jcap{\ref@jnl{J. Cosmology Astropart. Phys.}}
+                % Journal of Cosmology and Astroparticle Physics
+\def\jrasc{\ref@jnl{JRASC}}             % Journal of the RAS of Canada
+\def\memras{\ref@jnl{MmRAS}}            % Memoirs of the RAS
+\def\mnras{\ref@jnl{MNRAS}}             % Monthly Notices of the RAS
+\def\na{\ref@jnl{New A}}                % New Astronomy
+\def\nar{\ref@jnl{New A Rev.}}          % New Astronomy Review
+\def\pra{\ref@jnl{Phys.~Rev.~A}}        % Physical Review A: General Physics
+\def\prb{\ref@jnl{Phys.~Rev.~B}}        % Physical Review B: Solid State
+\def\prc{\ref@jnl{Phys.~Rev.~C}}        % Physical Review C
+\def\prd{\ref@jnl{Phys.~Rev.~D}}        % Physical Review D
+\def\pre{\ref@jnl{Phys.~Rev.~E}}        % Physical Review E
+\def\prl{\ref@jnl{Phys.~Rev.~Lett.}}    % Physical Review Letters
+\def\pasa{\ref@jnl{PASA}}               % Publications of the Astron. Soc. of Australia
+\def\pasp{\ref@jnl{PASP}}               % Publications of the ASP
+\def\pasj{\ref@jnl{PASJ}}               % Publications of the ASJ
+\def\rmxaa{\ref@jnl{Rev. Mexicana Astron. Astrofis.}}%
+                % Revista Mexicana de Astronomia y Astrofisica
+\def\qjras{\ref@jnl{QJRAS}}             % Quarterly Journal of the RAS
+\def\skytel{\ref@jnl{S\&T}}             % Sky and Telescope
+\def\solphys{\ref@jnl{Sol.~Phys.}}      % Solar Physics
+\def\sovast{\ref@jnl{Soviet~Ast.}}      % Soviet Astronomy
+\def\ssr{\ref@jnl{Space~Sci.~Rev.}}     % Space Science Reviews
+\def\zap{\ref@jnl{ZAp}}                 % Zeitschrift fuer Astrophysik
+\def\nat{\ref@jnl{Nature}}              % Nature
+\def\iaucirc{\ref@jnl{IAU~Circ.}}       % IAU Cirulars
+\def\aplett{\ref@jnl{Astrophys.~Lett.}} % Astrophysics Letters
+\def\apspr{\ref@jnl{Astrophys.~Space~Phys.~Res.}}
+                % Astrophysics Space Physics Research
+\def\bain{\ref@jnl{Bull.~Astron.~Inst.~Netherlands}} 
+                % Bulletin Astronomical Institute of the Netherlands
+\def\fcp{\ref@jnl{Fund.~Cosmic~Phys.}}  % Fundamental Cosmic Physics
+\def\gca{\ref@jnl{Geochim.~Cosmochim.~Acta}}   % Geochimica Cosmochimica Acta
+\def\grl{\ref@jnl{Geophys.~Res.~Lett.}} % Geophysics Research Letters
+\def\jcp{\ref@jnl{J.~Chem.~Phys.}}      % Journal of Chemical Physics
+\def\jgr{\ref@jnl{J.~Geophys.~Res.}}    % Journal of Geophysics Research
+\def\jqsrt{\ref@jnl{J.~Quant.~Spec.~Radiat.~Transf.}}
+                % Journal of Quantitiative Spectroscopy and Radiative Transfer
+\def\memsai{\ref@jnl{Mem.~Soc.~Astron.~Italiana}}
+                % Mem. Societa Astronomica Italiana
+\def\nphysa{\ref@jnl{Nucl.~Phys.~A}}   % Nuclear Physics A
+\def\physrep{\ref@jnl{Phys.~Rep.}}   % Physics Reports
+\def\physscr{\ref@jnl{Phys.~Scr}}   % Physica Scripta
+\def\planss{\ref@jnl{Planet.~Space~Sci.}}   % Planetary Space Science
+\def\procspie{\ref@jnl{Proc.~SPIE}}   % Proceedings of the SPIE
+
+\let\astap=\aap
+\let\apjlett=\apjl
+\let\apjsupp=\apjs
+\let\applopt=\ao
+
+
+\makeatother

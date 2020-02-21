@@ -1,0 +1,102 @@
+\documentclass[12pt, a4paper, onepage, english,singlespacing, parskip]{scrartcl}
+
+%\documentclass[
+%11pt, 				% The default document font size, options: 10pt, 11pt, 12pt
+%oneside, 			% Two side (alternating margins) for binding by default, uncomment to switch to one side
+%chapterinoneline,	% Have the chapter title next to the number in one single line
+%english, 			% ngerman for German
+%singlespacing, 	% Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, 			% Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, 	% If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+%liststotoc, 		% Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, 			% Uncomment to add the main table of contents to the table of contents
+%parskip, 			% Uncomment to add space between paragraphs
+%nohyperref, 		% Uncomment to not load the hyperref package
+%headsepline, 		% Uncomment to get a line under the header
+%]{scrartcl or scrreprt or scrbook} % The class file specifying the document structure
+
+\usepackage{lmodern} 		% Diese beiden packages sorgen für echte 
+\usepackage[T1]{fontenc}	% Umlaute.
+
+\usepackage{amssymb, amsmath, color, dsfont, graphicx, float, setspace, tipa}
+\usepackage[utf8]{inputenc} 
+\usepackage[english]{babel}
+\usepackage[pdfpagelabels,
+			pdfstartview = FitH,
+			bookmarksopen = true,
+			bookmarksnumbered = true,
+			linkcolor = black,
+			plainpages = false,
+			hypertexnames = false,
+			citecolor = black,
+			breaklinks]{hyperref}
+\usepackage{url}
+\usepackage{longtable} 		% Tables along multiple pages
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf, format=plain, justification=centering}
+\allowdisplaybreaks 		% allows page breaks in align/equation environment
+
+\usepackage{authblk} 		% titlepage stuff
+\usepackage[titletoc, title]{appendix}
+
+\usepackage{newclude} 		% use \include*{file} instead \include{} to omit pagebreak after include
+\usepackage{csquotes}		% in-line quotations
+
+
+
+%===================
+% BIBLIOGRAPHY
+%===================
+\usepackage[backend=bibtex,
+			sorting=nyt,
+			bibencoding=ascii,
+			citestyle=authoryear]{biblatex}
+\addbibresource{references.bib}
+\usepackage{csquotes} 		% recommended when using babel and biblatex
+%DONT FORGET TO COMPILE THE BIBLIOGRAPHY WITH BIBTEX WHEN CHANGES ARE MADE.
+
+
+
+%--------------------------------------------
+%     OPTIONAL
+%--------------------------------------------
+
+
+
+%% Change font
+%\newcommand{\changefont}[3]{
+%\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
+%\changefont{ppl}{m}{n} nach \begin{document} einsetzen
+
+% Fig. instead of Figure, Tab. instead of Table
+%\usepackage[footnotesize]{caption2}
+%\addto\captionsenglish{\renewcommand{\figurename}{Fig.}}
+%\addto\captionsngerman{\renewcommand{\figurename}{Fig.}}
+%\renewcommand{\tablename}{Tab.}%
+
+%\pagestyle{headings} % Write headings on each page
+
+%\usepackage{chngcntr} \counterwithout{figure}{section} % Integer only figure numbers, ignoring chapter numbers
+
+
+
+
+
+
+%-----------------------------------------------
+% FORMAT TITLE
+%-----------------------------------------------
+
+
+% Set fonts of document parts
+\setkomafont{title}{\rmfamily\bfseries\boldmath}
+\addtokomafont{section}{\rmfamily\bfseries\boldmath}
+\addtokomafont{subsection}{\rmfamily\bfseries\boldmath}
+\addtokomafont{subsubsection}{\rmfamily\bfseries\boldmath}
+\addtokomafont{disposition}{\rmfamily} % table of contents and stuff
+\setkomafont{descriptionlabel}{\rmfamily\bfseries\boldmath}
+
+
+
+% add my definitions here
+\include{my_defines}
