@@ -9,4 +9,5 @@
 *.synctex.gz
 *.o
 *.pyc
+*.toc
 **/__pycache__

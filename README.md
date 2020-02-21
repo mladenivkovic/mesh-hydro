@@ -39,7 +39,7 @@ Contents
 - `./IC`: A collection of default initial condition files.
 - `./program`: contains the actual software. The source code is in `./program/src`, the Makefile in `./program/bin` 
 - `./py`: python scripts for visualisation, generating ICs, etc.
-- `./tex`: Some TeX documents on the equations that are used, some implementation details, etc.
+- `./tex`: Some TeX documents on the equations that are used, some implementation details, etc., some results and conclusions.
 
 
 
