@@ -49,14 +49,14 @@ file_format = "png"
 
 
 
-def plot_1D(rho, u, p, fname, dots=False, t = 0, draw_legend = False, nosave = False, fig = None):
+def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave = False, fig = None):
     """
     Create a plot from 1D data.
 
     rho, u, p:   np arrays of physical quantities
     fname:       filename of the data you are plotting. Will be used to generate image filename
     dots:        whether to overplot points over lines.
-    t:           time of the simulation
+    t:           time of the simulation. Used to label lines. If it is a string, the string will be used as the label instead.
     draw_legend: whether to draw a legend. The line labels will be the time.
     nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
@@ -80,20 +80,28 @@ def plot_1D(rho, u, p, fname, dots=False, t = 0, draw_legend = False, nosave = F
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
+    if t is not None:
+        if isinstance(t, str):
+            text = t
+        elif isinstance(t, float):
+            text = r"$t = ${0:.3f}".format(t)
+        else:
+            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+
     ax1.plot(x, rho,
-             label = "t = {0:7.3f}".format(t),
+             label = text,
             )
     if dots: ax1.scatter(x, rho)
     ax1.set_ylabel('density')
 
     ax2.plot(x, u,
-             label = "t = {0:7.3f}".format(t),
+             label = text,
             )
     if dots: ax2.scatter(x, u)
     ax2.set_ylabel('velocity')
 
     ax3.plot(x, p,
-             label = "t = {0:7.3f}".format(t),
+             label = text,
             )
     if dots: ax3.scatter(x, p)
     ax3.set_ylabel('pressure')
@@ -191,7 +199,7 @@ def plot_2D_density_only(rho, fname, t=None):
 
     rho:         np arrays of physical quantities
     fname:       filename of the data you are plotting. Will be used to generate image filename
-    t:           time of simulation, optional. Will be put on the plot to label it.
+    t:           time of simulation, optional. Will be put on the plot to label it. If it is a string, it will be used just as the label.
     """
 
     fig = plt.figure(figsize=(6, 5))
