@@ -1,5 +1,130 @@
 \newpage
+
+%==============================================
 \section{Hydrodynamics Methods}
+%==============================================
 
 
-\subsection{Upwind Godunov}
+%==============================================
+\subsection{Godunov's Method}
+%==============================================
+
+
+
+
+
+
+
+
+
+
+%============================================
+\subsubsection{Method}
+%============================================
+
+Godunov's method arises from the integral form of the conservation law so that discontinuous solutions are allowable.
+
+For the one dimensional method, we discretize the spatial domain into $M$ computing cells of regular size, and assume that the initially continuous data is represented by piecewise constant distribution of data, see fig. \ref{fig:piecewise-constant}.
+
+
+
+\begin{figure}[H]
+	\includegraphics[width=\textwidth]{./figures/piecewise_const.pdf}%
+	\caption{	
+		A piecewise constant representation of continuous data among cells.
+		\label{fig:piecewise-constant}
+		}
+\end{figure}
+
+Having a collection of piecewise constant states, we effectively have to solve local Riemann problems with data $\U_i$ as $\U_L$ and $\U_{i+1}$ as $\U_R$, centered at the intercell boundary positions $x_{i+\half}$.
+The solution of the Riemann problem will depend on $\frac{\bar{x}}{\bar{t}}$, where $\bar{x}$ and $\bar{t}$ are in local coordinates to the specific Riemann problem under consideration. 
+$\bar{x}$ is zero at $x_{i+\half}$ and increasingly negative with decreasing $i$.
+$\bar{t}$ is zero at the current timestep.
+
+
+Now suppose that we have solved the Riemann problem at the position $x_{i+\half}$ with left state $\U_L = \U_i$ and right state $\U_R = \U_{i+1}$.
+Then, as time evolves, how will the state at $x_{i+\half}$ change?
+
+Recall that the elementary waves travel along characteristics, and that the characteristics are straight lines on the $x-t$ - diagram (see fig. \ref{fig:riemann-solution}.
+Then the state at $x_{i+\half}$, which is where the dividing line between the two initial states is, will be given by the solution of the Riemann problem at the position $\bar{x} = 0$, and will remain the same for all $\bar{t} > 0$.
+(This is assuming there is nothing else that might disturb the current situation.)
+
+
+Using that fact, it can be derived that (see \cite{toro}) 
+
+\begin{align}
+	\U^{n+1}_i = \U^n_i + \frac{\Delta t}{\Delta x} \left[\F(\U_{i-\half}) - \F(\U_{i+\half}) \right]
+\end{align}
+
+where $\U_{i-\half}$ and $\U_{i+\half}$ are the solutions to the Riemann problems at $x_{i-\half}$ and $x_{i+\half}$, respectively.
+
+
+It is noteworthy that this is an exact solution to a piecewise constant initial state.
+
+
+
+
+Lastly, we need to limit the time step size.
+We mustn't allow for a wave to be able to travel further than one cell length between two timesteps, otherwise we get bogus results.
+Remember that we assumed that the state at $x_{i+\half}$ doesn't change after $\bar{t} > 0$.
+This is only satisfied if the wave doesn't reach the boundary of the neighbouring cell.
+
+This time step restriction is imposed by the CFL condition:
+
+\begin{align}
+	\Delta t_{max} \leq \frac{C_{cfl} \Delta x}{|S_{max}^n|}
+\end{align}
+
+
+where $S_{max}^n$ is the highest wave propagation speed at the current time, and $C_{cfl} \in [0, 1($ is the Courant number.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%===================================================================
+\subsubsection{Implementation Details}\label{chap:godunov-details}
+%===================================================================
+
+
+The cells are stored as an array of \verb|struct cell| that stores both primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
+Furthermore they have \verb|struct pstate flux_x| and \verb|struct pstate flux_y| to store fluxes in x and y direction.
+
+
+Cells also have an index ID, know their position in the grid, and store the highest wave velocity present in \texttt{maxvel}.
+
+
+The grid is set up as follows:
+In 1D, it is a 1D array of \texttt{struct cell}.
+In 2D, it is a 2D array.
+Indices (0, 0) represent the lower left corner of the simulation domain.
+First index is in x direction, i.e. (nx - 1, 0) is at the coordinates (x = xmax, y = 0).
+
+
+The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \verb|flux| of cell \verb|grid[i, j]|.
+Because we're doing dimensional splitting, it suffices to have only one storage place, as they will be used in successive order.
+See section \ref{chap:dimensional-splitting} for details.
+
+We can afford to store $x_{i+\half}$ at cell $i$ because we have at least 1 extra virtual boundary cell which is used to apply boundary conditions, so the flux at $x_{-\half}$ will be stored in \verb|grid[BC-1]|, where \texttt{BC} is the number of boundary cells used, defined in \texttt{defines.h}.
+ 
+
+If the grid is only in 1D, then all the above definitions still apply as if y didn't exist.
+
+
+
+
+
+
+
+
+
+

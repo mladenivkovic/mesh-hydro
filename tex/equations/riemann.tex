@@ -138,13 +138,14 @@ If the \textbf{leftmost} wave (wave (1) in fig. \ref{fig:riemann-solution}) is a
 		\frac{\frac{p^*}{p_L} + \frac{\gamma - 1}{\gamma+1}}{\frac{\gamma - 1}{\gamma+1} \frac{p^*}{p_L} + 1} \rho_L \\
 	u^* &= 
 		u_L - \frac{p^* - p_L}{\sqrt{\frac{p^* + B_L}{A_L}}}\\
+		& = u_L - f_L(p^*) \\
 	A_L &= 
 		\frac{2}{(\gamma + 1) \rho_L}\\
 	B_L &= 
 		\frac{\gamma - 1}{\gamma + 1} p_L
 \end{align*}
 
-and the shock speed is
+$f_{L}$ is given in eq. \ref{eq:riemann-pstar}, and the shock speed is
 \begin{align*}
 	S_L = u_L - a_L \left[\frac{\gamma + 1}{2 \gamma} \frac{p^*}{p_L} + \frac{\gamma - 1}{2\gamma} \right]^{\half}
 \end{align*}
@@ -160,7 +161,8 @@ For a \textbf{right shock wave}, i.e. when wave (3) is a shock wave, we have the
 	\rho^*_R &= 
 		\frac{\frac{p^*}{p_R} + \frac{\gamma - 1}{\gamma+1}}{\frac{\gamma - 1}{\gamma+1} \frac{p^*}{p_R} + 1} \rho_R \\
 	u^* &= 
-		u_R - \frac{p^* - p_R}{\sqrt{\frac{p^* + B_R}{A_R}}}\\
+		u_R + \frac{p^* - p_R}{\sqrt{\frac{p^* + B_R}{A_R}}}\\
+		& = u_R + f_R(p^*) \\
 	A_R &= 
 		\frac{2}{(\gamma + 1) \rho_R}\\
 	B_R &= 
@@ -172,7 +174,7 @@ and the shock speed is
 	S_R = u_R + a_R \left[\frac{\gamma + 1}{2 \gamma} \frac{p^*}{p_R} + \frac{\gamma - 1}{2\gamma} \right]^{\half}
 \end{align*}
 
-where $a_R$ is the sound speed in the left state $U_L$.
+where $a_R$ is the sound speed in the left state $U_L$. $f_R$ is given in equation \ref{eq:riemann-pstar}.
 
 
 \todo{check $u^*$: is + $B_R$ correct?\\ actually, check all equations }
@@ -204,10 +206,11 @@ If we have a \textbf{left-facing} rarefaction, i.e. if wave (1) is a rarefaction
 	\rho^*_L &= 
 		\rho_L \left( \frac{p^*}{p_L} \right) ^ \frac{1}{\gamma}\\
 	u^* &= 
-		u_L + \frac{2 a_L}{\gamma - 1} \left[ 1 - \left( \frac{p^*}{p_L} \right) ^ \frac{\gamma - 1}{2 \gamma}  \right]  
+		u_L - \frac{2 a_L}{\gamma - 1} \left[ \left( \frac{p^*}{p_L} \right) ^ \frac{\gamma - 1}{2 \gamma} -1  \right]\\
+		& = u_L - f_L(p^*) \\
 \end{align*}
 
-where $a_L$ is the sound speed in the left state $U_L$.
+$f_{L}$ is given in eq. \ref{eq:riemann-pstar}, and $a_L$ is the sound speed in the left state $U_L$.
 
 
 The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wave are
@@ -243,10 +246,12 @@ If we have a \textbf{right-facing rarefaction}, i.e. if wave (1) is a rarefactio
 	\rho^*_R &= 
 		\rho_R \left( \frac{p^*}{p_R} \right) ^ \frac{1}{\gamma}\\
 	u^* &= 
-		u_R - \frac{2 a_R}{\gamma - 1} \left[ 1 - \left( \frac{p^*}{p_R} \right) ^ \frac{\gamma - 1}{2 \gamma}  \right]  
+		u_R - \frac{2 a_R}{\gamma - 1} \left[ 1 - \left( \frac{p^*}{p_R} \right) ^ \frac{\gamma - 1}{2 \gamma}  \right]\\
+		&= u_R + f_R(p^*)
 \end{align*}
 
 where $a_R$ is the sound speed in the left state $U_R$.
+$f_R$ is given in equation \ref{eq:riemann-pstar}.
 
 
 
@@ -255,7 +260,7 @@ where $a_R$ is the sound speed in the left state $U_R$.
 The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wave are
 \begin{align*}
 	S_{HR} &= u_R + a_R\\
-	S_{TR} &= u^* - a^*_R\\
+	S_{TR} &= u^* + a^*_R\\
 	a^*_R  &= a_R \left( \frac{p^*}{p_R} \right) ^ \frac{\gamma - 1}{2 \gamma}
 \end{align*}
 
@@ -338,7 +343,7 @@ with
 			(p - p_{L,R}) \left[ \frac{A_{L,R}}{p + B_{L,R}} \right]^{\frac{1}{2}}
 				& ~\text{ if } ~ p > p_{L,R} ~ \quad \text{(shock)} \\
 			\frac{2 a_{L,R}}{\gamma - 1} \left[ \left( \frac{p}{p_{L,R}} \right)^ \frac{\gamma -1}{2 \gamma} - 1 \right]
-				& ~\text{ if } ~ p \leq p_{L,R} ~ \quad \text{(rarefaction)}\\
+				& ~\text{ if } ~ p \leq p_{L,R} ~ \quad \text{(rarefaction)} \label{eq:riemann-pstar}\\
 		\end{cases} \\
 	A_{L,R} &= 
 		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
@@ -380,9 +385,70 @@ with
 %====================================================================
 
 
+The equation for the pressure in the star region \ref{eq:riemann-pstar} can't be solved analytically, but it can be solved iteratively.
+
+Since we have the analytic function and the first derivative w.r.t. $p$ can be computed, i.e.
+
+\begin{align*}
+	\frac{\del f_{L,R}}{\del p} &= 
+		\begin{cases}
+			\left[ \frac{A_{L,R}}{p + B_{L,R}} \right]^{\frac{1}{2}} \left( 1 - \frac{1}{2} \frac{p - p_{L,R}}{p + B_{L,R}} \right) 
+				& ~\text{ if } ~ p > p_{L,R} ~ \quad \text{(shock)} \\
+			\frac{a_{L,R}}{\gamma p_{L,R}}  \left( \frac{p}{p_{L,R}} \right)^ \frac{-(\gamma+1)}{2 \gamma}
+				& ~\text{ if } ~ p \leq p_{L,R} ~ \quad \text{(rarefaction)} \label{eq:riemann-pstar-dp}\\
+		\end{cases} \\
+	A_{L,R} &= 
+		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
+	B_{L,R} &= 
+		\frac{\gamma - 1}{\gamma + 1} p_{L,R}
+\end{align*}
+
+
+Then, using the Newton-Raphson iteration, we can find the solution using the prescription
+
+\begin{align}
+	p_{n+1} = p_n - \frac{f(p_n)}{\frac{\del f(p_n)}{\del p}}
+\end{align}
+
+
+we re-iterate until it converges, i.e. when the relative pressure change 
+
+\begin{align}
+	\frac{|p_k - p_{k+1}|}{\frac{1}{2} | p_k + p_(k+1) | } < \epsilon
+\end{align}
+
+where $\epsilon$ is some tolerance. Default value is set in \texttt{defines.h} as \verb|#define EPSILON_ITER 1e-6|.
+
+
+We need to find a first guess for the pressure. 
+An ok way to do it is to take the average:
+\begin{align*}
+	p_0^* = \frac{1}{2} (p_L + p_R)
+\end{align*}
+
+The implemented way is based on a linearised solution based on primitive variables:
+\begin{align*}
+	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R)\\
+	p_0^* &= \max(\epsilon, p_{PV})
+\end{align*}
+
+Note that every step along the iteration, we must make sure that we didn't accidentally get negative pressures, and limit it to zero (or the tolerance $\epsilon$). 
+If it drops below zero, it might get stuck there, and then all hell breaks loose.
+(Seriously, you will get NANs because you're trying to take fractal powers of negative stuff.)
+
+
+And that's it for the exact solver.
+All that is left to do is sample the solution, which is described in section \ref{chap:sampling-solution}.
 
 
 
+
+
+
+
+\todo{Fix Riemann stuff! you had a + in dfdp for shock!}
+
+\todo{Vacuum}
 
 
 
@@ -419,7 +485,7 @@ with
 
 
 %====================================================================
-\subsection{Sampling the Solution}
+\subsection{Sampling the Solution}\label{chap:sampling-solution}
 %====================================================================
 
 With the solvers readily available, the final task is to sample the solution at some given point $(x, t)$.
