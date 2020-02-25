@@ -17,8 +17,7 @@
 
 
 
-from hydro_utils import check_file_exists
-from hydro_io import read_ic, read_output
+from hydro_io import read_ic, read_output, check_file_exists
 from hydro_riemann import riemann_solver
 from hydro_plotting import plot_1D
 from sys import argv
@@ -40,8 +39,8 @@ if __name__ == "__main__":
     if twostate:
         fig = plot_1D(rho, u, p, fname, t=t, nosave=True, draw_legend=True)
 
-        rho_sol, u_sol, p_sol = riemann_solver(rho, u, p, t)
-        plot_1D(rho, u, p, fname, t=t, nosave=False, draw_legend=True, fig=fig)
+        rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
+        plot_1D(rho_sol, u_sol, p_sol, fname, t="python solver", nosave=False, draw_legend=True, fig=fig)
 
     else:
         print("Can't work with non-riemann ICs.")

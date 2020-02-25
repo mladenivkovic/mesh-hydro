@@ -194,14 +194,15 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
     #  gR = np.sqrt(AR / (pstar + BR))
     #  pstar = (gL*pL + gR*pR + uL - uR)/(gL + gR)
     #  pstar = max(epsilon, pstar)
-    
+
     diff = 1
     i = 0
     while diff > epsilon:
+
         f = f_K(pstar, pL, AL, BL, aL) + f_K(pstar, pR, AR, BR, aR) + uR - uL
         dfdp = df_Kdp(pstar, rhoL, pL, AL, BL, aL) + df_Kdp(pstar, rhoR, pR, AR, BR, aR)
         pstar_new = pstar - f / dfdp
-        diff = 0.5* (pstar_new - pstar) / (pstar_new + pstar)
+        diff = 2 * (pstar_new - pstar) / (pstar_new + pstar)
         pstar = pstar_new
 
         if i > 1000:
@@ -209,7 +210,6 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
             break
         i+=1
 
-        print("pstar iter", pstar)
         # don't allow negative pressure
         if pstar < epsilon:
             pstar = epsilon
@@ -218,6 +218,7 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
 
 
     ustar = uL - f_K(pstar, pL, AL, BL, aL)
+    print("Got pstar = {0:12.6f}, ustar = {1:12.6f}".format(pstar, ustar))
 
     return pstar, ustar
 
@@ -244,6 +245,8 @@ def f_K(pstar, pK, AK, BK, aK):
     else:
         # rarefaction relation
         return 2 * aK / GM1 * ((pstar/pK)**alpha - 1)
+
+
 
 
 def df_Kdp(pstar, rhoK, pK, AK, BK, aK):
@@ -276,6 +279,6 @@ def B_K(pK):
 
 def soundspeed(p, rho):
     """
-    Compute the sound speed of the gas:w
+    Compute the sound speed of the gas
     """
     return np.sqrt(p * gamma / rho)

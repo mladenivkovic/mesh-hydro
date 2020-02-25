@@ -51,6 +51,7 @@ void params_init_defaults();
 void params_init_derived();
 void params_print_log();
 void params_check();
+void params_check_riemann();
 
 
 #endif

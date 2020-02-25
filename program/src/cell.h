@@ -21,6 +21,8 @@ typedef struct{
 
   pstate flux;  /* fluxes of primitive variables */
 
+  float wavevel; /* highest wave velocity */
+
 } cell;
 
 

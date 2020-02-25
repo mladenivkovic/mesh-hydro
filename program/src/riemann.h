@@ -21,6 +21,11 @@
 #endif
 
 
+void riemann_solve(oneDpstate* left, oneDpstate* right, oneDpstate* sol, float xovert, float* wavevel);
+
+
+
+
 #ifdef RIEMANN_HLL
 #define HLL
 #endif

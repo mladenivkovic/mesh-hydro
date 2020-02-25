@@ -80,6 +80,7 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
+    text = None
     if t is not None:
         if isinstance(t, str):
             text = t

@@ -38,9 +38,15 @@
 /* Physical constants */
 
 #define PI 3.14159265358979
-#define GAMMA 1.4
+#define GAMMA 1.666666666
 
-#define GM1 GAMMA-1
+#define GM1 (GAMMA-1.)
+#define GP1 (GAMMA+1.)
+#define GP1OGM1 (GP1)/(GM1)
+#define GM1OGP1 (GM1)/(GP1)
+#define ONEOVERGAMMA 1./GAMMA
+#define GM1HALF 0.5*(GM1)
+#define ALPHA (GM1HALF) / GAMMA
 
 
 /* boundary cells */
@@ -51,6 +57,9 @@
 /* boxsize */
 #define BOXLEN 1.
 
+
+/* iteration tolerance */
+#define EPSILON_ITER 1e-6
 
 
 /* define solvers as integers */

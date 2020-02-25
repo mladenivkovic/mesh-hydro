@@ -63,13 +63,24 @@ An example parameter file is given in `bin/example-paramfile.txt`.
 Example IC files are in `IC/`
 
 
+There is an option to just use the code as a Riemann solver.
+To do that, use the `Makefile-Riemann` makefile in `/program/bin/`, i.e.
+
+```
+cd program/bin/
+make -f Makefile-Riemann
+./riemann paramfile ic-file
+```
+in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters are ignored.
+
+
 
 Things to keep in mind
 ----------------------------
 
 - this code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
 - boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
-- there is only a uniform grid. If you want AMR, do it yourself.
+- there is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
 - ...
 
 

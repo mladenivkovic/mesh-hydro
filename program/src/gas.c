@@ -21,8 +21,7 @@ void gas_init_pstate(pstate* s){
   s->uy   = 0;
   s->p    = 0;
 
-}
-
+} 
 
 void gas_init_cstate(cstate *s){
   /*-------------------------------------------------*/
@@ -40,14 +39,12 @@ void gas_init_cstate(cstate *s){
 
 
 
-float gas_soundspeed(pstate* s){
+float gas_soundspeed(float p, float rho){
   /*-----------------------------------------*/
   /* compute sound speed of ideal gas        */
   /*-----------------------------------------*/
-
-  return sqrt(GAMMA * s->p / s->rho);
+  return sqrtf(GAMMA * p / rho);
 }
-
 
 
 
@@ -56,6 +53,5 @@ float gas_energy(pstate* s){
   /*-----------------------------------------*/
   /* compute total energy of a state         */
   /*-----------------------------------------*/
-
   return 0.5*s->rho * (s->ux * s->ux + s->uy * s->uy) + s->p/GM1;
 }

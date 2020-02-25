@@ -15,6 +15,13 @@ typedef struct {
   float p;    /* pressure */
 } pstate;
 
+/* primitive state in 1D for easier reading of Riemann solver */
+typedef struct {
+  float rho;  /* density */
+  float u;    /* velocity in x direction */
+  float p;    /* pressure */
+} oneDpstate;
+
 
 /* conserved state */
 typedef struct {
@@ -29,7 +36,7 @@ typedef struct {
 void gas_init_pstate(pstate *p);
 void gas_init_cstate(cstate *c);
 
-float gas_soundspeed(pstate* s);
+float gas_soundspeed(float p, float rho);
 float gas_energy(pstate* s);
 
 

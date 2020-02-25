@@ -189,6 +189,7 @@ void params_print_log(){
 
 
 
+
 void params_check(){
   /* ----------------------------------------------- */
   /* Check whether we can work with these parameters */
@@ -227,5 +228,26 @@ void params_check(){
       int nd = NDIM;
       throw_error("You're trying to use an arbitrary IC filetype for ndim=%d, but the code is compiled for ndim=%d", pars.ndim_ic, nd);
     }
+  }
+}
+
+
+
+
+
+void params_check_riemann(){
+  /* ----------------------------------------------- */
+  /* Check whether we can work with these parameters */
+  /* When using the program as a riemann solver      */
+  /* ----------------------------------------------- */
+
+  log_extra("Checking whether we have valid parameters");
+
+  if (pars.tmax == 0 ){
+    throw_error("You need to specify tmax so I know at what time to sample the solution.");
+  }
+
+  if (pars.nx == 0) {
+    throw_error("In params_check: I have nx = 0 cells for the sim. You need to tell me how many cells you want.");
   }
 }

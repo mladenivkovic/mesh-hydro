@@ -20,8 +20,8 @@ RIEMANN = NONE
 # set which hydro solver to use.
 # Choices: GODUNOV_UPWIND, ADVECTION_PWCONST, ADVECTION_PWLIN
 # SOLVER=GODUNOV_UPWIND
-# SOLVER = ADVECTION_PWCONST
-SOLVER = ADVECTION_PWLIN
+SOLVER = ADVECTION_PWCONST
+# SOLVER = ADVECTION_PWLIN
 
 # set which flux limiter to use.
 # Choices: NONE, MINMOD, SUPERBEE, VANLEER, MC
@@ -174,9 +174,30 @@ ifeq ($(strip $(LIMITER)), MC)
 endif
 
 
+ifeq ($(strip $(RIEMANN)), NONE)
+	RIEMANNOBJ=
+endif
+ifeq ($(strip $(RIEMANN)), EXACT)
+	RIEMANNOBJ=riemann-exact.o
+endif
+ifeq ($(strip $(RIEMANN)), TRRS)
+	RIEMANNOBJ=riemann-trrs.o
+endif
+ifeq ($(strip $(RIEMANN)), TSRS)
+	RIEMANNOBJ=riemann-tsrs.o
+endif
+ifeq ($(strip $(RIEMANN)), HLL)
+	RIEMANNOBJ=riemann-hll.o
+endif
+ifeq ($(strip $(RIEMANN)), HLLC)
+	RIEMANNOBJ=riemann-hllc.o
+endif
+
+
 # OBJECTS = $(notdir $(patsubst %.c, %.o, $(wildcard $(SRCDIR)/*.c)))
 # OBJECTS = main.o gas.o godunov.o io.o params.o  utils.o $(RIEMANNFILE)
-OBJECTS = main.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ)
+OBJECTS = main.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
+RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(LIMITEROBJ) $(RIEMANOBJ)
 
 
 
@@ -222,6 +243,9 @@ default: $(EXEC)
 $(EXEC): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
+riemann: $(RIEMANN_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -DNDIM=1
+
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
@@ -236,4 +260,4 @@ $(EXEC): $(OBJECTS)
 .PHONY: clean # keeps makefile from doing something with a file named clean
 
 clean:
-	rm -f $(OBJECTS) $(EXEC) riemann*.o
+	rm -f $(EXEC) *.o

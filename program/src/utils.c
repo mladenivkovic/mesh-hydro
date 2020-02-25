@@ -72,8 +72,8 @@ void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
   strcpy(solver, "ADVECTION_PWLIN");
 #elif SOLVER == GODUNOV_UPWIND
   strcpy(solver, "GODUNOV UPWIND");
-#else
-#error "NO SOLVER SPECIFIED"
+#elif SOLVER == NONE
+  strcpy(solver, "");
 #endif
 
 

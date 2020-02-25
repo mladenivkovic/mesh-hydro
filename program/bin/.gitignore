@@ -3,3 +3,4 @@ hydro
 paramfile.txt
 *.png
 defines.mk
+riemann
