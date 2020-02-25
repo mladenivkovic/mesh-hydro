@@ -49,7 +49,7 @@ file_format = "png"
 
 
 
-def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave = False, fig = None):
+def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave = False, fig = None, kwargs={}):
     """
     Create a plot from 1D data.
 
@@ -61,6 +61,8 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
     nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
+
+    kwargs get passed to matplotlib.pyplot.plot(), and need to be a dictionnary
 
     returns:
         fig:     pyplot.figure() object containing the plots
@@ -80,6 +82,7 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
+
     text = None
     if t is not None:
         if isinstance(t, str):
@@ -91,18 +94,21 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
 
     ax1.plot(x, rho,
              label = text,
+             **kwargs,
             )
     if dots: ax1.scatter(x, rho)
     ax1.set_ylabel('density')
 
     ax2.plot(x, u,
              label = text,
+             **kwargs,
             )
     if dots: ax2.scatter(x, u)
     ax2.set_ylabel('velocity')
 
     ax3.plot(x, p,
              label = text,
+             **kwargs,
             )
     if dots: ax3.scatter(x, p)
     ax3.set_ylabel('pressure')
@@ -132,7 +138,7 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
 
 
 
-def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nosave = False, fig = None):
+def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nosave = False, fig = None, kwargs={}):
     """
     Create a plot from 1D data. Only plot density.
 
@@ -144,6 +150,8 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
     nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
+
+    kwargs get passed to matplotlib.pyplot.plot(), and need to be a dictionnary
 
     returns:
         fig:     pyplot.figure() object containing the plots
@@ -161,6 +169,7 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
 
     ax1.plot(x, rho,
              label = "t = {0:7.3f}".format(t),
+             **kwargs,
             )
     if dots: ax1.scatter(x, rho)
     ax1.set_ylabel('density')
@@ -194,13 +203,15 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
 
 
 
-def plot_2D_density_only(rho, fname, t=None):
+def plot_2D_density_only(rho, fname, t=None, kwargs={}):
     """
     Create a plot from 2D data. Plots density only.
 
     rho:         np arrays of physical quantities
     fname:       filename of the data you are plotting. Will be used to generate image filename
     t:           time of simulation, optional. Will be put on the plot to label it. If it is a string, it will be used just as the label.
+
+    kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
     """
 
     fig = plt.figure(figsize=(6, 5))
@@ -211,6 +222,7 @@ def plot_2D_density_only(rho, fname, t=None):
     im1 = ax1.imshow(rho,
             origin='lower', 
             extent=(0,1,0,1),
+             **kwargs,
             )
     ax1.set_title('density')
 
@@ -249,7 +261,7 @@ def plot_2D_density_only(rho, fname, t=None):
 
 
 
-def plot_2D(rho, u, p, fname):
+def plot_2D(rho, u, p, fname, kwargs={}):
     """
     Create a plot from 2D data.
     rho, u, p:   np arrays of physical quantities
@@ -259,6 +271,8 @@ def plot_2D(rho, u, p, fname):
     nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
+
+    kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
     """
 
     fig = plt.figure(figsize=(21, 5))
@@ -269,6 +283,7 @@ def plot_2D(rho, u, p, fname):
     im1 = ax1.imshow(rho,
             origin='lower', 
             extent=(0,1,0,1),
+             **kwargs,
             )
     ax1.set_title('density')
 
@@ -276,6 +291,7 @@ def plot_2D(rho, u, p, fname):
     im2 = ax2.imshow(u[:,:,0],
             origin='lower', 
             extent=(0,1,0,1),
+             **kwargs,
             )
     ax2.set_title('velocity in x direction')
 
@@ -283,6 +299,7 @@ def plot_2D(rho, u, p, fname):
     im3 = ax3.imshow(u[:,:,1],
             origin='lower', 
             extent=(0,1,0,1),
+             **kwargs,
             )
     ax3.set_title('velocity in y direction')
 
@@ -290,6 +307,7 @@ def plot_2D(rho, u, p, fname):
     im4 = ax4.imshow(p, 
             origin='lower', 
             extent=(0,1,0,1),
+             **kwargs,
             )
     ax4.set_title('pressure')
 
@@ -320,7 +338,7 @@ def plot_2D(rho, u, p, fname):
 
 
 
-def plot_2D_in_3D(rho, u, p, fname):
+def plot_2D_in_3D(rho, u, p, fname, kwargs={}):
     """
     Create a 3D plot from 2D data.
     rho, u, p:   np arrays of physical quantities
@@ -330,6 +348,8 @@ def plot_2D_in_3D(rho, u, p, fname):
     nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
+
+    kwargs get passed to matplotlib.pyplot.plot_surface(), and need to be a dictionnary
     """
 
     fig = plt.figure(figsize=(21, 5))
@@ -341,19 +361,31 @@ def plot_2D_in_3D(rho, u, p, fname):
     X, Y = np.meshgrid(X, Y)
 
     ax1 = fig.add_subplot(1, 4, 1, projection='3d')
-    im1 = ax1.plot_surface(X, Y, rho, cmap = 'viridis' )
+    im1 = ax1.plot_surface(X, Y, rho, 
+            cmap = 'viridis',
+             **kwargs,
+             )
     ax1.set_title('density')
 
     ax2 = fig.add_subplot(1, 4, 2, projection='3d')
-    im2 = ax2.plot_surface(X, Y, u[:,:,0], cmap = 'viridis' )
+    im2 = ax2.plot_surface(X, Y, u[:,:,0],
+            cmap = 'viridis',
+             **kwargs,
+             )
     ax2.set_title('velocity in x direction')
 
     ax3 = fig.add_subplot(1, 4, 3, projection='3d')
-    im3 = ax3.plot_surface(X, Y, u[:,:,1], cmap = 'viridis' )
+    im3 = ax3.plot_surface(X, Y, u[:,:,1],
+            cmap = 'viridis',
+             **kwargs,
+             )
     ax3.set_title('velocity in y direction')
 
     ax4 = fig.add_subplot(1, 4, 4, projection='3d')
-    im4 = ax4.plot_surface(X, Y, p, cmap = 'viridis' )
+    im4 = ax4.plot_surface(X, Y, p,
+            cmap = 'viridis',
+             **kwargs,
+             )
     ax4.set_title('pressure')
 
     for ax in fig.axes:
