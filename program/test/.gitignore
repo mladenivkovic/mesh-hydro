@@ -1,5 +1,6 @@
 paramfile.txt
 defines.mk
 hydro
+riemann
 *.png
 *.toc

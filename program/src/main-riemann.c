@@ -62,6 +62,7 @@ int main(int argc, char* argv[]){
 
   params_init_derived(); /* process the parameters you got. */
   params_check_riemann(); /* check whether we can work with this setup. */
+  params_generate_riemann_output_filename(); /* create a different file name than the default */
 
 
   /* print / announce stuff for logging */
@@ -77,8 +78,19 @@ int main(int argc, char* argv[]){
   io_read_ic_twostate(skiplines_ic);
 
   /* get the left and right state of the original problem */
-  pstate left = grid[pars.nx/2+BC-1].prim;
-  pstate right = grid[pars.nx/2+BC].prim;
+  /* copy them, otherwise you will overwrite them! */
+  pstate left; 
+  gas_init_pstate(&left);
+  left.rho = grid[pars.nx/2+BC-1].prim.rho;
+  left.u[0] = grid[pars.nx/2+BC-1].prim.u[0];
+  left.u[1] = grid[pars.nx/2+BC-1].prim.u[1];
+  left.p = grid[pars.nx/2+BC-1].prim.p;
+  pstate right;
+  gas_init_pstate(&right);
+  right.rho = grid[pars.nx/2+BC].prim.rho;
+  right.u[0] = grid[pars.nx/2+BC].prim.u[0];
+  right.u[1] = grid[pars.nx/2+BC].prim.u[1];
+  right.p = grid[pars.nx/2+BC].prim.p;
 
   /* pretend we're doing hydro */
   int outcount = 0;
@@ -99,10 +111,12 @@ int main(int argc, char* argv[]){
   log_message("rho_L %12.6f; rho_R %12.6f\n", left.rho, right.rho);
   log_message("  u_L %12.6f;   u_R %12.6f\n", left.u[0], right.u[0]);
   log_message("  p_L %12.6f;   p_R %12.6f\n", left.p, right.p);
-  float center = (pars.nx/2 + BC) * pars.dx;
+
+
+  float center = (pars.nx/2) * pars.dx; /* where the initial separation of the states is.*/
   float wavevel;
   for (int i = BC; i<BC+pars.nx; i++){
-    float x = (i+0.5)*pars.dx - center;
+    float x = (i-BC+0.5)*pars.dx - center;
     float xovert = x / pars.tmax;
     riemann_solve(&left, &right, &grid[i].prim, xovert, &wavevel, /*dimension=*/0);
     grid[i].wavevel = wavevel;

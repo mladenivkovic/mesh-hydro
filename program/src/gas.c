@@ -42,11 +42,11 @@ void gas_init_cstate(cstate *s){
 
 
 
-float gas_soundspeed(float p, float rho){
+float gas_soundspeed(pstate* s){
   /*-----------------------------------------*/
   /* compute sound speed of ideal gas        */
   /*-----------------------------------------*/
-  return sqrtf(GAMMA * p / rho);
+  return sqrtf(GAMMA * s->p / s->rho);
 }
 
 

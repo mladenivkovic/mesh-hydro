@@ -18,20 +18,22 @@ genparamfile() {
     # $2 = tmax
     # $3 = output frequency: after how many steps to write
     # $4 = dt_out
-    # $5 = basename
+    # $5 = basename. if == "NO_BASENAME" it will be skipped
     # $6 = Ccfl
 
     f=paramfile.txt
     echo "// parameter file for hydro program" > $f
     echo ""                 >> $f
     echo "verbose = 2"      >> $f
-    echo "nx = 100"         >> $f
+    echo "nx = 200"         >> $f
     echo "nstep_log = 100"  >> $f
     echo "nsteps = $1"      >> $f
     echo "tmax = $2"        >> $f
     echo "foutput = $3"     >> $f
     echo "dt_out = $4"      >> $f
-    echo "basename = $5"    >> $f
+    if [ "$5" == "NO_BASENAME" ]; then
+        echo "basename = $5"    >> $f
+    fi
     echo "ccfl = $6"        >> $f
 }
 
@@ -58,6 +60,10 @@ genmakefile(){
 }
 
 
+function myecho(){
+    echo "================ $1"
+}
+
 
 function errexit() {
     # usage: errexit $? "optional message string"
@@ -66,7 +72,6 @@ function errexit() {
         if [[ $# > 1 ]]; then
             myecho "$2"
         fi
-        traceback 1
         exit $1
     else
         return 0
@@ -79,191 +84,270 @@ plotdir=../../py/plotting
 
 
 # cleanup first
-rm *.out *.log
+rm -f *.out *.log
 # rm *.png
 
 
-# create global log file
-touch output.log
 
 
 #==========================
 # ADVECTION
 #==========================
 
-
-#-------------------
-# 1D PWCONST
-#-------------------
-
-# genmakefile ndim solver riemann limiter
-genmakefile 1 ADVECTION_PWCONST NONE NONE
-make clean && make | tee -a output.log
-errexit $?
-
-# positive velocity
-# genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 10 0 1.0 advection-1D-pwconst 0.8
-
-./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
-errexit $?
-$plotdir/plot_all_density.py advection-1D-pwconst-0000.out
-
-# negative velocity
-genparamfile 0 10 0 1.0 advection-1D-pwconst-negvel 0.8
-./hydro paramfile.txt ./IC/advection-1D-negvel.dat | tee -a output.log
-errexit $?
-$plotdir/plot_all_density.py advection-1D-pwconst-negvel-0000.out
-
-
-#-------------------
-# 2D PWCONST
-#-------------------
-
-# genmakefile ndim solver riemann limiter
-genmakefile 2 ADVECTION_PWCONST NONE NONE
-make clean && make | tee -a output.log
-errexit $?
-
-# positive velocity
-# genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 1 0 0 advection-2D-pwconst 0.8
-./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwconst-0001.out
-
-# negative velocity
-genparamfile 0 1 0 0 advection-2D-pwconst-negvel 0.8
-./hydro paramfile.txt ./IC/advection-2D-negvel.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwconst-negvel-0001.out
-
-# x only
-genparamfile 0 1 0 0 advection-2D-pwconst-x 0.8
-./hydro paramfile.txt ./IC/advection-2D-x.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwconst-x-0001.out
-
-# y only
-genparamfile 0 1 0 0 advection-2D-pwconst-y 0.8
-./hydro paramfile.txt ./IC/advection-2D-y.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwconst-y-0001.out
-
-
-
-
-
-
-
-#-------------------
-# 1D PWLIN
-#-------------------
-
-# genmakefile ndim solver riemann limiter
-genmakefile 1 ADVECTION_PWLIN NONE NONE
-make clean && make | tee -a output.log
-errexit $?
-
-# positive velocity
-# genparamfile nsteps tmax foutput dt_out basename ccfl
-genparamfile 0 10 0 1.0 advection-1D-pwlin 0.8
-
-./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
-errexit $?
-$plotdir/plot_all_density.py advection-1D-pwlin-0000.out
-
-# negative velocity
-genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.8
-./hydro paramfile.txt ./IC/advection-1D-negvel.dat | tee -a output.log
-errexit $?
-$plotdir/plot_all_density.py advection-1D-pwlin-negvel-0000.out
-
-
-#-------------------
-# 2D pwlin
-#-------------------
-
-# genmakefile ndim solver riemann limiter
-genmakefile 2 ADVECTION_PWLIN NONE NONE
-make clean && make | tee -a output.log
-errexit $?
-
-# positive velocity
-# genparamfile nsteps tmax foutput dt_out basename
-genparamfile 0 1 0 0 advection-2D-pwlin 0.8
-
-./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwlin-0001.out
-
-# negative velocity
-genparamfile 0 1 0 0 advection-2D-pwlin-negvel 0.8
-./hydro paramfile.txt ./IC/advection-2D-negvel.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwlin-negvel-0001.out
-
-# x only
-genparamfile 0 1 0 0 advection-2D-pwlin-x 0.8
-./hydro paramfile.txt ./IC/advection-2D-x.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwlin-x-0001.out
-
-# y only
-genparamfile 0 1 0 0 advection-2D-pwlin-y 0.8
-./hydro paramfile.txt ./IC/advection-2D-y.dat | tee -a output.log
-errexit $?
-$plotdir/plot_density.py advection-2D-pwlin-y-0001.out
-
-
-
-
-#----------------------------
-# 1D pwlin with limiters
-#----------------------------
-
-for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+advection_pwconst_1D(){
+    #-------------------
+    # 1D PWCONST
+    #-------------------
 
     # genmakefile ndim solver riemann limiter
-    genmakefile 1 ADVECTION_PWLIN NONE $LIMITER
-    make clean && make | tee -a output.log
+    genmakefile 1 ADVECTION_PWCONST NONE NONE
+    make clean && make
     errexit $?
 
     # positive velocity
     # genparamfile nsteps tmax foutput dt_out basename ccfl
-    genparamfile 0 10 0 1.0 advection-1D-$LIMITER 0.8
+    genparamfile 0 10 0 1.0 advection-1D-pwconst 0.8
 
-    ./hydro paramfile.txt ./IC/advection-1D.dat | tee -a output.log
+    ./hydro paramfile.txt ./IC/advection-1D.dat
     errexit $?
-    $plotdir/plot_all_density.py advection-1D-$LIMITER-0000.out
-done
+    $plotdir/plot_all_density.py advection-1D-pwconst-0000.out
+
+    # negative velocity
+    genparamfile 0 10 0 1.0 advection-1D-pwconst-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
+    errexit $?
+    $plotdir/plot_all_density.py advection-1D-pwconst-negvel-0000.out
+}
 
 
-
-
-
-#----------------------------
-# 2D pwlin with limiters
-#----------------------------
-
-for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+advection_pwconst_2D(){
+    #-------------------
+    # 2D PWCONST
+    #-------------------
 
     # genmakefile ndim solver riemann limiter
-    genmakefile 2 ADVECTION_PWLIN NONE $LIMITER
-    make clean && make | tee -a output.log
+    genmakefile 2 ADVECTION_PWCONST NONE NONE
+    make clean && make
     errexit $?
 
     # positive velocity
     # genparamfile nsteps tmax foutput dt_out basename ccfl
-    genparamfile 0 1 0 0 advection-2D-$LIMITER 0.8
-
-    ./hydro paramfile.txt ./IC/advection-2D.dat | tee -a output.log
+    genparamfile 0 1 0 0 advection-2D-pwconst 0.8
+    ./hydro paramfile.txt ./IC/advection-2D.dat
     errexit $?
-    $plotdir/plot_density.py advection-2D-$LIMITER-0001.out
+    $plotdir/plot_density.py advection-2D-pwconst-0001.out
 
-done
+    # negative velocity
+    genparamfile 0 1 0 0 advection-2D-pwconst-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-negvel.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwconst-negvel-0001.out
+
+    # x only
+    genparamfile 0 1 0 0 advection-2D-pwconst-x 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-x.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwconst-x-0001.out
+
+    # y only
+    genparamfile 0 1 0 0 advection-2D-pwconst-y 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-y.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwconst-y-0001.out
+}
 
 
+
+
+advection_pwlin_1D(){
+
+    #-------------------
+    # 1D PWLIN
+    #-------------------
+
+    # genmakefile ndim solver riemann limiter
+    genmakefile 1 ADVECTION_PWLIN NONE NONE
+    make clean && make
+    errexit $?
+
+    # positive velocity
+    # genparamfile nsteps tmax foutput dt_out basename ccfl
+    genparamfile 0 10 0 1.0 advection-1D-pwlin 0.8
+
+    ./hydro paramfile.txt ./IC/advection-1D.dat
+    errexit $?
+    $plotdir/plot_all_density.py advection-1D-pwlin-0000.out
+
+    # negative velocity
+    genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
+    errexit $?
+    $plotdir/plot_all_density.py advection-1D-pwlin-negvel-0000.out
+
+}
+
+
+
+advection_pwlin_2D(){
+    #-------------------
+    # 2D pwlin
+    #-------------------
+
+    # genmakefile ndim solver riemann limiter
+    genmakefile 2 ADVECTION_PWLIN NONE NONE
+    make clean && make
+    errexit $?
+
+    # positive velocity
+    # genparamfile nsteps tmax foutput dt_out basename
+    genparamfile 0 1 0 0 advection-2D-pwlin 0.8
+
+    ./hydro paramfile.txt ./IC/advection-2D.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwlin-0001.out
+
+    # negative velocity
+    genparamfile 0 1 0 0 advection-2D-pwlin-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-negvel.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwlin-negvel-0001.out
+
+    # x only
+    genparamfile 0 1 0 0 advection-2D-pwlin-x 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-x.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwlin-x-0001.out
+
+    # y only
+    genparamfile 0 1 0 0 advection-2D-pwlin-y 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-y.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-pwlin-y-0001.out
+}
+
+
+
+
+advection_pwlin_limiters_1D(){
+    #----------------------------
+    # 1D pwlin with limiters
+    #----------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 ADVECTION_PWLIN NONE $LIMITER
+        make clean && make
+        errexit $?
+
+        # positive velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 10 0 1.0 advection-1D-$LIMITER 0.8
+
+        ./hydro paramfile.txt ./IC/advection-1D.dat
+        errexit $?
+        $plotdir/plot_all_density.py advection-1D-$LIMITER-0000.out
+    done
+}
+
+
+
+
+advection_pwlin_limiters_2D(){
+    #----------------------------
+    # 2D pwlin with limiters
+    #----------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 2 ADVECTION_PWLIN NONE $LIMITER
+        make clean && make
+        errexit $?
+
+        # positive velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 1 0 0 advection-2D-$LIMITER 0.8
+
+        ./hydro paramfile.txt ./IC/advection-2D.dat
+        errexit $?
+        $plotdir/plot_density.py advection-2D-$LIMITER-0001.out
+
+    done
+
+}
+
+
+
+
+riemann_vacuum(){
+
+    for RIEMANN in EXACT; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 NONE $RIEMANN NONE
+        make -f Makefile-Riemann clean && make -f Makefile-Riemann
+        errexit $?
+
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 0.01 0 0 "NO_BASENAME" 1
+        ./riemann paramfile.txt ./IC/riemann-left-vacuum.dat
+        errexit $?
+        $plotdir/plot_riemann_result.py riemann-left-vacuum-*0001.out ./IC/riemann-left-vacuum.dat
+        
+        genparamfile 0 0.01 0 0 "NO_BASENAME" 1
+        ./riemann paramfile.txt ./IC/riemann-right-vacuum.dat
+        errexit $?
+        $plotdir/plot_riemann_result.py riemann-right-vacuum-*0001.out ./IC/riemann-right-vacuum.dat
+
+        genparamfile 0 0.01 0 0 "NO_BASENAME" 1
+        ./riemann paramfile.txt ./IC/riemann-vacuum-generating.dat
+        errexit $?
+        $plotdir/plot_riemann_result.py riemann-vacuum-generating*0001.out ./IC/riemann-vacuum-generating.dat
+
+    done
+
+
+}
+
+
+
+
+
+
+riemann_solver(){
+
+    for RIEMANN in EXACT; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 NONE $RIEMANN NONE
+        make -f Makefile-Riemann clean && make -f Makefile-Riemann
+        errexit $?
+
+        # positive velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 0.01 0 0 "NO_BASENAME" 1
+        ./riemann paramfile.txt ./IC/riemann-sod-shock.dat
+        errexit $?
+
+    done
+    $plotdir/plot_all_results.py riemann-sod-shock-*-0001.out
+
+}
+
+
+
+
+
+# advection_pwconst_1D
+# advection_pwconst_2D
+# advection_pwlin_1D
+# advection_pwlin_2D
+# advection_pwlin_limiters_1D
+# advection_pwlin_limiters_2D
+
+riemann_vacuum
+# riemann_solver
 
 
 
@@ -271,6 +355,6 @@ done
 #---------------
 # create TeX
 #---------------
-cd TeX
-./run.sh
-cd .
+# cd TeX
+# ./run.sh
+# cd .

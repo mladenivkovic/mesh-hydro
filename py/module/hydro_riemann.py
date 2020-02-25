@@ -41,8 +41,6 @@ def riemann_solver(rho, u, p, t):
     dx = 1./nx
     i = nx // 2 - 1 # in hydro_io.py/read_twostate_ic: rho[:nxhalf] = rhoL, nxhalf = nx // 2
 
-    print(nx, i)
-
     rhoL = rho[i]
     rhoR = rho[i+1]
     uL = u[i]
@@ -56,19 +54,40 @@ def riemann_solver(rho, u, p, t):
     print("  pL = {0:12.6f},   pR = {1:12.6f}".format(pL, pR))
     print("  nx = ", nx)
 
-    pstar, ustar = find_star_state(rhoL, uL, pL, rhoR, uR, pR)
+    # check if we have vacuum
+    is_vacuum = False
+    if rhoL == 0:
+        is_vacuum = True
+    elif rhoR == 0:
+        is_vacuum = True
+    else:
+        # don't compute square roots of zero, so compute
+        # soundspeeds only now
+        aL = soundspeed(pL, rhoL)
+        aR = soundspeed(pR, rhoR)
+        if uR - uL >= 2/GM1 * (aL + aR):
+            is_vacuum = True
+
+    if not is_vacuum:
+        pstar, ustar = find_star_state(rhoL, uL, pL, rhoR, uR, pR)
 
     rho_sol = np.empty(rho.shape, dtype = np.float)
     u_sol = np.empty(u.shape, dtype = np.float)
     p_sol = np.empty(p.shape, dtype = np.float)
 
-    center = (i*dx) # position of the center
+    center = (nx//2)*dx # position of the center
     for i in range(nx):
         x = (i+0.5)*dx - center
         xt = x / t
-        rho_sol[i], u_sol[i], p_sol[i] = sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt)
+        if not is_vacuum: 
+            rho_sol[i], u_sol[i], p_sol[i] = sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt)
+        else:
+            rho_sol[i], u_sol[i], p_sol[i] = sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt)
+
+        
 
     return rho_sol, u_sol, p_sol   
+
 
 
 
@@ -162,7 +181,7 @@ def sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt):
                     fact = ( 2 / GP1 - GM1OGP1 / aR *(uR - xt) )**(2/GM1)
                     rho = rhoR * fact
                     u =  2 / GP1 * (GM1HALF * uR - aR + xt)
-                    p = pL * fact**gamma
+                    p = pR * fact**gamma
 
 
     return rho, u, p
@@ -227,9 +246,6 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
 
 
 
-
-
-
 def f_K(pstar, pK, AK, BK, aK):
     """
     Compute f_{K=L, R} (See section 3.2 in equations_and_implementation_details.pdf)
@@ -245,6 +261,8 @@ def f_K(pstar, pK, AK, BK, aK):
     else:
         # rarefaction relation
         return 2 * aK / GM1 * ((pstar/pK)**alpha - 1)
+
+
 
 
 
@@ -265,11 +283,19 @@ def df_Kdp(pstar, rhoK, pK, AK, BK, aK):
         # rarefaction relation
         return 1./(aK * rhoK) * (pstar/pK)**(-0.5*GP1/gamma)
 
+
+
+
+
 def A_K(rhoK):
     """
     Compute A_{L, R}
     """
     return 2 / (GP1 * rhoK)
+
+
+
+
 
 def B_K(pK):
     """
@@ -277,8 +303,105 @@ def B_K(pK):
     """
     return pK / GP1OGM1
 
+
+
+
+
 def soundspeed(p, rho):
     """
     Compute the sound speed of the gas
     """
     return np.sqrt(p * gamma / rho)
+
+
+
+
+
+def sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt):
+    """
+    Sample the solution in the presence of vacuum
+    """
+
+    if rhoL == 0 and rhoR == 0:
+        return 0., 0., 0.
+
+    if rhoL == 0:
+        # left vacuum state
+        aR = soundspeed(pR, rhoR)
+        SR = uR - 2 * aR / GM1
+        SHR = uR + aR
+
+        if xt <= SR:
+            # left vacuum
+            rho = 0
+            u = SR
+            p = 0
+        elif xt < SHR:
+            # inside right rarefaction
+            fact = ( 2 / GP1 - GM1OGP1 / aR * (uR - xt) )**(2/GM1)
+            rho = rhoR * fact
+            u =  2 / GP1 * (GM1HALF * uR - aR + xt)
+            p = pR * fact**gamma
+        else:
+            # in right state
+            rho = rhoR
+            u = uR
+            p = pR
+
+    elif rhoR == 0:
+        # Right vacuum state
+        aL = soundspeed(pL, rhoL)
+        SL = uL + 2 * aL / GM1
+        SHL = uL - aL
+
+        if xt >= SL:
+            rho = 0
+            u = SL
+            p = 0
+        elif xt > SHL:
+            fact = ( 2 / GP1 + GM1OGP1 / aL *(uL - xt) )**(2/GM1)
+            rho = rhoL * fact
+            u =  2 / GP1 * (GM1HALF * uL + aL + xt)
+            p = pL * fact**gamma
+        else:
+            rho = rhoL
+            u = uL
+            p = pL
+    else:
+        # Vacuum generating state
+        aL = soundspeed(pL, rhoL);
+        aR = soundspeed(pR, rhoR);
+        SL = uL + 2*aL/GM1
+        SR = uR - 2*aR/GM1
+        SHL = uL - aL;
+        SHR = uR + aR;
+
+        if xt <= SHL:
+            # outside left rarefaction, original state
+            rho = rhoL
+            u = uL
+            p = pL
+        elif xt < SL:
+            # inside left rarefaction fan
+            fact = ( 2 / GP1 + GM1OGP1 / aL * (uL - xt) )**(2/GM1)
+            rho = rhoL * fact
+            u =  2 / GP1 * (GM1HALF * uL + aL + xt)
+            p = pL * fact**gamma
+        elif xt < SR:
+            # vacuum region
+            rho = 0
+            u = 0.5 * (SL + SR)
+            p = 0
+        elif xt < SHR:
+            # inside right rarefaction fan
+            fact = ( 2 / GP1 - GM1OGP1 / aR * (uR - xt) )**(2/GM1)
+            rho = rhoR * fact
+            u =  2 / GP1 * (GM1HALF * uR - aR + xt)
+            p = pR * fact**gamma
+        else:
+            # right original state
+            rho = rhoR
+            u = uR
+            p = pR
+
+    return rho, u, p

@@ -40,7 +40,8 @@ if __name__ == "__main__":
         fig = plot_1D(rho, u, p, fname, t=t, nosave=True, draw_legend=True)
 
         rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
-        plot_1D(rho_sol, u_sol, p_sol, fname, t="python solver", nosave=False, draw_legend=True, fig=fig)
+        kwargs = { "linestyle":"--", }
+        plot_1D(rho_sol, u_sol, p_sol, fname, t="python solver", nosave=False, draw_legend=True, fig=fig, kwargs = kwargs)
 
     else:
         print("Can't work with non-riemann ICs.")

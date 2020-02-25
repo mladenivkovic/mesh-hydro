@@ -445,14 +445,6 @@ All that is left to do is sample the solution, which is described in section \re
 
 
 
-
-\todo{Fix Riemann stuff! you had a + in dfdp for shock!}
-
-\todo{Vacuum}
-
-
-
-
 %====================================================================
 \subsection{Approximate Solvers}
 %====================================================================
@@ -477,6 +469,99 @@ All that is left to do is sample the solution, which is described in section \re
 %====================================================================
 \subsubsection{Two-Shock Riemann Solver (TSRS)}
 %====================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%====================================================================
+\subsection{Dealing with Vacuum}
+%====================================================================
+
+
+Vacuum is characterized by the condition $\rho = 0$.
+With out equation of state, we also have $p = 0$ and $E = 0$ following from $\rho = 0$.
+The structure of the solution to the Riemann problem is different, there is no more star region.
+It can be shown that a shock wave can't be adjacent to a vacuum.
+Instead, we have a rarefaction wave and a contact wave which coalesces with the tail of the rarefaction.
+So we have a jump discontinuity next to the vacuum, which makes perfect sense, and this discontinuity will travel with some ``escape velocity'' $u_{vac}$.
+Hence it makes sense to characterize the vacuum state as $\mathbf{W}_{vac} = (0, u_0, 0)$.
+
+There are three cases to consider:
+
+
+\begin{enumerate}
+
+	\item \textbf{The right state is a vacuum:}
+	
+		The vacuum front travels with the velocity
+		\begin{equation}
+			S_{vac, L} = u_L + \frac{2 a_L}{\gamma - 1}
+		\end{equation}
+		and left of it we have a left going rarefaction wave, i.e.
+		\begin{align}
+			\mathbf{W}_{L, \text{ with vacuum }} = 
+				\begin{cases}
+					\mathbf{W_L} & \quad \text{ if } \frac{x}{t} \leq u_L - a_L \\
+					\mathbf{W_{L, \text{inside fan}}} & \quad \text{ if } u_L - a_L < \frac{x}{t} < S_{vac, L} \\
+					\mathbf{W_{vac}} & \quad \text{ if } \frac{x}{t} \geq S_{vac, L}\\
+				\end{cases}
+		\end{align}
+		
+	\item \textbf{The left state is a vacuum:}
+	
+		The vacuum front travels with the velocity
+		\begin{equation}
+			S_{vac, R} = u_R - \frac{2 a_R}{\gamma - 1}
+		\end{equation}
+		and right of it we have a right going rarefaction wave, i.e.
+		\begin{align}
+			\mathbf{W}_{R, \text{ with vacuum }} = 
+				\begin{cases}
+					\mathbf{W_{vac}} & \quad \text{ if } \frac{x}{t} \leq S_{vac, R}\\
+					\mathbf{W_{R, \text{inside fan}}} & \quad \text{ if } S_{vac, R} < \frac{x}{t} <   u_R + a_R\\
+					\mathbf{W_R} & \quad \text{ if } \frac{x}{t} \geq u_R + a_R \\
+				\end{cases}
+		\end{align}
+		
+	\item \textbf{ Vacuum is being generated }
+	
+		In certain cases, with both the left and the right state being non-vacuum states, vacuum can be generated in regions of the solution.
+		Just think what might happen if the left state has high velocity towards the left, and the right state having a high velocity towards the right, leaving the center region empty.
+		The result is that we have a vacuum state emerging around the center, bounded by two vacuum fronts $S_{vac, L}$ on the left side and $S_{vac, R}$ on the right side.
+		The full solution is
+		\begin{align}
+			\mathbf{W} = 
+				\begin{cases}
+					\mathbf{W}_{L, \text{ with vacuum }} & \quad \text{ if } \frac{x}{t} \leq S_{vac, L}\\
+					\mathbf{W}_{vac} & \quad \text{ if } S_{vac, L} < \frac{x}{t} <  S_{vac, R}\\
+					\mathbf{W}_{R, \text{ with vacuum }} & \quad \text{ if } \frac{x}{t} \geq S_{vac, R} \\
+				\end{cases}
+		\end{align}
+		
+		
+		When do we have a vacuum generating condition?
+		Well, $S_{vac, L} \leq S_{vac, R}$ must hold, hence
+		\begin{align}
+			\Delta u_{crit} \equiv \frac{2 a_L}{\gamma - 1 } + \frac{2 a_R}{\gamma - 1 } \leq u_R - u_L
+		\end{align}
+
+\end{enumerate}
+
+
+
+
+
+
 
 
 

@@ -382,7 +382,7 @@ void io_read_paramfile(){
     remove_trailing_comments(tempbuff);
     if (line_is_empty(tempbuff)) continue;
 
-    sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
+    sscanf(tempbuff, "%s = %[^\n]\n", varname, varvalue);
 
 
     if (strcmp(varname,"verbose") == 0) {
@@ -402,10 +402,14 @@ void io_read_paramfile(){
     } else if (strcmp(varname, "ccfl") == 0){
       pars.ccfl = atof(varvalue);
     } else if (strcmp(varname, "basename") == 0){
-      strcpy(pars.outputfilename, varvalue);
+      if (! line_is_empty(varvalue)) {
+        strcpy(pars.outputfilename, varvalue);
+      }
     } else if (strcmp(varname, "toutfile") == 0){
-      strcpy(pars.toutfilename, varvalue);
-      pars.use_toutfile = 1;
+      if (! line_is_empty(varvalue)) {
+        strcpy(pars.toutfilename, varvalue);
+        pars.use_toutfile = 1;
+      }
     } else if (strcmp(varname, "boundary") == 0){
       pars.boundary= atoi(varvalue);
     } else if (strcmp(varname, "nstep_log") == 0){

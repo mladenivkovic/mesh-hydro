@@ -27,7 +27,7 @@ typedef struct {
 void gas_init_pstate(pstate *p);
 void gas_init_cstate(cstate *c);
 
-float gas_soundspeed(float p, float rho);
+float gas_soundspeed(pstate *s);
 float gas_energy(pstate* s);
 
 
