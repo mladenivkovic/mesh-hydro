@@ -81,6 +81,8 @@ Things to keep in mind
 - this code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
 - boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
 - there is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
+- No advection solver uses a Riemann solver.
+- Piecewise constant advection can't apply slope limiters.
 - ...
 
 
