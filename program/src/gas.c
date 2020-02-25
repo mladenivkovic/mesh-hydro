@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include "gas.h"
 #include "defines.h"
@@ -17,8 +18,9 @@ void gas_init_pstate(pstate* s){
   /*-------------------------------------------------*/
 
   s->rho  = 0;
-  s->ux   = 0;
-  s->uy   = 0;
+  s->u = malloc(2 * sizeof(float));
+  s->u[0] = 0;
+  s->u[1] = 0;
   s->p    = 0;
 
 } 
@@ -29,8 +31,9 @@ void gas_init_cstate(cstate *s){
   /*-------------------------------------------------*/
 
   s->rho   = 0;
-  s->rhoux = 0;
-  s->rhouy = 0;
+  s->rhou = malloc(2 * sizeof(float));
+  s->rhou[0] = 0;
+  s->rhou[1] = 0;
   s->E     = 0;
 
 }
@@ -53,5 +56,5 @@ float gas_energy(pstate* s){
   /*-----------------------------------------*/
   /* compute total energy of a state         */
   /*-----------------------------------------*/
-  return 0.5*s->rho * (s->ux * s->ux + s->uy * s->uy) + s->p/GM1;
+  return 0.5*s->rho * (s->u[0] * s->u[0] + s->u[1] * s->u[1]) + s->p/GM1;
 }

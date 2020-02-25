@@ -34,8 +34,14 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
   int i, j;
   float vel = 0;
   pstate r, phi;
-  /* cell left, right; */
+  gas_init_pstate(&r);
+  gas_init_pstate(&phi);
+
   pstate Uim1, Ui, Uip1, Uip2;  /*U_i-1, U_i-2, U_i, U_i+1 */ 
+  gas_init_pstate(&Uim1);
+  gas_init_pstate(&Ui);
+  gas_init_pstate(&Uip1);
+  gas_init_pstate(&Uip2);
 
 
   /* Find which cells wil come into play; This makes a difference for left/right */
@@ -43,7 +49,7 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
   cell_get_ij(c, &i, &j);
 
   if (dimension == 0){
-    vel = c->prim.ux;
+    vel = c->prim.u[0];
 #if NDIM == 1
     Uip2 = grid[i+2].prim;
     Uip1 = grid[i+1].prim;
@@ -56,7 +62,7 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
     Uim1 = grid[i-1][j].prim;
 #endif
   } else if (dimension == 1){
-    vel = c->prim.uy;
+    vel = c->prim.u[1];
 #if NDIM == 2
     Uip2 = grid[i][j+2].prim;
     Uip1 = grid[i][j+1].prim;
@@ -69,14 +75,14 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
 
 
   phi.rho = limiter_superbee(r.rho);
-  phi.ux = limiter_superbee(r.ux);
-  phi.uy = limiter_superbee(r.uy);
+  phi.u[0] = limiter_superbee(r.u[0]);
+  phi.u[1] = limiter_superbee(r.u[1]);
   phi.p = limiter_superbee(r.p);
 
   /* Which Ui you take to do the difference below is different for left/right slope*/
   slope->rho = phi.rho * (Uip1.rho - Ui.rho) / pars.dx;
-  slope->ux  = phi.ux  * (Uip1.ux  - Ui.ux)  / pars.dx;
-  slope->uy  = phi.uy  * (Uip1.uy  - Ui.uy)  / pars.dx;
+  slope->u[0]  = phi.u[0]  * (Uip1.u[0]  - Ui.u[0])  / pars.dx;
+  slope->u[1]  = phi.u[1]  * (Uip1.u[1]  - Ui.u[1])  / pars.dx;
   slope->p   = phi.p   * (Uip1.p   - Ui.p)   / pars.dx;
 }
 
@@ -93,7 +99,14 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
   int i, j;
   float vel = 0;
   pstate r, phi;
+  gas_init_pstate(&r);
+  gas_init_pstate(&phi);
+
   pstate Uim1, Uim2, Ui, Uip1;  /*U_i-1, U_i-2, U_i, U_i+1 */
+  gas_init_pstate(&Uim1);
+  gas_init_pstate(&Uim2);
+  gas_init_pstate(&Ui);
+  gas_init_pstate(&Uip1);
 
 
   /* Find which cells wil come into play; This makes a difference for left/right */
@@ -101,7 +114,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
   cell_get_ij(c, &i, &j);
 
   if (dimension == 0){
-    vel = c->prim.ux;
+    vel = c->prim.u[0];
 #if NDIM == 1
     Uip1 = grid[i+1].prim;
     Ui = grid[i].prim;
@@ -114,7 +127,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
     Uim2 = grid[i-2][j].prim;
 #endif
   } else if (dimension == 1){
-    vel = c->prim.uy;
+    vel = c->prim.u[1];
 #if NDIM == 2
     Uip1 = grid[i][j+1].prim;
     Ui = grid[i][j].prim;
@@ -126,14 +139,14 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
   limiter_get_r(&Uip1, &Ui, &Uim1, &Uim2, &r, vel);
 
   phi.rho = limiter_superbee(r.rho);
-  phi.ux = limiter_superbee(r.ux);
-  phi.uy = limiter_superbee(r.uy);
+  phi.u[0] = limiter_superbee(r.u[0]);
+  phi.u[1] = limiter_superbee(r.u[1]);
   phi.p = limiter_superbee(r.p);
 
   /* Which Ui you take to do the difference below is different for left/right slope*/
   slope->rho = phi.rho * (Ui.rho - Uim1.rho) / pars.dx;
-  slope->ux  = phi.ux  * (Ui.ux  - Uim1.ux)  / pars.dx;
-  slope->uy  = phi.uy  * (Ui.uy  - Uim1.uy)  / pars.dx;
+  slope->u[0]  = phi.u[0]  * (Ui.u[0]  - Uim1.u[0])  / pars.dx;
+  slope->u[1]  = phi.u[1]  * (Ui.u[1]  - Uim1.u[1])  / pars.dx;
   slope->p   = phi.p   * (Ui.p   - Uim1.p)   / pars.dx;
 }
 
@@ -153,15 +166,15 @@ void limiter_get_r(pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* Uim2, pstate*
     } else {
       r->rho = (Uim1->rho - Uim2->rho)/(Ui->rho - Uim1->rho);
     }
-    if (Ui->ux == Uim1->ux){
-      r->ux = (Uim1->ux - Uim2->ux)*1e18;
+    if (Ui->u[0] == Uim1->u[0]){
+      r->u[0] = (Uim1->u[0] - Uim2->u[0])*1e18;
     } else {
-      r->ux = (Uim1->ux - Uim2->ux)/(Ui->ux - Uim1->ux);
+      r->u[0] = (Uim1->u[0] - Uim2->u[0])/(Ui->u[0] - Uim1->u[0]);
     }
-    if (Ui->uy == Uim1->uy){
-      r->uy = (Uim1->uy - Uim2->uy)*1e18;
+    if (Ui->u[1] == Uim1->u[1]){
+      r->u[1] = (Uim1->u[1] - Uim2->u[1])*1e18;
     } else {
-      r->uy = (Uim1->uy - Uim2->uy)/(Ui->uy - Uim1->uy);
+      r->u[1] = (Uim1->u[1] - Uim2->u[1])/(Ui->u[1] - Uim1->u[1]);
     }
     if (Ui->p == Uim1->p){
       r->p = (Uim1->p - Uim2->p)*1e18;
@@ -174,15 +187,15 @@ void limiter_get_r(pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* Uim2, pstate*
     } else {
       r->rho = (Uip1->rho - Ui->rho)/(Ui->rho - Uim1->rho);
     }
-    if (Ui->ux == Uim1->ux){
-      r->ux = (Uip1->ux - Ui->ux)*1e18;
+    if (Ui->u[0] == Uim1->u[0]){
+      r->u[0] = (Uip1->u[0] - Ui->u[0])*1e18;
     } else{
-      r->ux = (Uip1->ux - Ui->ux)/(Ui->ux - Uim1->ux);
+      r->u[0] = (Uip1->u[0] - Ui->u[0])/(Ui->u[0] - Uim1->u[0]);
     }
-    if (Ui->uy == Uim1->uy){
-      r->uy = (Uip1->uy - Ui->uy)*1e18;
+    if (Ui->u[1] == Uim1->u[1]){
+      r->u[1] = (Uip1->u[1] - Ui->u[1])*1e18;
     } else{
-      r->uy = (Uip1->uy - Ui->uy)/(Ui->uy - Uim1->uy);
+      r->u[1] = (Uip1->u[1] - Ui->u[1])/(Ui->u[1] - Uim1->u[1]);
     }
     if (Ui->p == Uim1->p){
       r->p = (Uip1->p - Ui->p)*1e18;

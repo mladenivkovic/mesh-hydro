@@ -185,7 +185,7 @@ void io_read_ic_twostate(int skip){
       left.rho = atof(varvalue);
       rhol_set = 1;
     } else if (strcmp(varname, "u_L") == 0){
-      left.ux = atof(varvalue);
+      left.u[0] = atof(varvalue);
       ul_set = 1;
     } else if (strcmp(varname, "p_L") == 0){
       left.p = atof(varvalue);
@@ -194,7 +194,7 @@ void io_read_ic_twostate(int skip){
       right.rho = atof(varvalue);
       rhor_set = 1;
     } else if (strcmp(varname, "u_R") == 0){
-      right.ux = atof(varvalue);
+      right.u[0]= atof(varvalue);
       ur_set = 1;
     } else if (strcmp(varname, "p_R") == 0){
       right.p = atof(varvalue);
@@ -220,12 +220,12 @@ void io_read_ic_twostate(int skip){
 #if NDIM == 1
   for (int i = BC; i < pars.nx/2+BC; i++){
     grid[i].prim.rho = left.rho;
-    grid[i].prim.ux = left.ux;
+    grid[i].prim.u[0] = left.u[0];
     grid[i].prim.p = left.p;
   }
   for (int i = pars.nx/2 + BC; i < pars.nx + BC; i++){
     grid[i].prim.rho = right.rho;
-    grid[i].prim.ux = right.ux;
+    grid[i].prim.u[0] = right.u[0];
     grid[i].prim.p = right.p;
   }
 
@@ -235,13 +235,13 @@ void io_read_ic_twostate(int skip){
 
     for (int i = BC; i < pars.nx/2+BC; i++){
       grid[i][j].prim.rho = left.rho;
-      grid[i][j].prim.ux = left.ux;
-      grid[i][j].prim.uy = 0;
+      grid[i][j].prim.u[0] = left.u[0];
+      grid[i][j].prim.u[1] = 0;
       grid[i][j].prim.p = left.p;
     }
     for (int i = pars.nx/2 + BC; i < pars.nx + BC; i++){
       grid[i][j].prim.rho = right.rho;
-      grid[i][j].prim.ux = 0;
+      grid[i][j].prim.u[0] = 0;
       grid[i][j].prim.p = right.p;
     }
 
@@ -293,8 +293,8 @@ void io_read_ic_arbitrary(int skip){
     sscanf(tempbuff, "%f %f %f\n", &rho, &u, &p);
 
     grid[i].prim.rho = rho;
-    grid[i].prim.ux = u;
-    grid[i].prim.uy = 0;
+    grid[i].prim.u[0] = u;
+    grid[i].prim.u[1] = 0;
     grid[i].prim.p = p;
 
     i += 1;
@@ -305,8 +305,8 @@ void io_read_ic_arbitrary(int skip){
     sscanf(tempbuff, "%f %f %f %f\n", &rho, &ux, &uy, &p);
 
     grid[i][j].prim.rho = rho;
-    grid[i][j].prim.ux = ux;
-    grid[i][j].prim.uy = uy;
+    grid[i][j].prim.u[0] = ux;
+    grid[i][j].prim.u[1] = uy;
     grid[i][j].prim.p = p;
 
     i += 1;
@@ -524,7 +524,7 @@ void io_write_output(int *outstep, int step,  float t){
   for (int i=BC; i<pars.nx+BC; i++){
     cell c = grid[i];
     pstate s = c.prim;
-    fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f\n", c.x, s.rho, s.ux, s.p);
+    fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f\n", c.x, s.rho, s.u[0], s.p);
   }
 
 #elif NDIM == 2
@@ -534,7 +534,7 @@ void io_write_output(int *outstep, int step,  float t){
     for (int i = BC; i < pars.nx + BC; i++){
       cell c = grid[i][j];
       pstate s = c.prim;
-      fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n", c.x, c.y, s.rho, s.ux, s.uy, s.p);
+      fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n", c.x, c.y, s.rho, s.u[0], s.u[1], s.p);
     }
   }
 

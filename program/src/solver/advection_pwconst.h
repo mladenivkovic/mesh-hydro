@@ -19,7 +19,7 @@ void solver_get_dt(float* dt);
 void solver_compute_fluxes(int dimension);
 void solver_advance_step(float* dt);
 
-void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dimension);
+void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim);
 void solver_update_state(cell* c, float dtdx);
 
 

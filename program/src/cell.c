@@ -204,8 +204,8 @@ void cell_copy_boundary_data(cell* real, cell* ghost){
    * --------------------------------------------------------- */
 
   ghost->prim.rho = real->prim.rho;
-  ghost->prim.ux = real->prim.ux;
-  ghost->prim.uy = real->prim.uy;
+  ghost->prim.u[0] = real->prim.u[0];
+  ghost->prim.u[1] = real->prim.u[1];
   ghost->prim.p = real->prim.p;
 }
 
@@ -224,8 +224,8 @@ void cell_copy_boundary_data_reflective(cell* real, cell* ghost){
   printf("BOUNDARY: Copying from %s -> %s\n", cell_get_index_string(real), cell_get_index_string(ghost));
 
   ghost->prim.rho = real->prim.rho;
-  ghost->prim.ux = - real->prim.ux;
-  ghost->prim.uy = - real->prim.uy;
+  ghost->prim.u[0] = - real->prim.u[0];
+  ghost->prim.u[1] = - real->prim.u[1];
   ghost->prim.p = real->prim.p;
 }
 
@@ -339,19 +339,19 @@ void cell_print_grid_part(char field[4], int* limits){
     } else if (strcmp(field, "rho") == 0){
       printf("%8.3f", grid[i].prim.rho);
     } else if (strcmp(field, "v_x") == 0){
-      printf("%8.3f", grid[i].prim.ux);
+      printf("%8.3f", grid[i].prim.u[0]);
     } else if (strcmp(field, "v_y") == 0){
-      printf("%8.3f", grid[i].prim.uy);
+      printf("%8.3f", grid[i].prim.u[1]);
     } else if (strcmp(field, "vsq") == 0){
-      printf("%8.3f", grid[i].prim.ux*grid[i].prim.ux + grid[i].prim.uy*grid[i].prim.uy);
+      printf("%8.3f", grid[i].prim.u[0]*grid[i].prim.u[0] + grid[i].prim.u[1]*grid[i].prim.u[1]);
     } else if (strcmp(field, "pre") == 0){
       printf("%8.3f", grid[i].prim.p);
     } else if (strcmp(field, "frh") == 0){
       printf("%8.3f", grid[i].flux.rho);
     } else if (strcmp(field, "fux") == 0){
-      printf("%8.3f", grid[i].flux.ux);
+      printf("%8.3f", grid[i].flux.u[0]);
     } else if (strcmp(field, "fuy") == 0){
-      printf("%8.3f", grid[i].flux.uy);
+      printf("%8.3f", grid[i].flux.u[1]);
     } else if (strcmp(field, "fpr") == 0){
       printf("%8.3f", grid[i].flux.p);
     }
@@ -416,19 +416,19 @@ void cell_print_grid_part(char field[4], int* limits){
       } else if (strcmp(field, "rho") == 0){
         printf("%8.3f", grid[i][j].prim.rho);
       } else if (strcmp(field, "v_x") == 0){
-        printf("%8.3f", grid[i][j].prim.ux);
+        printf("%8.3f", grid[i][j].prim.u[0]);
       } else if (strcmp(field, "v_y") == 0){
-        printf("%8.3f", grid[i][j].prim.uy);
+        printf("%8.3f", grid[i][j].prim.u[1]);
       } else if (strcmp(field, "vsq") == 0){
-        printf("%8.3f", grid[i][j].prim.ux*grid[i][j].prim.ux + grid[i][j].prim.uy*grid[i][j].prim.uy);
+        printf("%8.3f", grid[i][j].prim.u[0]*grid[i][j].prim.u[0] + grid[i][j].prim.u[1]*grid[i][j].prim.u[1]);
       } else if (strcmp(field, "pre") == 0){
         printf("%8.3f", grid[i][j].prim.p);
       } else if (strcmp(field, "frh") == 0){
         printf("%8.3f", grid[i][j].flux.rho);
-      } else if (strcmp(field, "fux") == 0){
-        printf("%8.3f", grid[i][j].flux.ux);
+      } else if (strcmp(field, "fu[0]") == 0){
+        printf("%8.3f", grid[i][j].flux.u[0]);
       } else if (strcmp(field, "fuy") == 0){
-        printf("%8.3f", grid[i][j].flux.uy);
+        printf("%8.3f", grid[i][j].flux.u[1]);
       } else if (strcmp(field, "fpr") == 0){
         printf("%8.3f", grid[i][j].flux.p);
       }

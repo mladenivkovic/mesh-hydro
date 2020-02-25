@@ -21,8 +21,7 @@
 #endif
 
 
-void riemann_solve(oneDpstate* left, oneDpstate* right, oneDpstate* sol, float xovert, float* wavevel);
-
+void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dimension);
 
 
 

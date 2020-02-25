@@ -90,14 +90,14 @@ void solver_get_dt(float* dt){
 
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i <= pars.nx + BC; i++){
-    float uxabs = fabs(grid[i].prim.ux);
+    float uxabs = fabs(grid[i].prim.u[0]);
     if (uxabs > umax){
       umax = uxabs;
     }
   }
 #else
   /* in this case, all velocities are the same and constant. */
-  umax = fabs(grid[BC].prim.ux);
+  umax = fabs(grid[BC].prim.u[0]);
 #endif
 
   *dt = pars.ccfl * pars.dx / umax;
@@ -111,11 +111,11 @@ void solver_get_dt(float* dt){
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i <= pars.nx + BC; i++){
     for (int j = BC; j <= pars.nx + BC; j++){
-      float uxabs = fabs(grid[i][j].prim.ux);
+      float uxabs = fabs(grid[i][j].prim.u[0]);
       if (uxabs > uxmax){
         uxmax = uxabs;
       }
-      float uyabs = fabs(grid[i][j].prim.uy);
+      float uyabs = fabs(grid[i][j].prim.u[1]);
       if (uyabs > uymax){
         uymax = uyabs;
       }
@@ -123,8 +123,8 @@ void solver_get_dt(float* dt){
   }
 #else
   /* in this case, all velocities are the same and constant. */
-  uxmax = fabs(grid[BC][BC].prim.ux);
-  uymax = fabs(grid[BC][BC].prim.uy);
+  uxmax = fabs(grid[BC][BC].prim.u[0]);
+  uymax = fabs(grid[BC][BC].prim.u[1]);
 #endif
 
   float uxdx = uxmax / pars.dx; /* ux_max / dx */
@@ -170,7 +170,7 @@ void solver_compute_fluxes(float* dt, int dimension){
 
   for (int i = BC; i < pars.nx + BC; i++){
     c = &grid[i];
-    if (c->prim.ux > 0) { /* we do upwind differencing */
+    if (c->prim.u[0] > 0) { /* we do upwind differencing */
       dw = c;
       uw = &(grid[i - 1]);
     } else {
@@ -186,7 +186,7 @@ void solver_compute_fluxes(float* dt, int dimension){
     for (int i = BC; i < pars.nx + BC; i++){
       for (int j = BC; j < pars.nx + BC; j++){
         c = &(grid[i][j]);
-        if (c->prim.ux > 0) {
+        if (c->prim.u[0] > 0) {
           dw = c;
           uw = &(grid[i - 1][j]);
         } else {
@@ -200,7 +200,7 @@ void solver_compute_fluxes(float* dt, int dimension){
     for (int i = BC; i < pars.nx + BC; i++){
       for (int j = BC; j < pars.nx + BC; j++){
         c = &(grid[i][j]);
-        if (c->prim.uy > 0) {
+        if (c->prim.u[1] > 0) {
           dw = c;
           uw = &(grid[i][j-1]);
         } else {
@@ -219,23 +219,25 @@ void solver_compute_fluxes(float* dt, int dimension){
 
 
 
-void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int dimension){
+void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int dim){
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with
    * uw:  the cell of the pair which is upwind
    * dw:  the cell of the cell pair which is downwind
    *
-   * dimension: integer along which dimension to advect. 0: x. 1: y.
+   * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-  pstate sl = {0, 0, 0, 0};
-  pstate sr = {0, 0, 0, 0}; /* slopes left and right of the cell */
+  pstate sl, sr;            /* slopes left and right of the cell */
   pstate su;                /* slope of upwind cell */
   pstate sd;                /* slope of downwind cell */
 
-  limiter_get_slope_left(c, &sl, dimension);
-  limiter_get_slope_right(c, &sr, dimension);
+  gas_init_pstate(&sl);
+  gas_init_pstate(&sr);
+
+  limiter_get_slope_left(c, &sl, dim);
+  limiter_get_slope_right(c, &sr, dim);
 
   /* assign the slopes to the upwind/downwind cells */
   if (uw->id < dw->id){
@@ -246,64 +248,32 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
     sd = sl;
   }
 
-  if (dimension == 0){
-  
-    /* Now compute the net fluxes */
+  /* Now compute the net fluxes */
 
-    float dsu, dsd; /* dx - |v|*dt */
+  float dsu, dsd; /* dx - |v|*dt */
 
-    if (uw->prim.ux >= 0) {
-      dsu = pars.dx - uw->prim.ux * (*dt);
-    } else {
-      dsu = - pars.dx - uw->prim.ux * (*dt);
-    }
-    if (dw->prim.ux >= 0) {
-      dsd = pars.dx - dw->prim.ux * (*dt);
-    } else {
-      dsd = -pars.dx - dw->prim.ux * (*dt);
-    }
-
-    c->flux.rho += uw->prim.ux *( uw->prim.rho +  0.5 * su.rho * dsu ) -
-                   dw->prim.ux *( dw->prim.rho +  0.5 * sd.rho * dsd );
-#ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->flux.ux += uw->prim.ux *( uw->prim.ux +  0.5 * su.ux * dsu ) -
-                   dw->prim.ux *( dw->prim.ux +  0.5 * sd.ux * dsd );
-    c->flux.uy += uw->prim.ux *( uw->prim.uy +  0.5 * su.uy * dsu ) -
-                   dw->prim.ux *( dw->prim.uy +  0.5 * sd.uy * dsd );
-#endif
-    c->flux.p += uw->prim.ux *( uw->prim.p +  0.5 * su.p * dsu ) -
-                   dw->prim.ux *( dw->prim.p +  0.5 * sd.p * dsd );
-
-
-  } else if (dimension == 1){
-
-    /* Now compute the net fluxes */
-
-    float dsu, dsd; /* dx - |v|*dt */
-
-    if (uw->prim.uy >= 0) {
-      dsu = pars.dx - uw->prim.uy * (*dt);
-    } else {
-      dsu = - pars.dx - uw->prim.uy * (*dt);
-    }
-    if (dw->prim.uy >= 0) {
-      dsd = pars.dx - dw->prim.uy * (*dt);
-    } else {
-      dsd = -pars.dx - dw->prim.uy * (*dt);
-    }
-
-    c->flux.rho += uw->prim.uy *( uw->prim.rho +  0.5 * su.rho * dsu ) -
-                   dw->prim.uy *( dw->prim.rho +  0.5 * sd.rho * dsd );
-#ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->flux.ux += uw->prim.uy *( uw->prim.ux +  0.5 * su.ux * dsu ) -
-                   dw->prim.uy *( dw->prim.ux +  0.5 * sd.ux * dsd );
-    c->flux.uy += uw->prim.uy *( uw->prim.uy +  0.5 * su.uy * dsu ) -
-                   dw->prim.uy *( dw->prim.uy +  0.5 * sd.uy * dsd );
-#endif
-    c->flux.p += uw->prim.uy *( uw->prim.p +  0.5 * su.p * dsu ) -
-                   dw->prim.uy *( dw->prim.p +  0.5 * sd.p * dsd );
-
+  if (uw->prim.u[dim] >= 0) {
+    dsu = pars.dx - uw->prim.u[dim] * (*dt);
+  } else {
+    dsu = - pars.dx - uw->prim.u[dim] * (*dt);
   }
+  if (dw->prim.u[dim] >= 0) {
+    dsd = pars.dx - dw->prim.u[dim] * (*dt);
+  } else {
+    dsd = -pars.dx - dw->prim.u[dim] * (*dt);
+  }
+
+  c->flux.rho += uw->prim.u[dim] * ( uw->prim.rho +  0.5 * su.rho * dsu ) -
+                 dw->prim.u[dim] * ( dw->prim.rho +  0.5 * sd.rho * dsd );
+#ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
+  c->flux.u[0] += uw->prim.u[dim] * ( uw->prim.u[0] +  0.5 * su.u[0] * dsu ) -
+                  dw->prim.u[dim] * ( dw->prim.u[0] +  0.5 * sd.u[0] * dsd );
+  c->flux.u[1] += uw->prim.u[dim] * ( uw->prim.u[1] +  0.5 * su.u[1] * dsu ) -
+                  dw->prim.u[dim] * ( dw->prim.u[1] +  0.5 * sd.u[1] * dsd );
+#endif
+  c->flux.p += uw->prim.u[dim] * ( uw->prim.p +  0.5 * su.p * dsu ) -
+               dw->prim.u[dim] * ( dw->prim.p +  0.5 * sd.p * dsd );
+
 }
 
 
@@ -347,9 +317,9 @@ void solver_update_state(cell *c, float dtdx){
 
     c->prim.rho = c->prim.rho + dtdx * c->flux.rho;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->prim.ux = c->prim.ux + dtdx * c->flux.ux;
+    c->prim.u[0] = c->prim.u[0] + dtdx * c->flux.u[0];
 #if NDIM >= 2
-    c->prim.uy = c->prim.uy + dtdx * c->flux.uy;
+    c->prim.u[1] = c->prim.u[1] + dtdx * c->flux.u[1];
 #endif
 #endif
     c->prim.p = c->prim.p + dtdx * c->flux.p;
@@ -366,22 +336,22 @@ void solver_advection_check_global_velocity(){
    * -----------------------------------------------------*/
 
 #if NDIM == 1
-  float ux = grid[BC].prim.ux;
+  float ux = grid[BC].prim.u[0];
   for (int i = BC; i < pars.nx + BC; i++ ){
-    if (grid[i].prim.ux != ux) {
-      throw_error("The velocities are not identical everywhere. u[%d] = %12.6f; u[%d] = %12.6f\n", BC, ux, i, grid[i].prim.ux);
+    if (grid[i].prim.u[0] != ux) {
+      throw_error("The velocities are not identical everywhere. u[%d] = %12.6f; u[%d] = %12.6f\n", BC, ux, i, grid[i].prim.u[0]);
     }
   }
 #elif NDIM == 2
-  float ux = grid[BC][BC].prim.ux;
-  float uy = grid[BC][BC].prim.uy;
+  float ux = grid[BC][BC].prim.u[0];
+  float uy = grid[BC][BC].prim.u[1];
   for (int i = BC; i < pars.nx + BC; i++ ){
     for (int j = BC; j < pars.nx + BC; j++ ){
-      if (grid[i][j].prim.ux != ux) {
-        throw_error("The velocities are not identical everywhere. ux[%d] = %12.6f; ux[%d] = %12.6f\n", BC, ux, i, grid[i][j].prim.ux);
+      if (grid[i][j].prim.u[0] != ux) {
+        throw_error("The velocities are not identical everywhere. ux[%d] = %12.6f; ux[%d] = %12.6f\n", BC, ux, i, grid[i][j].prim.u[0]);
       }
-      if (grid[i][j].prim.uy != uy) {
-        throw_error("The velocities are not identical everywhere. uy[%d] = %12.6f; uy[%d] = %12.6f\n", BC, uy, i, grid[i][j].prim.uy);
+      if (grid[i][j].prim.u[1] != uy) {
+        throw_error("The velocities are not identical everywhere. uy[%d] = %12.6f; uy[%d] = %12.6f\n", BC, uy, i, grid[i][j].prim.u[1]);
       }
     }
   }

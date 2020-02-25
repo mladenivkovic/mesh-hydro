@@ -10,24 +10,15 @@
 /* primitive state */
 typedef struct {
   float rho;  /* density */
-  float ux;   /* velocity in x direction */
-  float uy;   /* velocity in y direction */
+  float* u;   /* velocity vector. u[0] = ux, u[1] = uy */
   float p;    /* pressure */
 } pstate;
-
-/* primitive state in 1D for easier reading of Riemann solver */
-typedef struct {
-  float rho;  /* density */
-  float u;    /* velocity in x direction */
-  float p;    /* pressure */
-} oneDpstate;
 
 
 /* conserved state */
 typedef struct {
   float rho;    /* density */
-  float rhoux;  /* specific momentum in x direction */
-  float rhouy;  /* specific momentum in x direction */
+  float *rhou;  /* specific momentum. rhou[0] in x direction, rhou[1] in y direction */
   float E;      /* specific energy */
 } cstate; 
 

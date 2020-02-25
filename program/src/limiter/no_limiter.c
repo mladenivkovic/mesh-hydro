@@ -32,19 +32,19 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
 
   if (dimension == 0){
 #if NDIM == 1
-    if (c->prim.ux >= 0){
+    if (c->prim.u[0] >= 0){
       target = &grid[i-1];
     } else {
       target = &grid[i];
     }
 #elif NDIM == 2
-    if (c->prim.ux >= 0){
+    if (c->prim.u[0] >= 0){
       target = &grid[i-1][j];
     } else {
       target = &grid[i][j];
     }
   } else if (dimension == 1){
-    if (c->prim.uy >= 0){
+    if (c->prim.u[1] >= 0){
       target = &grid[i][j-1];
     } else {
       target = &grid[i][j];
@@ -69,19 +69,19 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
 
   if (dimension == 0){
 #if NDIM == 1
-    if (c->prim.ux >= 0){
+    if (c->prim.u[0] >= 0){
       target = &grid[i];
     } else {
       target = &grid[i+1];
     }
 #elif NDIM == 2
-    if (c->prim.ux >= 0){
+    if (c->prim.u[0] >= 0){
       target = &grid[i][j];
     } else {
       target = &grid[i+1][j];
     }
   } else if (dimension == 1){
-    if (c->prim.uy >= 0){
+    if (c->prim.u[1] >= 0){
       target = &grid[i][j];
     } else {
       target = &grid[i][j+1];
@@ -128,7 +128,7 @@ void limiter_get_slope(cell* c, pstate* slope, int dimension){
 
   /* and now do what shall be done */
   slope->rho = 0.5 * (right.prim.rho - left.prim.rho) / pars.dx;
-  slope->ux = 0.5 * (right.prim.ux - left.prim.ux) / pars.dx;
-  slope->uy = 0.5 * (right.prim.uy - left.prim.uy) / pars.dx;
+  slope->u[0] = 0.5 * (right.prim.u[0] - left.prim.u[0]) / pars.dx;
+  slope->u[1] = 0.5 * (right.prim.u[1] - left.prim.u[1]) / pars.dx;
   slope->p = 0.5 * (right.prim.p - left.prim.p) / pars.dx;
 }

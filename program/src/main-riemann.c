@@ -77,12 +77,8 @@ int main(int argc, char* argv[]){
   io_read_ic_twostate(skiplines_ic);
 
   /* get the left and right state of the original problem */
-  pstate wL = grid[pars.nx/2+BC-1].prim;
-  pstate wR = grid[pars.nx/2+BC].prim;
-
-  oneDpstate left = {wL.rho, wL.ux, wL.p};
-  oneDpstate right = {wR.rho, wR.ux, wR.p};
-
+  pstate left = grid[pars.nx/2+BC-1].prim;
+  pstate right = grid[pars.nx/2+BC].prim;
 
   /* pretend we're doing hydro */
   int outcount = 0;
@@ -101,18 +97,14 @@ int main(int argc, char* argv[]){
 
   log_message("Solving Riemann problem.\n");
   log_message("rho_L %12.6f; rho_R %12.6f\n", left.rho, right.rho);
-  log_message("  u_L %12.6f;   u_R %12.6f\n", left.u, right.u);
+  log_message("  u_L %12.6f;   u_R %12.6f\n", left.u[0], right.u[0]);
   log_message("  p_L %12.6f;   p_R %12.6f\n", left.p, right.p);
   float center = (pars.nx/2 + BC) * pars.dx;
   float wavevel;
   for (int i = BC; i<BC+pars.nx; i++){
     float x = (i+0.5)*pars.dx - center;
     float xovert = x / pars.tmax;
-    oneDpstate solution;
-    riemann_solve(&left, &right, &solution, xovert, &wavevel);
-    grid[i].prim.rho = solution.rho;
-    grid[i].prim.ux = solution.u;
-    grid[i].prim.p = solution.p;
+    riemann_solve(&left, &right, &grid[i].prim, xovert, &wavevel, /*dimension=*/0);
     grid[i].wavevel = wavevel;
   }
 

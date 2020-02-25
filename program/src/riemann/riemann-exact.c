@@ -17,24 +17,29 @@ extern params pars;
 
 
 /* ============================================================================== */
-void riemann_solve(oneDpstate* left, oneDpstate* right, oneDpstate* sol, float xovert, float* wavevel){
+void riemann_solve(pstate* left, pstate* right, pstate* sol, 
+      float xovert, float* wavevel, int dimension){
 /* ============================================================================== */
-  /* Solve the Riemann problem with given left pstate state wL, right pstate
-   * pR, and sample it over the time t at place x, given as x / t in xovert
+  /* Solve the Riemann problem posed by a left and right state
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * pstate* sol:     pstate where solution will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * float* wavevel:  highest wave velocity from the problem
+   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
-    /* int vacuum = check_vacuum(&left, &right); */
+    int vacuum = check_vacuum(&left, &right);
 
-    /* if (vacuum){ */
-    /*   [> printf("calling vacuum for x=%lf\n", x[i]); <] */
-    /*   compute_riemann_vacuum(&left, &right, &w_intercell[i]); */
-    /* } */
-    /* else { */
-    float pstar = 0;
-    float ustar = 0;
-    riemann_compute_star_states(left, right, &pstar, &ustar);
-    riemann_sample_solution(left, right, pstar, ustar, sol, xovert, wavevel);
-    /* } */
+    if (vacuum){
+      compute_riemann_vacuum(&left, &right, &w_intercell[i]);
+    }
+    else {
+      float pstar = 0;
+      float ustar = 0;
+      riemann_compute_star_states(left, right, &pstar, &ustar, dimension);
+      riemann_sample_solution(left, right, pstar, ustar, sol, xovert, wavevel, dimension);
+    }
 }
 
 
@@ -43,10 +48,16 @@ void riemann_solve(oneDpstate* left, oneDpstate* right, oneDpstate* sol, float x
 
 
 /* ========================================================================================== */
-void riemann_compute_star_states(oneDpstate *left, oneDpstate *right, float *pstar, float *ustar){
+void riemann_compute_star_states(pstate *left, pstate *right, 
+      float *pstar, float *ustar, int dim){
 /* ========================================================================================== */
-  /* computes the star region pressure and velocity given the left and right pstates.         */
-  /*------------------------------------------------------------------------------------------*/
+  /* computes the star region pressure and velocity given the left and right pstates.         
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float* pstar:    where pressure of star region will be written
+   * float* ustar:    where velocity of star region will be written
+   * int dimension:   which fluid velocity dimensionto use. 0: x, 1: y
+   *------------------------------------------------------------------------------------------*/
 
   float AL = 2. / GP1 / left->rho;
   float AR = 2. / GP1 / right->rho;
@@ -55,7 +66,7 @@ void riemann_compute_star_states(oneDpstate *left, oneDpstate *right, float *pst
   float aL = gas_soundspeed(left->p, left->rho);
   float aR = gas_soundspeed(right->p, right->rho);
 
-  float delta_u = right->u - left->u;
+  float delta_u = right->u[dim] - left->u[dim];
 
   float pguess, pold;
 
@@ -82,7 +93,7 @@ void riemann_compute_star_states(oneDpstate *left, oneDpstate *right, float *pst
   }
   while (2*fabs((pguess-pold)/(pguess+pold)) >= EPSILON_ITER);
 
-  *ustar = left->u - fp(pguess, left,  AL, BL, aL);
+  *ustar = left->u[dim] - fp(pguess, left,  AL, BL, aL);
   *pstar = pguess;
 
   debugmessage("p* found after %d iterations.\n", niter);
@@ -99,7 +110,7 @@ void riemann_compute_star_states(oneDpstate *left, oneDpstate *right, float *pst
 
 
 /* =============================================================================== */
-float fp(float pstar, oneDpstate *s, float A, float B, float a){
+float fp(float pstar, pstate *s, float A, float B, float a){
 /* =============================================================================== */
   /* Left/Right part of the pressure function                                      */
   /*-------------------------------------------------------------------------------*/
@@ -119,7 +130,7 @@ float fp(float pstar, oneDpstate *s, float A, float B, float a){
 
 
 /* =============================================================================== */
-float dfpdp(float pstar, oneDpstate *s, float A, float B, float a){
+float dfpdp(float pstar, pstate *s, float A, float B, float a){
 /* =============================================================================== */
   /* First derivative of Left/Right part of the pressure function                  */
   /*-------------------------------------------------------------------------------*/
@@ -142,11 +153,19 @@ float dfpdp(float pstar, oneDpstate *s, float A, float B, float a){
 
 
 /* ================================================================================================== */
-void riemann_sample_solution(oneDpstate* left, oneDpstate* right, 
-    float pstar, float ustar, oneDpstate* sol, float xovert, float* wavevel){
+void riemann_sample_solution(pstate* left, pstate* right, 
+    float pstar, float ustar, pstate* sol, float xovert, float* wavevel, int dim){
 /* ================================================================================================== */
-  /* Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     */
-  /*--------------------------------------------------------------------------------------------------*/
+  /* Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float pstar:     pressure of star region
+   * float ustar:     velocity of star region
+   * pstate* sol:     pstate where solution will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * float* wavevel:  highest wave velocity from the problem
+   * int dim:         which fluid velocity direction to use. 0: x, 1: y
+   *--------------------------------------------------------------------------------------------------*/
 
   if (xovert <= ustar){
     /*------------------------*/
@@ -159,12 +178,12 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
       /*------------------*/
       /* left rarefaction */
       /*------------------*/
-      float SHL = left->u - aL;    /* speed of head of left rarefaction fan */
+      float SHL = left->u[dim] - aL;    /* speed of head of left rarefaction fan */
       *wavevel = fabs(SHL);
       if (xovert < SHL) {
         /* we're outside the rarefaction fan */
         sol->rho = left->rho;
-        sol->u = left->u;
+        sol->u[dim] = left->u[dim];
         sol->p = left->p;
       }
       else {
@@ -172,15 +191,15 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
         float STL = ustar - astarL;  /* speed of tail of left rarefaction fan */
         if (xovert < STL){
           /* we're inside the fan */
-          float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u - xovert) ), (2./GM1));
+          float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - xovert) ), (2./GM1));
           sol->rho = left->rho * precomp;
-          sol->u = 2./GP1 * (GM1HALF * left->u + aL + xovert);
+          sol->u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + xovert);
           sol->p = left->p * pow(precomp, GAMMA);
         }
         else{
           /* we're in the star region */
           sol->rho = left->rho*pow(pstaroverpL, ONEOVERGAMMA);
-          sol->u = ustar;
+          sol->u[dim] = ustar;
           sol->p = pstar;
         }
       }
@@ -189,18 +208,18 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
       /*------------------*/
       /* left shock       */
       /*------------------*/
-      float SL  = left->u  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + ALPHA); /* left shock speed */
+      float SL  = left->u[dim]  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + ALPHA); /* left shock speed */
       *wavevel = fabs(SL);
       if (xovert < SL){
         /* we're outside the shock */
         sol->rho = left->rho;
-        sol->u = left->u;
+        sol->u[dim] = left->u[dim];
         sol->p = left->p;
       }
       else{
         /* we're in the star region */
         sol->rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1) * left->rho;
-        sol->u = ustar;
+        sol->u[dim] = ustar;
         sol->p = pstar;
       }
     }
@@ -216,12 +235,12 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
       /*-------------------*/
       /* right rarefaction */
       /*-------------------*/
-      float SHR = right->u + aR;   /* speed of head of right rarefaction fan */
+      float SHR = right->u[dim] + aR;   /* speed of head of right rarefaction fan */
       *wavevel = fabs(SHR);
       if (xovert > SHR) {
         /* we're outside the rarefaction fan */
         sol->rho = right->rho;
-        sol->u = right->u;
+        sol->u[dim] = right->u[dim];
         sol->p = right->p;
       }
       else {
@@ -229,15 +248,15 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
         float STR = ustar + astarR;  /* speed of tail of right rarefaction fan */
         if (xovert > STR){
           /* we're inside the fan */
-          float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u - xovert) ), (2/GM1));
+          float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert) ), (2/GM1));
           sol->rho = left->rho * precomp;
-          sol->u = 2./ GP1 * (GM1HALF * right->u - aR + xovert);
+          sol->u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + xovert);
           sol->p = left->p * pow(precomp, GAMMA);
         }
         else{
           /* we're in the star region */
           sol->rho = right->rho * pow(pstaroverpR, ONEOVERGAMMA);
-          sol->u = ustar;
+          sol->u[dim] = ustar;
           sol->p = pstar;
         }
       }
@@ -246,18 +265,18 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
       /*------------------*/
       /* right shock      */
       /*------------------*/
-      float SR  = right->u + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + ALPHA); /* right shock speed */
+      float SR  = right->u[dim] + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + ALPHA); /* right shock speed */
       *wavevel = fabs(SR);
       if (xovert > SR){
         /* we're outside the shock */
         sol->rho = right->rho;
-        sol->u = right->u;
+        sol->u[dim] = right->u[dim];
         sol->p = right->p;
       }
       else{
         /* we're in the star region */
         sol->rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1) * right->rho;
-        sol->u = ustar;
+        sol->u[dim] = ustar;
         sol->p = pstar;
       }
     }
@@ -385,32 +404,3 @@ void riemann_sample_solution(oneDpstate* left, oneDpstate* right,
 /*   return; */
 /* } */
 
-
-
-
-
-
-/* [> ====================================================== <] */
-/* int check_vacuum(pstate *left, pstate *right){ */
-/* [> ====================================================== <] */
-/*   [> Check whether we work with vacuum                    <] */
-/*   [> returns true (1) if vacuum, 0 otherwise              <] */
-/*   [>------------------------------------------------------<] */
-/*  */
-/*   if (left->rho == 0 && left->p == 0){ */
-/*     return(1); */
-/*   } */
-/*   if (right->rho == 0 && right->p == 0){ */
-/*     return(1); */
-/*   } */
-/*  */
-/*   float delta_u = right->ux - left->ux; */
-/*   float u_crit = 2./(gamma - 1) * (gas_soundspeed(left) + gas_soundspeed(right)); */
-/*  */
-/*   if (delta_u < u_crit){ */
-/*     return(0); */
-/*   } */
-/*   else { */
-/*     return(1); */
-/*   } */
-/* } */
