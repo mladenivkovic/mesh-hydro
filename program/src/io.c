@@ -175,6 +175,7 @@ void io_read_ic_twostate(int skip){
     if (line_is_comment(tempbuff)) continue;
     remove_trailing_comments(tempbuff);
     if (line_is_empty(tempbuff)) continue;
+    if (!check_name_equal_value_present(tempbuff)) continue;
 
     debugmessage("In io_read_ic_twostate: After cleanup, read line is: %s", tempbuff);
 
@@ -289,7 +290,7 @@ void io_read_ic_arbitrary(int skip){
 
 #if NDIM == 1
     float rho, u, p;
-    check_number_of_columns(tempbuff, 3);
+    check_number_of_columns_IC(tempbuff, 3);
     sscanf(tempbuff, "%f %f %f\n", &rho, &u, &p);
 
     grid[i].prim.rho = rho;
@@ -301,7 +302,7 @@ void io_read_ic_arbitrary(int skip){
 
 #elif NDIM == 2
     float rho, ux, uy, p;
-    check_number_of_columns(tempbuff, 4);
+    check_number_of_columns_IC(tempbuff, 4);
     sscanf(tempbuff, "%f %f %f %f\n", &rho, &ux, &uy, &p);
 
     grid[i][j].prim.rho = rho;
@@ -381,9 +382,9 @@ void io_read_paramfile(){
     if (line_is_comment(tempbuff)) continue;
     remove_trailing_comments(tempbuff);
     if (line_is_empty(tempbuff)) continue;
+    if (!check_name_equal_value_present(tempbuff)) continue;
 
-    sscanf(tempbuff, "%s = %[^\n]\n", varname, varvalue);
-
+    sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
 
     if (strcmp(varname,"verbose") == 0) {
       pars.verbose = atoi(varvalue);
@@ -704,10 +705,57 @@ void remove_trailing_comments(char* line){
 }
 
 
+int check_name_equal_value_present(char* line){
+  /* ----------------------------------------------------------------
+   * Check that the line you're reading has the correct number of
+   * columns, delimited by an equality sign.
+   * We expect <name> = <param>
+   *
+   * returns 1 if that is the case, 0 if not.
+   * ----------------------------------------------------------------*/
+
+  int pos = 0;
+  int check = 0;
+  int len = strlen(line);
+
+  /* first check that we have an equal sign in there */
+  for (int i = 0; i<len; i++){
+    if (line[i] == '='){
+      pos = i;
+      break;
+    }
+  }
+  if (pos==0) return(0); /* '=' is either in first place or not present. */
+
+  /* now check that we have non-whitespace characters */ 
+  for (int i = 0; i<pos; i++){
+    if (line[i] != ' '){
+      check = 1;
+      break;
+    }
+  }
+
+  if (!check) return(0);
+  check = 0;
+
+  /* now check that we have non-whitespace characters after the equal sign */
+  for (int i = pos+1; i < len; i++){
+    if (line[i] != ' '){
+      check = 1;
+      break;
+    }
+  }
+
+  if (!check) return(0);
+  return(1);
+}
 
 
 
-void check_number_of_columns(char* line, int should){
+
+
+
+void check_number_of_columns_IC(char* line, int should){
   /* ----------------------------------------------------------------
    * Check that the line you're reading has the correct number of
    * columns, delimited by an empty space. int should defines the

@@ -55,6 +55,7 @@ void params_init_defaults(){
 
 
 
+
 void params_init_derived(){
   /* ------------------------------------------------- */
   /* Set up parameters that need some processing first */
@@ -92,6 +93,7 @@ void params_init_derived(){
 
     /* now copy the exact part that you want into filename string */
     strncpy(pars.outputfilename, pars.datafilename+slash, dot-slash);
+    pars.outputfilename[dot-slash] = '\0'; /* safety measure */
     strcat(pars.outputfilename, "-");
 
     /* Add hydro solver */
@@ -254,6 +256,8 @@ void params_check_riemann(){
 
 
 
+
+
 void params_generate_riemann_output_filename(){
   /* ------------------------------------------------- */
   /* Create a filename for the output for when the code
@@ -287,10 +291,11 @@ void params_generate_riemann_output_filename(){
   utils_get_macro_strings(solver, riemann, limiter);
 
   /* now copy the exact part that you want into filename string */
+  strcpy(pars.outputfilename, "");
   strncpy(pars.outputfilename, pars.datafilename+slash, dot-slash);
+  pars.outputfilename[dot-slash] = '\0';
   strcat(pars.outputfilename, "-RIEMANN-");
   strcat(pars.outputfilename, riemann);
-
 }
 
 

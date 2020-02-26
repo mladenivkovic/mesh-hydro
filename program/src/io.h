@@ -24,6 +24,7 @@ void io_check_file_exists(char* fname);
 int line_is_empty(char* line);
 int line_is_comment(char* line);
 void remove_trailing_comments(char* line);
-void check_number_of_columns(char* line, int should);
+int check_name_equal_value_present(char* line);
+void check_number_of_columns_IC(char* line, int should);
 
 #endif
