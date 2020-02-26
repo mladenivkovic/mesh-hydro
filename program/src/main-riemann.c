@@ -60,9 +60,9 @@ int main(int argc, char* argv[]){
     exit(2);
   }
 
+  params_generate_riemann_output_filename(); /* create a different file name than the default */
   params_init_derived(); /* process the parameters you got. */
   params_check_riemann(); /* check whether we can work with this setup. */
-  params_generate_riemann_output_filename(); /* create a different file name than the default */
 
 
   /* print / announce stuff for logging */

@@ -110,7 +110,7 @@ float fp(float pstar, pstate *s, float A, float B, float a){
   }
   else{
     /* we have a rarefaction situation */
-    return 2 * a / GM1 * (pow(pstar/s->p, ALPHA) - 1);
+    return 2 * a / GM1 * (pow(pstar/s->p, BETA) - 1);
   }
 }
 
@@ -172,7 +172,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
         sol->p = left->p;
       }
       else {
-        float astarL = aL * pow(pstaroverpL, ALPHA);
+        float astarL = aL * pow(pstaroverpL, BETA);
         float STL = ustar - astarL;  /* speed of tail of left rarefaction fan */
         if (xovert < STL){
           /* we're inside the fan */
@@ -193,7 +193,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /*------------------*/
       /* left shock       */
       /*------------------*/
-      float SL  = left->u[dim]  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + ALPHA); /* left shock speed */
+      float SL  = left->u[dim]  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + BETA); /* left shock speed */
       *wavevel = fabs(SL);
       if (xovert < SL){
         /* we're outside the shock */
@@ -229,7 +229,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
         sol->p = right->p;
       }
       else {
-        float astarR = aR * pow(pstaroverpR, ALPHA);
+        float astarR = aR * pow(pstaroverpR, BETA);
         float STR = ustar + astarR;  /* speed of tail of right rarefaction fan */
         if (xovert > STR){
           /* we're inside the fan */
@@ -250,7 +250,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /*------------------*/
       /* right shock      */
       /*------------------*/
-      float SR  = right->u[dim] + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + ALPHA); /* right shock speed */
+      float SR  = right->u[dim] + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + BETA); /* right shock speed */
       *wavevel = fabs(SR);
       if (xovert > SR){
         /* we're outside the shock */

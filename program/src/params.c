@@ -63,6 +63,7 @@ void params_init_derived(){
 
   /* Generate output filename based on ic filename */
   /*-----------------------------------------------*/
+  /* do this only if no basename is given */
   if (strlen(pars.outputfilename)==0) {
 
     int dot = 0;
@@ -264,38 +265,42 @@ void params_generate_riemann_output_filename(){
    * is employed as a Riemann solver only
    * ------------------------------------------------- */
 
-  int dot = 0;
-  /* extract filename without suffix */
-  for (int i = strlen(pars.datafilename); i > 0; i--){
-    if (pars.datafilename[i] == '.'){
-      dot = i;
-      break;
+  /* do this only if no basename is given */
+  if (strlen(pars.outputfilename)==0) {
+
+    int dot = 0;
+    /* extract filename without suffix */
+    for (int i = strlen(pars.datafilename); i > 0; i--){
+      if (pars.datafilename[i] == '.'){
+        dot = i;
+        break;
+      }
     }
-  }
 
-  int slash = 0;
-  /* remove possible directories paths from filename*/
-  for (int i = 0; i < (int) strlen(pars.datafilename); i++){
-    if (pars.datafilename[i] == '/'){
-      slash = i;
+    int slash = 0;
+    /* remove possible directories paths from filename*/
+    for (int i = 0; i < (int) strlen(pars.datafilename); i++){
+      if (pars.datafilename[i] == '/'){
+        slash = i;
+      }
     }
+
+    if (dot==0) dot = strlen(pars.datafilename);
+    if (slash > 0) slash += 1;
+
+    char solver[80];
+    char riemann[80];
+    char limiter[80];
+
+    utils_get_macro_strings(solver, riemann, limiter);
+
+    /* now copy the exact part that you want into filename string */
+    strcpy(pars.outputfilename, "");
+    strncpy(pars.outputfilename, pars.datafilename+slash, dot-slash);
+    pars.outputfilename[dot-slash] = '\0';
+    strcat(pars.outputfilename, "-RIEMANN-");
+    strcat(pars.outputfilename, riemann);
   }
-
-  if (dot==0) dot = strlen(pars.datafilename);
-  if (slash > 0) slash += 1;
-
-  char solver[80];
-  char riemann[80];
-  char limiter[80];
-
-  utils_get_macro_strings(solver, riemann, limiter);
-
-  /* now copy the exact part that you want into filename string */
-  strcpy(pars.outputfilename, "");
-  strncpy(pars.outputfilename, pars.datafilename+slash, dot-slash);
-  pars.outputfilename[dot-slash] = '\0';
-  strcat(pars.outputfilename, "-RIEMANN-");
-  strcat(pars.outputfilename, riemann);
 }
 
 
