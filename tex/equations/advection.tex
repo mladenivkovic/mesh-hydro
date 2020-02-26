@@ -6,7 +6,7 @@
 Advection is a bit of an exception as a hydrodynamics method because we're not actually solving the (ideal) gas equations, but these instead:
 
 \begin{equation}
-	\DELDT{ \U } + \V \cdot \DELDX{\U} = 0
+	\DELDT{ \U } + v \cdot \DELDX{\U} = 0
 \end{equation}
 
 
@@ -19,12 +19,14 @@ Which is still a conservation law of the form
 with the flux tensor 
 
 \begin{equation}
-	\F = \V \cdot \U
+	\F = v \cdot \U
 \end{equation}
 
-We assume $\V = $ const.
+We assume the advection velocity $v = $ const.
 
-The analytical solution is given by any function $q(x)$ with $\U(x,t) = q(\x - \V t)$, which is just $q(x)$ translated by $\V t$.
+Note that in the formalism used, we only solve the 1D advection, but for every component of the state vector $\U$ and flux tensor $\F$
+
+The analytical solution is given by any function $q(x)$ with $\U(x,t) = q(x - v t)$, which is just $q(x)$ translated by $v t$.
 
 
 
@@ -40,13 +42,13 @@ The analytical solution is given by any function $q(x)$ with $\U(x,t) = q(\x - \
 
 
 We assume that the cell state within a cell is constant (fig. \ref{fig:pwconst}).
-Furthermore, we also assume that the velocity $\V$ is constant and positive.
+Furthermore, we also assume that the velocity $v$ is constant and positive.
 
 
 \begin{align}
 	\U_i ^{n+1} &= 
 		\U_i^{n} +  \frac{\Delta t}{\Delta x} \left( \F_{i-\half}^{n+\half} - \F_{i+\half}^{n+\half} \right) \label{eq:advection_basic}\\ 
-	\F_{i\pm\half}^{n+\half} &= \V_{i\pm\half}\cdot \U_{i - \half \pm \half} \label{eq:advection_flux}
+	\F_{i\pm\half}^{n+\half} &= v_{i\pm\half}\cdot \U_{i - \half \pm \half} \label{eq:advection_flux}
 \end{align}
 
 The method is first order accurate in time and space.
@@ -66,7 +68,7 @@ This is unphysical and leads to violent instabilites.
 So if we have negative velocity, all we need to do is change the expression \ref{eq:advection_flux} to
 
 \begin{equation}
-	\F_{i\pm\half}^{n+\half} = \V_{i\pm\half}\cdot \U_{i + \half \pm \half}
+	\F_{i\pm\half}^{n+\half} = v_{i\pm\half}\cdot \U_{i + \half \pm \half}
 \end{equation}
 
 
@@ -91,8 +93,8 @@ So if we have negative velocity, all we need to do is change the expression \ref
 This time, we assume that the state is not constant within a cell, but follows a piecewise linear profile with some slope $\mathbf{s}$ (fig. \ref{fig:pwlin}):
 
 \begin{align*}
-	\text{For } \x_{i-\half} < \x_i < \x_{i+\half}: &&
-	\quad \U(\x, t=t_n) &= \U_i^n + \mathbf{s}_i^n(\x - \x_i) \\
+	\text{For } x_{i-\half} < x_i < x_{i+\half}: &&
+	\quad \U(x, t=t_n) &= \U_i^n + \mathbf{s}_i^n(x - x_i) \\
 	\text{Centered method:} && \mathbf{s_i}^n &= \frac{\U_{i+1}^n - \U_{i-1}^n}{ 2 \Delta x}
 \end{align*}
 
@@ -101,23 +103,23 @@ Other choices for the slope are possible and stable.
 
 
 
-Assuming a positive constant velocity $\V$, we derive the flux $\F$ at the time $t^n < t < t^{n+1}$ at the interface position $i-\half$.
-At time $t$, the cell will have been advected by a distance $\V (t - t^n)$, and the the current state at the interface will be
+Assuming a positive constant velocity $v$, we derive the flux $\F$ at the time $t^n < t < t^{n+1}$ at the interface position $i-\half$.
+At time $t$, the cell will have been advected by a distance $v (t - t^n)$, and the the current state at the interface will be
 
 \begin{align*}
 	\U(x=x_{i-\half}, t) 
-		&= \U_{i-1}^n + \mathbf{s}_{i-1} (\x_{i-\half} - \V (t - t^n) - \x_{i-1}) \\
-		&= \U_{i-1}^n + \mathbf{s}_{i-1} (\half \Delta x - \V (t - t^n))
+		&= \U_{i-1}^n + \mathbf{s}_{i-1} (x_{i-\half} - v (t - t^n) - x_{i-1}) \\
+		&= \U_{i-1}^n + \mathbf{s}_{i-1} (\frac{1}{2} \Delta x - v (t - t^n))
 \end{align*}
 
-To understand how the $\x_{i-\half} - \V (t - t^n)$ comes into play, imagine the state doesn't change (i.e. isn't advected), but you move the boundaries to the left instead over a distance $\V(t - t^n)$.
+To understand how the $x_{i-\half} - v (t - t^n)$ comes into play, imagine the state doesn't change (i.e. isn't advected), but you move the boundaries to the left instead over a distance $v(t - t^n)$.
 
 So if we have a \textbf{negative} constant velocity, the term changes to 
 
 \begin{align*}
 	\U(x=x_{i-\half}, t) 
-		&= \U_{i}^n + \mathbf{s}_{i} (\x_{i-\half} - \V (t - t^n) - \x_{i}) \\
-		&= \U_{i}^n + \mathbf{s}_{i} (-\V (t - t^n) - \Delta x)
+		&= \U_{i}^n + \mathbf{s}_{i} (x_{i-\half} - v (t - t^n) - x_{i}) \\
+		&= \U_{i}^n + \mathbf{s}_{i} (-v (t - t^n) - \Delta x)
 \end{align*}
 
 
@@ -128,34 +130,34 @@ Finally, we can compute the average flux over the time step $\Delta t = t^{n+1} 
 \begin{align}
 	\F_{i-\half}^{n+\half} 
 	&= \langle \F_{i+\half}(t)\rangle _{t^n} ^ {t^{n+1}} 
-	= \frac{1}{\Delta t} \int_{t^n}^{t^{n+1}} \V \U(\x 
-	= \x_{i-\half}, t) \\
-	&= \frac{1}{\Delta t} \int_{t^n}^{t^{n+1}} \V \left( \U_{i-1}^n + \mathbf{s}_{i-1} (\half \Delta x - \V (t - t^n)) \right) \\
-	&= \V \left( \U_{i-1}^n  + \mathbf{s}_{i-1} \left( \half \Delta x - \V \left( \left[ \frac{1}{2 \Delta t} t^2 \right]_{t^n}^{t^{n+1}} - t^n \right)  \right) \right) \\
-	&= \V \left( \U_{i-1}^n  + \mathbf{s}_{i-1} \left( \half \Delta x - \V \left[ \frac{1}{2} (t^{n+1} + t^n) - t^n \right] \right) \right) \\
-	&= \V \left( \U_{i-1}^n  + \half \mathbf{s}_{i-1} \left(\Delta x - \V \Delta t \right) \right)
+	= \frac{1}{\Delta t} \int_{t^n}^{t^{n+1}} v \U(x 
+	= x_{i-\half}, t) \\
+	&= \frac{1}{\Delta t} \int_{t^n}^{t^{n+1}} v \left( \U_{i-1}^n + \mathbf{s}_{i-1} (\frac{1}{2} \Delta x - v (t - t^n)) \right) \\
+	&= v \left( \U_{i-1}^n  + \mathbf{s}_{i-1} \left( \frac{1}{2} \Delta x - v \left( \left[ \frac{1}{2 \Delta t} t^2 \right]_{t^n}^{t^{n+1}} - t^n \right)  \right) \right) \\
+	&= v \left( \U_{i-1}^n  + \mathbf{s}_{i-1} \left( \frac{1}{2} \Delta x - v \left[ \frac{1}{2} (t^{n+1} + t^n) - t^n \right] \right) \right) \\
+	&= v \left( \U_{i-1}^n  + \frac{1}{2} \mathbf{s}_{i-1} \left(\Delta x - v \Delta t \right) \right)
 \end{align}
 
 
 
 Finally averaging the fluxes over a time step gives:
 \begin{equation}
-	\U_i^{n+1} = \U_i^n - \V \cdot \frac{\Delta t}{\Delta x} ( \U_i ^n - \U_{i-1}^n) - \V \cdot \frac{\Delta t}{\Delta x} \frac{1}{2} (\mathbf{s}_i^n - \mathbf{s}_{i-1}^n)(\Delta x - \V \Delta t)
+	\U_i^{n+1} = \U_i^n - v \cdot \frac{\Delta t}{\Delta x} ( \U_i ^n - \U_{i-1}^n) - v \cdot \frac{\Delta t}{\Delta x} \frac{1}{2} (\mathbf{s}_i^n - \mathbf{s}_{i-1}^n)(\Delta x - v \Delta t)
 \end{equation}
 
 This is the same as eq. \ref{eq:advection_basic} where we used
 \begin{align*}
 	\F_{i + \half}^{n+\half} 
-		& = \V_{i+\half} \cdot  \U_{i+\half} ^{n + \half} \\
-		& = \V \cdot \U(\x_{i+\half} - \half \V \Delta t) \\
-		& = \V \cdot \left( \U_i^n + \mathbf{s}_i^n [(\x_{i+\half} - \half \V \Delta t) - \x_i ]  \right)\\
-		& = \V \cdot \left( \U_i^n + \half \mathbf{s}_i^n (\Delta \x -  \V \Delta t)  \right)\\
+		& = v_{i+\half} \cdot  \U_{i+\half} ^{n + \half} \\
+		& = v \cdot \U(x_{i+\half} - \frac{1}{2} v \Delta t) \\
+		& = v \cdot \left( \U_i^n + \mathbf{s}_i^n [(x_{i+\half} - \frac{1}{2} v \Delta t) - x_i ]  \right)\\
+		& = v \cdot \left( \U_i^n + \frac{1}{2} \mathbf{s}_i^n (\Delta x -  v \Delta t)  \right)\\
 \end{align*}
 
 and analoguely
 \begin{align*}
 	\F_{i - \half}^{n+\half} 
-		& = \V \cdot \left( \U_{i-1}^n + \frac{1}{2} \mathbf{s}_{i-1}^n (\Delta \x -  \V \Delta t)  \right)\\
+		& = v \cdot \left( \U_{i-1}^n + \frac{1}{2} \mathbf{s}_{i-1}^n (\Delta x -  v \Delta t)  \right)\\
 \end{align*}
 
 
@@ -172,17 +174,17 @@ To summarize the formulae:
 		\U_i^{n} +  \frac{\Delta t}{\Delta x} \left( \F_{i-\half}^{n+\half} - \F_{i+\half}^{n+\half} \right) & \\
 	\F_{i-\half}^{n+\half} &= 
 		\begin{cases}
-			\V_{i-\half} \cdot \U_{i-1}^n +  \frac{1}{2} \V_{i-\half} \cdot\mathbf{s}_{i-1}^n (\Delta \x -  \V_{i-\half} \Delta t)
-			 	& \quad \text{for } \V \geq 0 \\
-			\V_{i-\half} \cdot \U_{i}^n -\frac{1}{2} \V_{i-\half} \cdot \mathbf{s}_{i}^n (\Delta \x + \V_{i-\half} \Delta t)
-				& \quad \text{for } \V \leq 0 \\
+			v_{i-\half} \cdot \U_{i-1}^n +  \frac{1}{2} v_{i-\half} \cdot\mathbf{s}_{i-1}^n (\Delta x -  v_{i-\half} \Delta t)
+			 	& \quad \text{for } v \geq 0 \\
+			v_{i-\half} \cdot \U_{i}^n -\frac{1}{2} v_{i-\half} \cdot \mathbf{s}_{i}^n (\Delta x + v_{i-\half} \Delta t)
+				& \quad \text{for } v \leq 0 \\
 		\end{cases} \\
 	\F_{i+\half}^{n+\half} &= 
 		\begin{cases}
-			\V_{i+\half} \cdot \U_{i}^n +  \frac{1}{2} \V_{i+\half} \cdot\mathbf{s}_{i}^n (\Delta \x -  \V_{i+\half} \Delta t)
-			 	& \quad \text{for } \V \geq 0 \\
-			\V_{i+\half} \cdot \U_{i+1}^n -\frac{1}{2} \V_{i+\half} \cdot \mathbf{s}_{i+1}^n (\Delta \x + \V_{i+\half} \Delta t)
-				& \quad \text{for } \V \leq 0 \\
+			v_{i+\half} \cdot \U_{i}^n +  \frac{1}{2} v_{i+\half} \cdot\mathbf{s}_{i}^n (\Delta x -  v_{i+\half} \Delta t)
+			 	& \quad \text{for } v \geq 0 \\
+			v_{i+\half} \cdot \U_{i+1}^n -\frac{1}{2} v_{i+\half} \cdot \mathbf{s}_{i+1}^n (\Delta x + v_{i+\half} \Delta t)
+				& \quad \text{for } v \leq 0 \\
 		\end{cases} \\		
 \end{align*}
 
@@ -193,7 +195,7 @@ To summarize the formulae:
 We can now insert a more general expression for the slopes.
 Let 
 \begin{align}
-	\theta_{i-\half} = \begin{cases} +1 \quad \text{ for } \V \geq 0 \\ -1 \quad  \text{ for } \V \leq{0} \end{cases}
+	\theta_{i-\half} = \begin{cases} +1 \quad \text{ for } v \geq 0 \\ -1 \quad  \text{ for } v \leq{0} \end{cases}
 \end{align}
 
 Then
@@ -203,8 +205,8 @@ Then
 		&= \frac{1}{2} \Delta x \left[ (1 + \theta_{i-\half}) \mathbf{s}_{i-1}^n + (1 - \theta_{i-\half})  \mathbf{s}_{i}^n \right]  \\
 	&\equiv \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \\
 	r^n_{i-\half} &= \begin{cases}
-		\frac{\U_{i-1}^n - \U_{i-2}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } \V  \geq 0 \\
-		\frac{\U_{i+1}^n - \U_{i}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } \V  \leq 0 \\
+		\frac{\U_{i-1}^n - \U_{i-2}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \geq 0 \\
+		\frac{\U_{i+1}^n - \U_{i}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \leq 0 \\
 	\end{cases} 
 \end{align}
 
@@ -212,11 +214,11 @@ $\phi$ is discussed later. Finally:
 
 \begin{align}
 	\F_{i-\half}^{n+\half} = 
-		&\frac{1}{2} \V_{i-\half} \left[  (1 + \theta_{i-\half}) \U_{i-1}^n + (1 - \theta_{i-\half})  \U_{i}^n \right] +\nonumber\\
-		&\frac{1}{2}| \V_{i-\half} | \left( 1 - \left| \frac{\V_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1}\\
+		&\frac{1}{2} v_{i-\half} \left[  (1 + \theta_{i-\half}) \U_{i-1}^n + (1 - \theta_{i-\half})  \U_{i}^n \right] +\nonumber\\
+		&\frac{1}{2}| v_{i-\half} | \left( 1 - \left| \frac{v_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1}\\
 	\F_{i+\half}^{n+\half} = 
-		&\frac{1}{2} \V_{i+\half} \left[  (1 + \theta_{i+\half}) \U_{i}^n + (1 - \theta_{i+\half})  \U_{i+1}^n \right] +\nonumber\\
-		&\frac{1}{2}| \V_{i+\half} | \left( 1 - \left| \frac{\V_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2}
+		&\frac{1}{2} v_{i+\half} \left[  (1 + \theta_{i+\half}) \U_{i}^n + (1 - \theta_{i+\half})  \U_{i+1}^n \right] +\nonumber\\
+		&\frac{1}{2}| v_{i+\half} | \left( 1 - \left| \frac{v_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2}
 \end{align}
 
 
@@ -296,11 +298,11 @@ For $N$ dimensions, the condition translates to
 What is implemented is the equation
 
 \begin{equation}
-    \DELDT{\U} + \V \cdot \DELDVECX{\U} = 0
+    \DELDT{\U} + v \cdot \DELDX{\U} = 0
 \end{equation}
 
 
-where we assume that the velocity $\V$ is constant. 
+where we assume that the velocity $v$ is constant. 
 Therefore, the fluid velocity is never updated, but kept identical to the initial conditions.
 
 You can change that behaviour by removing the \verb|ADVECTION_KEEP_VELOCITY_CONSTANT| macro definition in \verb|defines.h|
