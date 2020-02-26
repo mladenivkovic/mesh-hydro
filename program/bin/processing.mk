@@ -168,4 +168,4 @@ endif
 
 
 OBJECTS = main.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
-RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(LIMITEROBJ) $(RIEMANOBJ)
+RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(LIMITEROBJ) $(RIEMANNOBJ)
