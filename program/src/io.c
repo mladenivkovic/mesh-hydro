@@ -554,17 +554,25 @@ void io_write_output(int *outstep, int step,  float t){
 
 
 
-
 int io_is_output_step(float t, float *dt, int step){
-  /* ----------------------------------------------- 
-   * Check whether we should be writing an output in
-   * this time step. Returns 1 if true, 0 otherwise.
-   * If necessary, reduces size of dt so that it 
-   * fits required output time exactly.
-   * t: current time of sim
-   * dt: current time step size of sim
-   * step: current step of sim
-   * ----------------------------------------------- */
+  /* -------------------------------------------------------------------------------------------------
+   * Check whether we should be writing an output in this time step. Returns 1 if true, 0 otherwise.
+   * If necessary, reduces size of dt so that it fits required output time exactly.
+   *
+   * t:     current time of sim
+   * dt:    current time step size of sim
+   * step:  current step of sim
+   * ------------------------------------------------------------------------------------------------- */
+
+  debugmessage("Checking whether we need to limit the timestep for output");
+
+  /* do timestep limiting first! */
+  /* this case can happen if dt_out = 0 and foutput = 0! */
+  if (pars.tmax > 0 && pars.tmax < t + *dt){
+    debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  pars.tmax - t, pars.tmax);
+    *dt = pars.tmax - t;
+    return(0);
+  }
 
   if (pars.foutput > 0){
     if (step % pars.foutput == 0){ 
@@ -572,6 +580,7 @@ int io_is_output_step(float t, float *dt, int step){
     } else{
       return(0);
     }
+
   }
 
   if (t == 0 || t == pars.tmax) return(0);
@@ -597,14 +606,6 @@ int io_is_output_step(float t, float *dt, int step){
       pars.noutput += 1;
       return(1);
     }
-  }
-
-  /* this case can happen if dt_out = 0 and foutput = 0! */
-  if (pars.tmax > 0 && pars.tmax < t + *dt){
-    debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  pars.tmax - t, pars.tmax);
-    *dt = pars.tmax - t;
-    /* no need to return 1 here, final output will be dumped anyhow */
-    /* just limit the timestep though */
   }
 
   return(0);
@@ -705,6 +706,9 @@ void remove_trailing_comments(char* line){
 }
 
 
+
+
+
 int check_name_equal_value_present(char* line){
   /* ----------------------------------------------------------------
    * Check that the line you're reading has the correct number of
@@ -749,7 +753,6 @@ int check_name_equal_value_present(char* line){
   if (!check) return(0);
   return(1);
 }
-
 
 
 

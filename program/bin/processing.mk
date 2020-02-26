@@ -60,14 +60,11 @@ endif
 ifeq ($(strip $(RIEMANN)), HLLC)
 RIEMANNINT = 2
 endif
-ifeq ($(strip $(RIEMANN)), HLL)
+ifeq ($(strip $(RIEMANN)), TRRS)
 RIEMANNINT = 3
 endif
-ifeq ($(strip $(RIEMANN)), TRRS)
-RIEMANNINT = 4
-endif
 ifeq ($(strip $(RIEMANN)), TSRS)
-RIEMANNINT = 5
+RIEMANNINT = 4
 endif
 
 

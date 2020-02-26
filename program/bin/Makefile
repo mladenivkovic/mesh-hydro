@@ -8,11 +8,11 @@ EXEC = hydro
 # how many dimensions to compile for
 # Choices: 1, 2
 # NDIM = 1
-# NDIM = 2
+NDIM = 2
 
 
 # set which Riemann solver to use.
-# Choices: EXACT, TRRS, TSRS, HLL, HLLC
+# Choices: EXACT, TRRS, TSRS, HLLC
 # RIEMANN = EXACT
 # RIEMANN = NONE
 

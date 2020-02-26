@@ -13,7 +13,6 @@ You can pick between:
 	- Advection: piecewise constant, piecewise linear
 - Riemann solvers:
 	- Exact	(exact iterative solver)
-	- HLL	(Harten Lax van Leer approximate solver)
 	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
 	- TRRS	(Two Rarefaction approximate Riemann Solver)
 	- TSRS	(Two Shock approximate Riemann Solver)

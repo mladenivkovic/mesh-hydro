@@ -46,7 +46,7 @@
 #define GM1OGP1 (GM1)/(GP1)
 #define ONEOVERGAMMA 1./GAMMA
 #define GM1HALF 0.5*(GM1)
-#define ALPHA (GM1HALF) / GAMMA
+#define BETA (GM1HALF) / GAMMA
 
 
 /* boundary cells */
@@ -71,9 +71,8 @@
 #define NONE 0
 #define EXACT 1
 #define HLLC 2
-#define HLL 3
-#define TRRS 4
-#define TSRS 5
+#define TRRS 3
+#define TSRS 4
 
 /* define limiters as integers */
 #define MINMOD 1

@@ -280,9 +280,6 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
 
 
 
-
-
-
 void solver_advance_step(float* dt){
   /* ---------------------------------------------
    * Integrate the equations for one time step

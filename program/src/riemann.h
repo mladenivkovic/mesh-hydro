@@ -14,8 +14,6 @@
 #include "riemann/riemann-trrs.h"
 #elif RIEMANN == TSRS
 #include "riemann/riemann-tsrs.h"
-#elif RIEMANN == HLL
-#include "riemann/riemann-hll.h"
 #elif RIEMANN == HLLC
 #include "riemann/riemann-hllc.h"
 #endif
@@ -24,17 +22,6 @@
 void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dimension);
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension);
 void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dim);
-
-
-
-#ifdef RIEMANN_HLL
-#define HLL
-#endif
-#ifdef RIEMANN_HLLC
-#define HLL
-#endif
-
-
 
 
 #endif
