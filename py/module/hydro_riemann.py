@@ -221,7 +221,7 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
         f = f_K(pstar, pL, AL, BL, aL) + f_K(pstar, pR, AR, BR, aR) + uR - uL
         dfdp = df_Kdp(pstar, rhoL, pL, AL, BL, aL) + df_Kdp(pstar, rhoR, pR, AR, BR, aR)
         pstar_new = pstar - f / dfdp
-        diff = 2 * (pstar_new - pstar) / (pstar_new + pstar)
+        diff = 2 * abs(pstar_new - pstar) / abs(pstar_new + pstar)
         pstar = pstar_new
 
         if i > 1000:
