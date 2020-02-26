@@ -18,15 +18,11 @@
 
 
 
-from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
+from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename, label_to_kwargs
 from hydro_io import read_output
-from hydro_plotting import plot_1D_density_only
+from hydro_plotting import plot_1D_density_only, save_plot
 
 from sys import argv
-
-
-# plotting parameters
-dots = False    # overplot dots on 1D plot
 
 
 if __name__ == "__main__":
@@ -47,6 +43,6 @@ if __name__ == "__main__":
             print("I can't overplot 2D stuff...")
             quit(1)
         else:
-            fig = plot_1D_density_only(rho, f, dots=dots, t=t, draw_legend=True, fig = fig,
-                            nosave = f != filelist[-1]
-            )
+            fig = plot_1D_density_only(rho, draw_legend=True, fig = fig, kwargs=label_to_kwargs(t))
+
+    save_plot(fig, f, case="density-overplotted")

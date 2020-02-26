@@ -11,15 +11,11 @@
 
 
 
-from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
+from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename, label_to_kwargs
 from hydro_io import read_output
-from hydro_plotting import plot_1D_density_only, plot_2D_density_only
+from hydro_plotting import plot_1D_density_only, plot_2D_density_only, save_plot
 
 from sys import argv
-
-
-# plotting parameters
-dots = False    # overplot dots on 1D plot
 
 
 if __name__ == "__main__":
@@ -31,6 +27,9 @@ if __name__ == "__main__":
         ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:
-            plot_1D_density_only(rho, fname, dots=dots, t=t, draw_legend=True)
+            kwargs = label_to_kwargs(t)
+            fig = plot_1D_density_only(rho, draw_legend=True, kwargs=kwargs)
         elif ndim == 2:
-            plot_2D_density_only(rho, fname, t=t)
+            fig = plot_2D_density_only(rho, t = t)
+
+        save_plot(fig, fname, case='density')

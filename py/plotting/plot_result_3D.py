@@ -9,26 +9,21 @@
 # 
 # Usage:
 #   plot_result_3D.py file.out
-#-------------------------------------
+#------------------------------------------------------------
 
 
-
-from hydro_utils import get_only_cmdlinearg
+from hydro_utils import get_only_cmdlinearg, label_to_kwargs
 from hydro_io import read_output
-from hydro_plotting import plot_1D, plot_2D_in_3D
-
-
-# plotting parameters
-dots = False    # overplot dots on 1D plot
-
+from hydro_plotting import plot_1D, plot_2D_in_3D, save_plot
 
 if __name__ == "__main__":
     
     fname = get_only_cmdlinearg()
     ndim, rho, u, p, t, step = read_output(fname)
 
-
     if ndim == 1:
-        plot_1D(rho, u, p, fname, dots=dots)
+        fig = plot_1D(rho, u, p)
+        save_plot(fig, fname)
     elif ndim == 2:
-        plot_2D_in_3D(rho, u, p, fname)
+        fig = plot_2D_in_3D(rho, u, p, t=t)
+        save_plot(fig, fname, case="3D")

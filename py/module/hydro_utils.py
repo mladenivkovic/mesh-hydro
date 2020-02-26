@@ -48,3 +48,30 @@ def get_all_files_with_same_basename(fname):
     filelist.sort()
 
     return filelist
+
+
+
+def label_to_kwargs(t, kwargs={}):
+    """
+    Generate a label used in matplotlib.pyplot.plot() or similiar using either
+        - a string t: just pass it on as the label string
+        - a float t:  format it first: "t = {0:.3f}".format(t)
+    and add it to the kwargs dictionnary
+    
+    returns:
+        kwargs dictionnary
+    """
+
+    text = None
+    if isinstance(t, str):
+        text = t
+    elif isinstance(t, float):
+        text = r"$t = ${0:.3f}".format(t)
+    else:
+        raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+
+    if text is not None:
+        kwargs["label"] = text
+
+    return kwargs
+

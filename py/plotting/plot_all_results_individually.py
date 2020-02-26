@@ -11,15 +11,11 @@
 
 
 
-from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
+from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename, label_to_kwargs
 from hydro_io import read_output
-from hydro_plotting import plot_1D, plot_2D
+from hydro_plotting import plot_1D, plot_2D, save_plot
 
 from sys import argv
-
-
-# plotting parameters
-dots = False    # overplot dots on 1D plot
 
 
 if __name__ == "__main__":
@@ -31,6 +27,9 @@ if __name__ == "__main__":
         ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:
-            plot_1D(rho, u, p, fname, dots=dots)
+            fig = plot_1D(rho, u, p)
         elif ndim == 2:
-            plot_2D(rho, u, p, fname)
+            fig = plot_2D(rho, u, p, t=t)
+
+        save_plot(fig, fname)
+

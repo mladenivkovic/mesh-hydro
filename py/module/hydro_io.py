@@ -131,6 +131,7 @@ def read_output(fname):
 
 
 
+
 def read_ic(fname, nx=100):
     """
     Top-level function to read in the given IC file. File is passed as string fname.
@@ -444,6 +445,7 @@ def line_is_empty(line):
 
 
 
+
 def check_file_exists(fname):
     """
     Check that file exists, throw error if not.
@@ -457,6 +459,9 @@ def check_file_exists(fname):
 
 
 
+
+
+
 def remove_newline(line):
     """
     If newline character is the last character of the line, remove it.
@@ -466,6 +471,7 @@ def remove_newline(line):
             return (line[:-1]).strip()
 
     return line
+
 
 
 
@@ -521,4 +527,3 @@ def split_columns(line, delim=" "):
         splits.append(line[start:])
 
     return splits
-

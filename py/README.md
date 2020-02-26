@@ -54,3 +54,27 @@ Evaluations
 
 Contains plotting, comparing, and evaluation scripts for different tasks.
 E.g. compute and plot the convergence of a class of methods depending on grid spacing, dt, ...
+
+
+
+Testing
+-----------------
+The testing directory has some output and IC files so you can test your scripts on it.
+
+
+
+
+
+Want to build your own scripts?
+=============================================
+
+
+Here's some hints:
+
+- Reading in stuff: Use `read_output(...)` or `read_IC(...)` functions in `hydro_io.py`
+- Writing outputs: Use `write_ic(...)` from `hydro_io.py`
+- plotting stuff:
+    - use the `plot_*` functions in `hydro_plotting.py`
+    - plotting multiple figures in one plot: every `plot_1D*` function returns the `matplotlib.pyplot.figure()` object, and accepts such a figure object as keyword argument. So you can just pass the same figure object as the kwarg to overplot stuff in it. Overplotting stuff in 2D doesn't make sense, so it's not implemented.
+    - every `plot_*` function accepts a dict `kwargs` that is passed on to the `pyplot.plot()` or `pyplot.imshow()` for 2D or `pyplot.plot_surface()` in 3D, where you can put in line styles, labels, ...
+    - to save a figure: Either call `pyplot.savefig()` from your own script, or call `save_plot` from `hydro_plotting`

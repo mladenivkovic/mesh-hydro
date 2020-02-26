@@ -49,16 +49,12 @@ file_format = "png"
 
 
 
-def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave = False, fig = None, kwargs={}):
+def plot_1D(rho, u, p, draw_legend = False, fig = None, kwargs={}):
     """
     Create a plot from 1D data.
 
     rho, u, p:   np arrays of physical quantities
-    fname:       filename of the data you are plotting. Will be used to generate image filename
-    dots:        whether to overplot points over lines.
-    t:           time of the simulation. Used to label lines. If it is a string, the string will be used as the label instead.
-    draw_legend: whether to draw a legend. The line labels will be the time.
-    nosave:      don't save this figure.
+    draw_legend: whether to draw a legend.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
 
@@ -82,35 +78,19 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
-
-    text = None
-    if t is not None:
-        if isinstance(t, str):
-            text = t
-        elif isinstance(t, float):
-            text = r"$t = ${0:.3f}".format(t)
-        else:
-            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
-
     ax1.plot(x, rho,
-             label = text,
              **kwargs,
             )
-    if dots: ax1.scatter(x, rho)
     ax1.set_ylabel('density')
 
     ax2.plot(x, u,
-             label = text,
              **kwargs,
             )
-    if dots: ax2.scatter(x, u)
     ax2.set_ylabel('velocity')
 
     ax3.plot(x, p,
-             label = text,
              **kwargs,
             )
-    if dots: ax3.scatter(x, p)
     ax3.set_ylabel('pressure')
 
     for ax in fig.axes:
@@ -119,18 +99,6 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
         if draw_legend:
             ax.legend(prop={'size': 6})
 
-
-    if not nosave:
-        # if we have more than one line, this figure is used to overplot things.
-        # in that case, give it a different name.
-        case = None
-        if len(ax.get_lines()) > 1:
-            case = "overplotted"
-        figname = get_figname(fname, case = case)
-
-        plt.savefig(figname, format=file_format)
-        print("Saved figure", figname)
-
     return fig
 
 
@@ -138,16 +106,12 @@ def plot_1D(rho, u, p, fname, dots=False, t = None, draw_legend = False, nosave 
 
 
 
-def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nosave = False, fig = None, kwargs={}):
+def plot_1D_density_only(rho, draw_legend = False, fig = None, kwargs={}):
     """
     Create a plot from 1D data. Only plot density.
 
     rho, u, p:   np arrays of physical quantities
-    fname:       filename of the data you are plotting. Will be used to generate image filename
-    dots:        whether to overplot points over lines.
-    t:           time of the simulation
-    draw_legend: whether to draw a legend. The line labels will be the time.
-    nosave:      don't save this figure.
+    draw_legend: whether to draw a legend.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
 
@@ -168,31 +132,17 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
     x = np.linspace(0, 1, nx)
 
     ax1.plot(x, rho,
-             label = "t = {0:7.3f}".format(t),
              **kwargs,
             )
-    if dots: ax1.scatter(x, rho)
     ax1.set_ylabel('density')
 
     ax1.set_xlabel("x")
     ax1.set_xlim(0,1)
+
     if draw_legend:
         ax1.legend(prop={'size': 6})
 
-    if not nosave:
-        plt.subplots_adjust(left=0.15)
-
-        # if we have more than one line, this figure is used to overplot things.
-        # in that case, give it a different name.
-        case = "density"
-        threshold = 1
-        if dots: threshold += 1
-        if len(ax1.get_lines()) > threshold:
-            case = "density-overplotted"
-        figname = get_figname(fname, case = case)
-
-        plt.savefig(figname, format=file_format)
-        print("Saved figure", figname)
+    plt.subplots_adjust(left=0.15)
 
     return fig
 
@@ -203,7 +153,7 @@ def plot_1D_density_only(rho, fname, dots=False, t = 0, draw_legend = False, nos
 
 
 
-def plot_2D_density_only(rho, fname, t=None, kwargs={}):
+def plot_2D_density_only(rho, t=None, kwargs={}):
     """
     Create a plot from 2D data. Plots density only.
 
@@ -245,12 +195,6 @@ def plot_2D_density_only(rho, fname, t=None, kwargs={}):
             raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
         plt.figtext(0.05, 0.95, text)
 
-
-    figname = get_figname(fname, case="density")
-
-    plt.savefig(figname, format=file_format)
-    print("Saved figure", figname)
-
     return fig
 
 
@@ -261,11 +205,10 @@ def plot_2D_density_only(rho, fname, t=None, kwargs={}):
 
 
 
-def plot_2D(rho, u, p, fname, kwargs={}):
+def plot_2D(rho, u, p, t = None, kwargs={}):
     """
     Create a plot from 2D data.
     rho, u, p:   np arrays of physical quantities
-    fname:       filename of the data you are plotting. Will be used to generate image filename
     t:           time of the simulation
     draw_legend: whether to draw a legend. The line labels will be the time.
     nosave:      don't save this figure.
@@ -324,11 +267,14 @@ def plot_2D(rho, u, p, fname, kwargs={}):
         fig.colorbar(im, cax=cax)
 
 
-
-    figname = get_figname(fname)
-
-    plt.savefig(figname, format=file_format)
-    print("Saved figure", figname)
+    if t is not None:
+        if isinstance(t, str):
+            text = t
+        elif isinstance(t, float):
+            text = r"$t = ${0:.3f}".format(t)
+        else:
+            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+        plt.figtext(0.05, 0.95, text)
 
     return fig
 
@@ -338,11 +284,10 @@ def plot_2D(rho, u, p, fname, kwargs={}):
 
 
 
-def plot_2D_in_3D(rho, u, p, fname, kwargs={}):
+def plot_2D_in_3D(rho, u, p, t = None, kwargs={}):
     """
     Create a 3D plot from 2D data.
     rho, u, p:   np arrays of physical quantities
-    fname:       filename of the data you are plotting. Will be used to generate image filename
     t:           time of the simulation
     draw_legend: whether to draw a legend. The line labels will be the time.
     nosave:      don't save this figure.
@@ -394,15 +339,55 @@ def plot_2D_in_3D(rho, u, p, fname, kwargs={}):
         ax.set_ylabel("y")
         ax.set_ylim(0,1)
 
-    figname = get_figname(fname, "3D")
-
-    plt.savefig(figname, format=file_format)
-    print("Saved figure", figname)
+    if t is not None:
+        if isinstance(t, str):
+            text = t
+        elif isinstance(t, float):
+            text = r"$t = ${0:.3f}".format(t)
+        else:
+            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+        plt.figtext(0.05, 0.95, text)
 
     return fig
 
 
 
+
+
+
+def save_plot(fig, fname = None, case = None, fname_force = None):
+    """
+    Save the figure. If fname and case are given, it will first generate
+    a descriptive figure name. Otherwise, it will save it as 'hydro-plot.png'
+    """
+
+    if fname_force is not None:
+        plt.savefig(fname_force, fig = fig)
+        print("Saved figure", fname_force)
+
+    else:
+
+        if fname is not None:
+
+            ax = fig.axes[0]
+            if len(ax.get_lines()) > 1:
+                # if we have more than one line, this figure is used to overplot things.
+                # in that case, give it a different name.
+                if case is None:
+                    case = "overplotted"
+                else:
+                    if "overplotted" not in case:
+                        case += "-overplotted"
+            fname = get_figname(fname, case)
+        else:
+            fname = 'hydro-plot.png'
+
+        plt.savefig(fname, fig=fig)
+        print("Saved figure", fname)
+
+    plt.close()
+    return
+    
 
 
 
@@ -452,7 +437,9 @@ def get_figname(fname, case = None):
             figname += "-density-only-overplotted"
         if case == "3D":
             figname += "-3D"
-            
+        if case == "riemann-solver":
+            figname += "-riemann-solution"
+ 
 
     figname += "." + file_format
 
