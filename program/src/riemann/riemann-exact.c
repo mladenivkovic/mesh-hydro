@@ -16,11 +16,9 @@ extern params pars;
 
 
 
-/* ============================================================================== */
-void riemann_solve(pstate* left, pstate* right, pstate* sol, 
-      float xovert, float* wavevel, int dimension){
-/* ============================================================================== */
-  /* Solve the Riemann problem posed by a left and right state
+void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dimension){
+  /* -------------------------------------------------------------------------
+   * Solve the Riemann problem posed by a left and right state
    *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
@@ -30,14 +28,14 @@ void riemann_solve(pstate* left, pstate* right, pstate* sol,
    * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
-    if (riemann_has_vacuum(left, right, dimension)){
-      riemann_compute_vacuum_solution(left, right, sol, xovert, wavevel, dimension);
-    } else {
-      float pstar = 0;
-      float ustar = 0;
-      riemann_compute_star_states(left, right, &pstar, &ustar, dimension);
-      riemann_sample_solution(left, right, pstar, ustar, sol, xovert, wavevel, dimension);
-    }
+  if (riemann_has_vacuum(left, right, dimension)){
+    riemann_compute_vacuum_solution(left, right, sol, xovert, wavevel, dimension);
+  } else {
+    float pstar = 0;
+    float ustar = 0;
+    riemann_compute_star_states(left, right, &pstar, &ustar, dimension);
+    riemann_sample_solution(left, right, pstar, ustar, sol, xovert, wavevel, dimension);
+  }
 }
 
 
@@ -45,11 +43,9 @@ void riemann_solve(pstate* left, pstate* right, pstate* sol,
 
 
 
-/* ========================================================================================== */
-void riemann_compute_star_states(pstate *left, pstate *right, 
-      float *pstar, float *ustar, int dim){
-/* ========================================================================================== */
-  /* computes the star region pressure and velocity given the left and right pstates.         
+void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, float *ustar, int dim){
+  /* ------------------------------------------------------------------------------------------
+   * computes the star region pressure and velocity given the left and right pstates.         
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
    * float* pstar:    where pressure of star region will be written
@@ -96,7 +92,6 @@ void riemann_compute_star_states(pstate *left, pstate *right,
 
   debugmessage("p* found after %d iterations.", niter);
   debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar);
-  
 }
 
 
@@ -104,12 +99,8 @@ void riemann_compute_star_states(pstate *left, pstate *right,
 
 
 
-
-
-
-/* =============================================================================== */
 float fp(float pstar, pstate *s, float A, float B, float a){
-/* =============================================================================== */
+  /* ------------------------------------------------------------------------------*/
   /* Left/Right part of the pressure function                                      */
   /*-------------------------------------------------------------------------------*/
 
@@ -127,9 +118,8 @@ float fp(float pstar, pstate *s, float A, float B, float a){
 
 
 
-/* =============================================================================== */
 float dfpdp(float pstar, pstate *s, float A, float B, float a){
-/* =============================================================================== */
+  /*-------------------------------------------------------------------------------*/
   /* First derivative of Left/Right part of the pressure function                  */
   /*-------------------------------------------------------------------------------*/
 
@@ -148,13 +138,10 @@ float dfpdp(float pstar, pstate *s, float A, float B, float a){
 
 
 
-
-
-/* ================================================================================================== */
-void riemann_sample_solution(pstate* left, pstate* right, 
-    float pstar, float ustar, pstate* sol, float xovert, float* wavevel, int dim){
-/* ================================================================================================== */
-  /* Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+void riemann_sample_solution(pstate* left, pstate* right, float pstar, 
+  float ustar, pstate* sol, float xovert, float* wavevel, int dim){
+  /*--------------------------------------------------------------------------------------------------
+   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
    * float pstar:     pressure of star region

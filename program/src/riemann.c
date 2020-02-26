@@ -14,10 +14,9 @@ extern params pars;
 
 
 
-/* ================================================================ */
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension){
-/* ================================================================ */
-  /* Check whether we work with vacuum                    
+  /* ------------------------------------------------------------------------- 
+   * Check whether we work with vacuum                    
    * returns true (1) if vacuum, 0 otherwise              
    *
    * pstate* left:    left state of Riemann problem
@@ -43,11 +42,10 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension){
 
 
 
-/* ============================================================================== */
 void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol, 
       float xovert, float* wavevel, int dim){
-/* ============================================================================== */
-  /* Solve the Riemann problem posed by a left and right state
+  /* -------------------------------------------------------------------------
+   * Solve the Riemann problem posed by a left and right state
    * and sample the solution at given x and t
    *
    * pstate* left:    left state of Riemann problem
@@ -63,7 +61,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
     sol->rho = 0;
     sol->u[dim] = 0;
     sol->p = 0;
-    return
+    return;
   }
 
   if (left->rho==0){
@@ -182,4 +180,3 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
   return;
 }
-
