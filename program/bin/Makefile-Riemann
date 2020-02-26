@@ -9,101 +9,29 @@
 # executable name
 EXEC = riemann  
 
-# always compiles as 1D
-
 # set which Riemann solver to use.
 # Choices: EXACT, TRRS, TSRS, HLL, HLLC
 RIEMANN = EXACT
 # RIEMANN = NONE
 
 
-
-
-
-
-
-
-#==============================
-# Preprocessing defines
-#==============================
-
 # set default values if not defined otherwise
 ifndef RIEMANN
 RIEMANN = EXACT
 endif
-
-
-
 ifeq ($(strip $(RIEMANN)), NONE)
 RIEMANN = EXACT
-RIEMANNINT = 1
-endif
-ifeq ($(strip $(RIEMANN)), EXACT)
-RIEMANNINT = 1
-endif
-ifeq ($(strip $(RIEMANN)), HLLC)
-RIEMANNINT = 2
-endif
-ifeq ($(strip $(RIEMANN)), HLL)
-RIEMANNINT = 3
-endif
-ifeq ($(strip $(RIEMANN)), TRRS)
-RIEMANNINT = 4
-endif
-ifeq ($(strip $(RIEMANN)), TSRS)
-RIEMANNINT = 5
 endif
 
 
-COMPILEDATE=$(shell date "+%F %T")
+include processing.mk
 
 
 
 
-
+# override defines and objects
 DEFINES= -DNDIM=1 -DSOLVER=0 -DRIEMANN=$(RIEMANNINT) -DLIMITER=0 -DCOMPDATE="$(COMPILEDATE)" 
-
-
-
-#==================================
-# FILE LISTS
-#==================================
-
-SRCDIR=../src
-
-#include paths. Will be followed in that order.
-VPATH=$(SRCDIR):$(SRCDIR)/riemann
-
-#include directories for headers
-# IDIR=$(VPATH)
-IDIR=$(SRCDIR)
-
-
-ifeq ($(strip $(RIEMANN)), NONE)
-	RIEMANNOBJ=
-endif
-ifeq ($(strip $(RIEMANN)), EXACT)
-	RIEMANNOBJ=riemann-exact.o
-endif
-ifeq ($(strip $(RIEMANN)), TRRS)
-	RIEMANNOBJ=riemann-trrs.o
-endif
-ifeq ($(strip $(RIEMANN)), TSRS)
-	RIEMANNOBJ=riemann-tsrs.o
-endif
-ifeq ($(strip $(RIEMANN)), HLL)
-	RIEMANNOBJ=riemann-hll.o
-endif
-ifeq ($(strip $(RIEMANN)), HLLC)
-	RIEMANNOBJ=riemann-hllc.o
-endif
-
-
-# OBJECTS = $(notdir $(patsubst %.c, %.o, $(wildcard $(SRCDIR)/*.c)))
-# OBJECTS = main.o gas.o godunov.o io.o params.o  utils.o $(RIEMANNFILE)
-OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
-
-
+OBJECTS=$(RIEMANN_OBJECTS)
 
 
 
@@ -142,7 +70,6 @@ LDFLAGS= -lm
 
 
 default: $(EXEC)
-
 
 $(EXEC): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)

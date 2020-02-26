@@ -2,6 +2,7 @@
 # as a 1D Riemann solver only
 
 include defines.mk
+include ../bin/processing.mk
 
 
 #==================================
@@ -12,49 +13,21 @@ include defines.mk
 EXEC = riemann  
 
 
-
-
-
-
-#==============================
-# Preprocessing defines
-#==============================
-
 # set default values if not defined otherwise
 ifndef RIEMANN
 RIEMANN = EXACT
 endif
-
-
-
 ifeq ($(strip $(RIEMANN)), NONE)
 RIEMANN = EXACT
-RIEMANNINT = 1
-endif
-ifeq ($(strip $(RIEMANN)), EXACT)
-RIEMANNINT = 1
-endif
-ifeq ($(strip $(RIEMANN)), HLLC)
-RIEMANNINT = 2
-endif
-ifeq ($(strip $(RIEMANN)), HLL)
-RIEMANNINT = 3
-endif
-ifeq ($(strip $(RIEMANN)), TRRS)
-RIEMANNINT = 4
-endif
-ifeq ($(strip $(RIEMANN)), TSRS)
-RIEMANNINT = 5
 endif
 
 
-COMPILEDATE=$(shell date "+%F %T")
+include processing.mk
 
 
-
-
-
+# override defines and objects
 DEFINES= -DNDIM=1 -DSOLVER=0 -DRIEMANN=$(RIEMANNINT) -DLIMITER=0 -DCOMPDATE="$(COMPILEDATE)" 
+OBJECTS=$(RIEMANN_OBJECTS)
 
 
 
