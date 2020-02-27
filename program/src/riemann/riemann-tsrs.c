@@ -17,7 +17,7 @@ extern params pars;
 
 
 
-void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dimension){
+void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, int dimension){
   /* -------------------------------------------------------------------------
    * Solve the Riemann problem posed by a left and right state
    *
@@ -25,17 +25,16 @@ void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float
    * pstate* right:   right state of Riemann problem
    * pstate* sol:     pstate where solution will be written
    * float xovert:    x / t, point where solution shall be sampled
-   * float* wavevel:  highest wave velocity from the problem
    * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
   if (riemann_has_vacuum(left, right, dimension)){
-    riemann_compute_vacuum_solution(left, right, sol, xovert, wavevel, dimension);
+    riemann_compute_vacuum_solution(left, right, sol, xovert, dimension);
   } else {
     float pstar = 0;
     float ustar = 0;
     riemann_compute_star_states(left, right, &pstar, &ustar, dimension);
-    riemann_sample_solution(left, right, pstar, ustar, sol, xovert, wavevel, dimension);
+    riemann_sample_solution(left, right, pstar, ustar, sol, xovert, dimension);
   }
 }
 
@@ -86,7 +85,7 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
 
 
 void riemann_sample_solution(pstate* left, pstate* right, float pstar, 
-  float ustar, pstate* sol, float xovert, float* wavevel, int dim){
+  float ustar, pstate* sol, float xovert, int dim){
   /*--------------------------------------------------------------------------------------------------
    * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
    * pstate* left:    left state of Riemann problem
@@ -95,7 +94,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
    * float ustar:     velocity of star region
    * pstate* sol:     pstate where solution will be written
    * float xovert:    x / t, point where solution shall be sampled
-   * float* wavevel:  highest wave velocity from the problem
    * int dim:         which fluid velocity direction to use. 0: x, 1: y
    *--------------------------------------------------------------------------------------------------*/
 
@@ -111,7 +109,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /* left rarefaction */
       /*------------------*/
       float SHL = left->u[dim] - aL;    /* speed of head of left rarefaction fan */
-      *wavevel = fabs(SHL);
       if (xovert < SHL) {
         /* we're outside the rarefaction fan */
         sol->rho = left->rho;
@@ -141,7 +138,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /* left shock       */
       /*------------------*/
       float SL  = left->u[dim]  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + BETA); /* left shock speed */
-      *wavevel = fabs(SL);
       if (xovert < SL){
         /* we're outside the shock */
         sol->rho = left->rho;
@@ -168,7 +164,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /* right rarefaction */
       /*-------------------*/
       float SHR = right->u[dim] + aR;   /* speed of head of right rarefaction fan */
-      *wavevel = fabs(SHR);
       if (xovert > SHR) {
         /* we're outside the rarefaction fan */
         sol->rho = right->rho;
@@ -198,7 +193,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar,
       /* right shock      */
       /*------------------*/
       float SR  = right->u[dim] + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + BETA); /* right shock speed */
-      *wavevel = fabs(SR);
       if (xovert > SR){
         /* we're outside the shock */
         sol->rho = right->rho;

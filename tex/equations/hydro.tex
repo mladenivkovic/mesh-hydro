@@ -114,9 +114,6 @@ The cells are stored as an array of \verb|struct cell| that stores both primitiv
 Furthermore they have \verb|struct pstate pflux| and \verb|struct cstate cflux| to store fluxes of primitive and conserved variables.
 
 
-Cells also have an index ID, know their position in the grid, and store the highest wave velocity present in \texttt{maxvel}.
-
-
 The grid is set up as follows:
 In 1D, it is a 1D array of \texttt{struct cell}.
 In 2D, it is a 2D array.

@@ -43,7 +43,7 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension){
 
 
 void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol, 
-      float xovert, float* wavevel, int dim){
+      float xovert, int dim){
   /* -------------------------------------------------------------------------
    * Solve the Riemann problem posed by a left and right state
    * and sample the solution at given x and t
@@ -52,7 +52,6 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
    * pstate* right:   right state of Riemann problem
    * pstate* sol:     pstate where solution will be written
    * float xovert:    x / t, point where solution shall be sampled
-   * float* wavevel:  highest wave velocity from the problem
    * int dim:   which fluid velocity dim to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
@@ -70,9 +69,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
     /*------------------------*/
     float aR = gas_soundspeed(right);
     float SR = right->u[dim] - 2*aR/GM1; /* vacuum front speed */
-    *wavevel = fabs(SR);
     float SHR = right->u[dim] + aR;   /* speed of head of right rarefaction fan */
-    if (fabs(SHR) > *wavevel) *wavevel = fabs(SHR);
 
     if (xovert <= SR){
       /* left vacuum */
@@ -102,9 +99,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
     float aL = gas_soundspeed(left);
     float SL = left->u[dim] + 2*aL/GM1; /* vacuum front speed */
-    *wavevel = fabs(SL);
     float SHL = left->u[dim] - aL;    /* speed of head of left rarefaction fan */
-    if (fabs(SHL) > *wavevel) *wavevel = fabs(SHL);
 
     if (xovert >= SL){
       /* right vacuum */
@@ -137,12 +132,6 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
     float SR = right->u[dim] - 2*aR/GM1; /* vacuum front speed */
     float SHL = left->u[dim] - aL;    /* speed of head of left rarefaction fan */
     float SHR = right->u[dim] + aR;   /* speed of head of right rarefaction fan */
-
-    /* store max velocity */
-    *wavevel = fabs(SL);
-    if (fabs(SR) > *wavevel) *wavevel = fabs(SR);
-    if (fabs(SHR) > *wavevel) *wavevel = fabs(SHR);
-    if (fabs(SHL) > *wavevel) *wavevel = fabs(SHL);
 
     if (xovert <= SHL){
       /* left original pstate*/

@@ -19,9 +19,9 @@
 #endif
 
 
-void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dimension);
+void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, int dimension);
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension);
-void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol, float xovert, float* wavevel, int dim);
+void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol, float xovert, int dim);
 
 
 #endif

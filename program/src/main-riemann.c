@@ -114,12 +114,10 @@ int main(int argc, char* argv[]){
 
 
   float center = (pars.nx/2) * pars.dx; /* where the initial separation of the states is.*/
-  float wavevel;
   for (int i = BC; i<BC+pars.nx; i++){
     float x = (i-BC+0.5)*pars.dx - center;
     float xovert = x / pars.tmax;
-    riemann_solve(&left, &right, &grid[i].prim, xovert, &wavevel, /*dimension=*/0);
-    grid[i].wavevel = wavevel;
+    riemann_solve(&left, &right, &grid[i].prim, xovert, /*dimension=*/0);
   }
 
 
