@@ -332,7 +332,7 @@ For both shock and rarefaction waves on either side, we have equations for $u^*$
 By setting $u^*_L - u^*_R = 0$, which must hold, we get the equation
 
 \begin{align}
-	f(p, \mathbf{W}_L, \mathbf{W}_R) \equiv f_L(p, \mathbf{W}_L) + f_R(p, \mathbf{W}_R) + (u_R - u_L) = 0
+	f(p, \mathbf{W}_L, \mathbf{W}_R) \equiv f_L(p, \mathbf{W}_L) + f_R(p, \mathbf{W}_R) + (u_R - u_L) = 0 \label{eq:riemann-pressure-equation}
 \end{align}
 
 with 
@@ -452,24 +452,111 @@ All that is left to do is sample the solution, which is described in section \re
 
 
 %====================================================================
-\subsubsection{HLL Solver}
-%====================================================================
-
-
-%====================================================================
-\subsubsection{HLLC Solver}
-%====================================================================
-
-
-%====================================================================
 \subsubsection{Two-Rarefaction Riemann Solver (TRRS)}
 %====================================================================
+
+
+
+
+
+The big idea is to assume a priori that both the left and right waves are going to be rarefaction waves, and to use that assumption to get an expression for $p^*$ and $u^*$, the pressure and velocity in the star region, respectively.
+
+We get
+
+\begin{align}
+	\beta &\equiv 
+		\frac{\gamma - 1}{2 \gamma} \\
+	u^* &= 
+		\frac{
+			\frac{2}{\gamma - 1} \left[\left(\frac{p_L}{p_R} \right) ^ \beta - 1\right]+ \frac{u_L}{a_L} \left(\frac{p_L}{p_R} \right) ^ \beta  + \frac{u_R}{a_R}
+		}{
+			\frac{1}{a_R} + \frac{1}{a_L}\left(\frac{p_L}{p_R} \right) ^ \beta
+		} \\
+	p^* &=
+		\frac{1}{2} \left[
+			p_R \left[ \frac{\gamma - 1}{2 a_R} (u^* - u_R) + 1 \right] ^ \frac{1}{\beta} +
+			p_L \left[ \frac{\gamma - 1}{2 a_L} (u_L - u^*) + 1 \right] ^ \frac{1}{\beta}
+		\right] \label{eq:pstar-trrs}
+\end{align}
+
+Note that we may also write $p^*$ independently of $u^*$:
+
+\begin{align}
+	p^* = 
+		\left[ 
+			\frac{ a_L + a_R - \frac{\gamma - 1}{2} (u_R - u_L)}{\frac{a_L}{p_L^\beta} + \frac{a_R}{p_R^\beta}}
+		\right] ^ \frac{1}{\beta}
+\end{align}
+
+But eq. \ref{eq:pstar-trrs} is computationally more efficient if we compute $u^*$ first. (Way fewer uses of fractional powers.)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %====================================================================
 \subsubsection{Two-Shock Riemann Solver (TSRS)}
 %====================================================================
 
+
+The big idea is to assume a priori that both the left and right waves are going to be shock waves, and to use that assumption to get an expression for $p^*$ and $u^*$, the pressure and velocity in the star region, respectively.
+
+
+The equation for the pressure in the star region (eq. \ref{eq:riemann-pressure-equation}) then is given by
+
+\begin{align}
+	f(p) &= (p - p_L) g_L(p) + (p - p_R) g_R(p) + u_R - u_L = 0 \label{eq:riemann-pressure-tsrs} \\
+	g_{L,R}(p) &= \left[ \frac{A_{L,R}}{p + B_{L,R}} \right] ^{\half} \\
+	A_{L,R} &= 
+		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
+	B_{L,R} &= 
+		\frac{\gamma - 1}{\gamma + 1} p_{L,R}
+\end{align}
+
+Unfortunately, this approximation does not lead to a closed form solution.
+So we can either use an iterative method again, or use further approximations.
+So the idea is to find $p_0$, an estimate for the pressure to use in eq. \ref{eq:riemann-pressure-tsrs}, and to use that to get a better approximation for $p^*$:
+
+\begin{align*}
+	p^* = \frac{g_L(p_0) p_L + g_R(p_0)p_R - (u_R - u_L)}{g_L(p_0) + g_R(p_0)}
+\end{align*}
+
+and
+
+\begin{align*}
+	u^*  = \frac{1}{2} (u_L + u_R) + \frac{1}{2} \left[ (p^* - p_R) g_R(p_0) - (p^* - p_L) g_L(p_0) \right]
+\end{align*}
+
+
+A good choice for $p_0$ is coming from the linearised solution of the primitive variables approach:
+
+\begin{align*}
+	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R)\\
+	p_0 &= \max(\epsilon, p_{PV})
+\end{align*}
+
+
+
+
+
+
+
+
+
+
+%====================================================================
+\subsubsection{HLLC Solver}
+%====================================================================
 
 
 

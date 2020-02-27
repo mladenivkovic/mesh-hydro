@@ -1,5 +1,4 @@
-/* all stuff concerning Riemann problem */
-
+/* all stuff concerning Two Rarefaction Riemann solver */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
@@ -8,19 +7,7 @@
 #define RIEMANN_TRRS_H
 #include "gas.h"
 
+void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, float *ustar, int dimension);
+void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ustar, pstate* sol, float xovert, float* wavevel, int dim);
 
-extern int check_vacuum(pstate *left, pstate *right);
-extern void compute_fluxes();
-extern void compute_intercell_states();
-extern void compute_star_pstate(pstate *left, pstate *right, pstate* starL, pstate* starR);
-extern double compute_pstar(pstate *left, pstate *right);
-extern double rho_star(pstate *s, pstate *star);
-extern void compute_riemann(pstate* left, pstate* right, pstate* starL, pstate* starR, pstate* intercell);
-extern void compute_riemann_vacuum(pstate* left, pstate* right, pstate* intercell);
-extern double rho_fanL(pstate* s);
-extern double u_fanL(pstate* s);
-extern double p_fanL(pstate* s);
-extern double rho_fanR(pstate* s);
-extern double u_fanR(pstate* s);
-extern double p_fanR(pstate* s);
 #endif

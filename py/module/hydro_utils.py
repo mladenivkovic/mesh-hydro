@@ -31,7 +31,7 @@ def get_all_files_with_same_basename(fname):
     """
 
     # first generate basename
-    basename = fname[:-9]
+    basename = fname[:-9] # remove -0000.out
     
     basedir = os.path.dirname(basename)
     if basedir == '':

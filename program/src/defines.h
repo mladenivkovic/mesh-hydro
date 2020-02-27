@@ -38,15 +38,15 @@
 /* Physical constants */
 
 #define PI 3.14159265358979
-#define GAMMA 1.666666666
+#define GAMMA (5./3.)
 
 #define GM1 (GAMMA-1.)
 #define GP1 (GAMMA+1.)
-#define GP1OGM1 (GP1)/(GM1)
-#define GM1OGP1 (GM1)/(GP1)
-#define ONEOVERGAMMA 1./GAMMA
-#define GM1HALF 0.5*(GM1)
-#define BETA (GM1HALF) / GAMMA
+#define GP1OGM1 ((GP1)/(GM1))
+#define GM1OGP1 ((GM1)/(GP1))
+#define ONEOVERGAMMA (1./GAMMA)
+#define GM1HALF (0.5*(GM1))
+#define BETA ((GM1HALF) / GAMMA)
 
 
 /* boundary cells */
