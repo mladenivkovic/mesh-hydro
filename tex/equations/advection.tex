@@ -304,6 +304,8 @@ What is implemented is the equation
 
 where we assume that the velocity $v$ is constant. 
 Therefore, the fluid velocity is never updated, but kept identical to the initial conditions.
+The fluxes $\F = v \U$ are computed and sored in \verb|pstate pflux| of each cell.
+Only the \textbf{net flux} is stored, i.e. $\F_{i-\half} - \F_{i+\half}$.
 
 You can change that behaviour by removing the \verb|ADVECTION_KEEP_VELOCITY_CONSTANT| macro definition in \verb|defines.h|
 

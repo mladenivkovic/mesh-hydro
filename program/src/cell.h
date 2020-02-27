@@ -19,7 +19,8 @@ typedef struct{
   pstate prim;  /* primitive state vector */
   cstate cons;  /* conserved state vector */
 
-  pstate flux;  /* fluxes of primitive variables */
+  pstate pflux;  /* fluxes of primitive variables */
+  cstate cflux;  /* fluxes of conserved variables */
 
   float wavevel; /* highest wave velocity */
 

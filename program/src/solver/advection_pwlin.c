@@ -155,7 +155,7 @@ void solver_compute_fluxes(float* dt, int dimension){
   /* ------------------------------------------------------
    * Computes the actual *net* fluxes between cells
    * Here we compute F^{n+1/2}_{i-1/2} - F^{n+1/2}_{i+1/2}
-   * and store it in cell.flux
+   * and store it in cell.pflux
    * dimension: 0 for x, 1 for y. Only used with Strang
    * splitting.
    * ------------------------------------------------------ */
@@ -263,15 +263,15 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
     dsd = -pars.dx - dw->prim.u[dim] * (*dt);
   }
 
-  c->flux.rho += uw->prim.u[dim] * ( uw->prim.rho +  0.5 * su.rho * dsu ) -
+  c->pflux.rho += uw->prim.u[dim] * ( uw->prim.rho +  0.5 * su.rho * dsu ) -
                  dw->prim.u[dim] * ( dw->prim.rho +  0.5 * sd.rho * dsd );
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->flux.u[0] += uw->prim.u[dim] * ( uw->prim.u[0] +  0.5 * su.u[0] * dsu ) -
+  c->pflux.u[0] += uw->prim.u[dim] * ( uw->prim.u[0] +  0.5 * su.u[0] * dsu ) -
                   dw->prim.u[dim] * ( dw->prim.u[0] +  0.5 * sd.u[0] * dsd );
-  c->flux.u[1] += uw->prim.u[dim] * ( uw->prim.u[1] +  0.5 * su.u[1] * dsu ) -
+  c->pflux.u[1] += uw->prim.u[dim] * ( uw->prim.u[1] +  0.5 * su.u[1] * dsu ) -
                   dw->prim.u[dim] * ( dw->prim.u[1] +  0.5 * sd.u[1] * dsd );
 #endif
-  c->flux.p += uw->prim.u[dim] * ( uw->prim.p +  0.5 * su.p * dsu ) -
+  c->pflux.p += uw->prim.u[dim] * ( uw->prim.p +  0.5 * su.p * dsu ) -
                dw->prim.u[dim] * ( dw->prim.p +  0.5 * sd.p * dsd );
 
 }
@@ -312,14 +312,14 @@ void solver_update_state(cell *c, float dtdx){
      * dtdx: dt / dx
      * ------------------------------------------------------ */
 
-    c->prim.rho = c->prim.rho + dtdx * c->flux.rho;
+    c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->prim.u[0] = c->prim.u[0] + dtdx * c->flux.u[0];
+    c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
 #if NDIM >= 2
-    c->prim.u[1] = c->prim.u[1] + dtdx * c->flux.u[1];
+    c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
 #endif
 #endif
-    c->prim.p = c->prim.p + dtdx * c->flux.p;
+    c->prim.p = c->prim.p + dtdx * c->pflux.p;
 }
 
 

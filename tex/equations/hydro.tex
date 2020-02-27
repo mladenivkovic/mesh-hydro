@@ -97,7 +97,7 @@ where $S_{max}^n$ is the highest wave propagation speed at the current time, and
 
 
 The cells are stored as an array of \verb|struct cell| that stores both primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
-Furthermore they have \verb|struct pstate flux_x| and \verb|struct pstate flux_y| to store fluxes in x and y direction.
+Furthermore they have \verb|struct pstate pflux| and \verb|struct cstate cflux| to store fluxes of primitive and conserved variables.
 
 
 Cells also have an index ID, know their position in the grid, and store the highest wave velocity present in \texttt{maxvel}.
@@ -110,7 +110,9 @@ Indices (0, 0) represent the lower left corner of the simulation domain.
 First index is in x direction, i.e. (nx - 1, 0) is at the coordinates (x = xmax, y = 0).
 
 
-The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \verb|flux| of cell \verb|grid[i, j]|.
+The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \verb|cflux| or \verb|pflux| of cell \verb|grid[i, j]|, depending whether you're storing primitive or conserved variables.
+For the Godunov scheme, we need conserved variables.
+For advection, we only deal with primitive variables.
 Because we're doing dimensional splitting, it suffices to have only one storage place, as they will be used in successive order.
 See section \ref{chap:dimensional-splitting} for details.
 

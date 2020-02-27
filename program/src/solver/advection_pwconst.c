@@ -149,7 +149,7 @@ void solver_compute_fluxes(int dimension){
   /* ------------------------------------------------------
    * Computes the actual fluxes between cells
    * Here we compute F^{n+1/2}_{i-1/2} - F^{n+1/2}_{i+1/2}
-   * and store it in cell.flux
+   * and store it in cell.pflux
    * int dimension: 0 for x, 1 for y. Only used when strang
    * splitting is employed.
    * ------------------------------------------------------ */
@@ -224,12 +224,12 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim){
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-  c->flux.rho += uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
+  c->pflux.rho += uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->flux.u[0] += uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
-  c->flux.u[1] += uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
+  c->pflux.u[0] += uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
+  c->pflux.u[1] += uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
 #endif
-  c->flux.p += uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
+  c->pflux.p += uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
 
 }
 
@@ -270,14 +270,14 @@ void solver_update_state(cell *c, float dtdx){
      * dtdx: dt / dx
      * ------------------------------------------------------ */
 
-    c->prim.rho = c->prim.rho + dtdx * c->flux.rho;
+    c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->prim.u[0] = c->prim.u[0] + dtdx * c->flux.u[0];
+    c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
 #if NDIM > 1
-    c->prim.u[1] = c->prim.u[1] + dtdx * c->flux.u[1];
+    c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
 #endif
 #endif
-    c->prim.p = c->prim.p + dtdx * c->flux.p;
+    c->prim.p = c->prim.p + dtdx * c->pflux.p;
 }
 
 

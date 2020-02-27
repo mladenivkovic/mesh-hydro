@@ -39,8 +39,9 @@ void cell_init_cell(cell * c){
   c->y = 0;
   
   gas_init_pstate(&(c->prim));
-  gas_init_pstate(&(c->flux));
+  gas_init_pstate(&(c->pflux));
   gas_init_cstate(&(c->cons));
+  gas_init_cstate(&(c->cflux));
 }
 
 
@@ -207,6 +208,11 @@ void cell_copy_boundary_data(cell* real, cell* ghost){
   ghost->prim.u[0] = real->prim.u[0];
   ghost->prim.u[1] = real->prim.u[1];
   ghost->prim.p = real->prim.p;
+
+  ghost->cons.rho = real->cons.rho;
+  ghost->cons.rhou[0] = real->cons.rhou[0];
+  ghost->cons.rhou[1] = real->cons.rhou[1];
+  ghost->cons.E = real->cons.E;
 }
 
 
@@ -227,6 +233,11 @@ void cell_copy_boundary_data_reflective(cell* real, cell* ghost){
   ghost->prim.u[0] = - real->prim.u[0];
   ghost->prim.u[1] = - real->prim.u[1];
   ghost->prim.p = real->prim.p;
+
+  ghost->cons.rho = real->cons.rho;
+  ghost->cons.rhou[0] = - real->cons.rhou[0];
+  ghost->cons.rhou[1] = - real->cons.rhou[1];
+  ghost->cons.E = real->cons.E;
 }
 
 
@@ -242,12 +253,14 @@ void cell_reset_fluxes(){
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++){
-    gas_init_pstate(&(grid[i].flux));
+    gas_init_pstate(&(grid[i].pflux));
+    gas_init_cstate(&(grid[i].cflux));
   }
 #elif NDIM == 2
   for (int i = BC; i < pars.nx + BC; i++){
     for (int j = BC; j < pars.nx + BC; j++){
-      gas_init_pstate(&(grid[i][j].flux));
+      gas_init_pstate(&(grid[i][j].pflux));
+      gas_init_cstate(&(grid[i][j].cflux));
     }
   }
 
@@ -347,13 +360,13 @@ void cell_print_grid_part(char field[4], int* limits){
     } else if (strcmp(field, "pre") == 0){
       printf("%8.3f", grid[i].prim.p);
     } else if (strcmp(field, "frh") == 0){
-      printf("%8.3f", grid[i].flux.rho);
+      printf("%8.3f", grid[i].pflux.rho);
     } else if (strcmp(field, "fux") == 0){
-      printf("%8.3f", grid[i].flux.u[0]);
+      printf("%8.3f", grid[i].pflux.u[0]);
     } else if (strcmp(field, "fuy") == 0){
-      printf("%8.3f", grid[i].flux.u[1]);
+      printf("%8.3f", grid[i].pflux.u[1]);
     } else if (strcmp(field, "fpr") == 0){
-      printf("%8.3f", grid[i].flux.p);
+      printf("%8.3f", grid[i].pflux.p);
     }
   }
   printf("\n");
@@ -424,13 +437,13 @@ void cell_print_grid_part(char field[4], int* limits){
       } else if (strcmp(field, "pre") == 0){
         printf("%8.3f", grid[i][j].prim.p);
       } else if (strcmp(field, "frh") == 0){
-        printf("%8.3f", grid[i][j].flux.rho);
+        printf("%8.3f", grid[i][j].pflux.rho);
       } else if (strcmp(field, "fu[0]") == 0){
-        printf("%8.3f", grid[i][j].flux.u[0]);
+        printf("%8.3f", grid[i][j].pflux.u[0]);
       } else if (strcmp(field, "fuy") == 0){
-        printf("%8.3f", grid[i][j].flux.u[1]);
+        printf("%8.3f", grid[i][j].pflux.u[1]);
       } else if (strcmp(field, "fpr") == 0){
-        printf("%8.3f", grid[i][j].flux.p);
+        printf("%8.3f", grid[i][j].pflux.p);
       }
     }
     printf("\n");
