@@ -1,5 +1,5 @@
 /* Piecewise constant advection scheme 
- * declaration of functions additional to those in hydro.h */
+ * declaration of functions additional to those in solver.h */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
