@@ -9,7 +9,7 @@ A program to run 1D and 2D mesh based hydro solvers.
 You can pick between:
 
 - Hydro solvers:
-	- Godunov upwind
+	- Godunov
 	- Advection: piecewise constant, piecewise linear
 - Riemann solvers:
 	- Exact	(exact iterative solver)

@@ -10,8 +10,8 @@
 #include "defines.h"
 
 
-#if SOLVER == GODUNOV_UPWIND
-#include "solver/godunov_upwind.h"
+#if SOLVER == GODUNOV
+#include "solver/godunov.h"
 #elif SOLVER == ADVECTION_PWCONST
 #include "solver/advection_pwconst.h"
 #elif SOLVER == ADVECTION_PWLIN

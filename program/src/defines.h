@@ -65,7 +65,7 @@
 /* define solvers as integers */
 #define ADVECTION_PWCONST 1
 #define ADVECTION_PWLIN 2
-#define GODUNOV_UPWIND 3
+#define GODUNOV 3
 
 /* define riemann solvers as integers */
 #define NONE 0

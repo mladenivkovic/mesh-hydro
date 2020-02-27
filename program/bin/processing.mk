@@ -17,7 +17,7 @@ ifndef RIEMANN
 RIEMANN = EXACT
 endif
 ifndef SOLVER
-SOLVER = GODUNOV_UPWIND
+SOLVER = GODUNOV
 endif
 ifndef LIMITER
 LIMITER = NONE
@@ -46,7 +46,7 @@ endif
 ifeq ($(strip $(SOLVER)), ADVECTION_PWLIN)
 SOLVERINT = 2
 endif
-ifeq ($(strip $(SOLVER)), GODUNOV_UPWIND)
+ifeq ($(strip $(SOLVER)), GODUNOV)
 SOLVERINT = 3
 endif
 
@@ -121,8 +121,8 @@ endif
 ifeq ($(strip $(SOLVER)), ADVECTION_PWLIN)
 	HYDROOBJ=advection_pwlin.o
 endif
-ifeq ($(strip $(SOLVER)), GODUNOV_UPWIND)
-	HYDROOBJ=godunov_upwind.o
+ifeq ($(strip $(SOLVER)), GODUNOV)
+	HYDROOBJ=godunov.o
 endif
 
 
