@@ -376,6 +376,7 @@ def save_plot(fig, fname = None, case = None, fname_force = None):
                 if case is None:
                     case = "overplotted"
                 else:
+                    # Note: this skips the case "not-overplotted", which is as intended
                     if "overplotted" not in case:
                         case += "-overplotted"
             fname = get_figname(fname, case)
@@ -439,6 +440,8 @@ def get_figname(fname, case = None):
             figname += "-3D"
         if case == "riemann-solver":
             figname += "-riemann-solution"
+        if case == "not-overplotted":
+            pass
  
 
     figname += "." + file_format

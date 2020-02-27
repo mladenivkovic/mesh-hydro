@@ -55,7 +55,7 @@ if __name__ == "__main__":
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs = kwargs)
 
-        save_plot(fig, fname, )
+        save_plot(fig, fname, case='not-overplotted')
 
     else:
         print("Can't work with non-riemann ICs.")
