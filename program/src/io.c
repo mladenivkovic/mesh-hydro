@@ -177,10 +177,7 @@ void io_read_ic_twostate(int skip){
     if (line_is_empty(tempbuff)) continue;
     if (!check_name_equal_value_present(tempbuff)) continue;
 
-    debugmessage("In io_read_ic_twostate: After cleanup, read line is: %s", tempbuff);
-
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
-
   
     if (strcmp(varname,"rho_L") == 0) {
       left.rho = atof(varvalue);
@@ -564,14 +561,25 @@ int io_is_output_step(float t, float *dt, int step){
    * step:  current step of sim
    * ------------------------------------------------------------------------------------------------- */
 
-  debugmessage("Checking whether we need to limit the timestep for output");
+  debugmessage("Checking whether we need to limit the timestep for output. t=%g, dt=%g", t, *dt);
+
+  if (pars.use_toutfile){ /* if we have a toutfile or dt_out in params is given */
+    if (pars.noutput >= pars.noutput_tot) return(0); /* final output will be dumped anyhow */
+    float tnext = pars.outputtimes[pars.noutput];
+    if ( t + *dt >= tnext ){
+      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  tnext - t, tnext);
+      *dt = tnext - t;
+      pars.noutput += 1;
+      return(1);
+    }
+  }
 
   /* do timestep limiting first! */
   /* this case can happen if dt_out = 0 and foutput = 0! */
   if (pars.tmax > 0 && pars.tmax < t + *dt){
     debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  pars.tmax - t, pars.tmax);
     *dt = pars.tmax - t;
-    return(0);
+    return(0); /* write up as not output step because last output will be dumped */
   }
 
   if (pars.foutput > 0){
@@ -581,31 +589,6 @@ int io_is_output_step(float t, float *dt, int step){
       return(0);
     }
 
-  }
-
-  if (t == 0 || t == pars.tmax) return(0);
-
-  if (pars.dt_out > 0){
-    /* compute how many times a dt_out fits in the time, before and after adding dt */
-    int nold = floor(t / pars.dt_out);
-    int nnew = floor((t + *dt) / pars.dt_out);
-
-    if (nnew > nold){
-      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  nnew*pars.dt_out - t, t +  nnew*pars.dt_out - t);
-      *dt = nnew*pars.dt_out - t;
-      return(1);
-    }
-  }
-
-  if (pars.use_toutfile){
-    if (pars.noutput >= pars.noutput_tot) return(0); /* final output will be dumped anyhow */
-    float tnext = pars.outputtimes[pars.noutput];
-    if ( t + *dt >= tnext ){
-      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,  tnext - t, tnext);
-      *dt = tnext - t;
-      pars.noutput += 1;
-      return(1);
-    }
   }
 
   return(0);

@@ -89,8 +89,10 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
   *ustar = left->u[dim] - fp(pguess, left,  AL, BL, aL);
   *pstar = pguess;
 
-  debugmessage("p* found after %d iterations.", niter);
-  debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar);
+  /* debugmessage("p* found after %d iterations.", niter); */
+  /* debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar); */
+  /* debugmessage("rhoL %.3f uL %.3f pL %.3f rhoR %.3f uR %.3f pR %.3f dim %d\n",  */
+  /*     left->rho, left->u[dim], left->p, right->rho, right->u[dim], right->p, dim); */
 }
 
 

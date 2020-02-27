@@ -22,8 +22,10 @@ void gas_init_pstate(pstate* s){
   s->u[0] = 0;
   s->u[1] = 0;
   s->p    = 0;
-
 } 
+
+
+
 
 void gas_init_cstate(cstate *s){
   /*-------------------------------------------------*/
@@ -35,10 +37,61 @@ void gas_init_cstate(cstate *s){
   s->rhou[0] = 0;
   s->rhou[1] = 0;
   s->E     = 0;
-
 }
 
 
+
+
+void gas_prim_to_cons(pstate* p, cstate* c){
+  /* --------------------------------------------------------
+   * Compute the conserved state vector of a given
+   * primitive state
+   * -------------------------------------------------------- */
+
+  c->rho = p->rho;
+  c->rhou[0] = p->rho * p->u[0];
+  c->rhou[1] = p->rho * p->u[1];
+  c->E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / p->rho / GM1;
+}
+
+
+
+
+void gas_cons_to_prim(cstate *c, pstate* p){
+  /* --------------------------------------------------------
+   * Compute the primitive state vector of a given
+   * conserved state
+   * -------------------------------------------------------- */
+
+  p->rho = c->rho;
+  p->u[0] = c->rhou[0]/c->rho;
+  p->u[1] = c->rhou[1]/c->rho;
+  p->p = GM1 * c->rho * ( c->E - 0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1] ) / c->rho ); 
+}
+
+
+
+void gas_get_cflux_from_pstate(pstate *p, cstate *f, int dimension){
+  /* -----------------------------------------------------------
+   * Compute the flux of conserved variables of the Euler
+   * equations given a primitive state vector 
+   *
+   * The flux is not an entire tensor for 3D Euler equations, but
+   * correpsonds to the dimensionally split vectors F, G as 
+   * described in the "Euler equations in 2D" section of the
+   * documentation TeX files.
+   * That's why you need to specify the dimension.
+   * ----------------------------------------------------------- */
+
+  
+  /* get energy */
+  float E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / p->rho / GM1;
+
+  f->rho = p->rho * p->u[dimension];
+  f->rhou[dimension] = p->rho * p->u[dimension] * p->u[dimension] + p->p;
+  f->rhou[(dimension+1) % 2] = p->rho * p->u[0] * p->u[1];
+  f->E = (E + p->p) * p->u[dimension];
+}
 
 
 

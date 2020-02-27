@@ -1,20 +1,20 @@
-/* upwind godunov first order scheme */
-/* declaration of functions additional to those in hydro.h */
+/* First order Godunov scheme */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 /* -------------------------------------*/
 
+
+
 #ifndef GODUNOV_H
 #define GODUNOV_H
 
-/* number of boundary cells */
-// #define NBC 1
-// #define NBCT 2*NBC
+void solver_init_step();
+void solver_get_dt(float* dt);
+void solver_compute_fluxes(float* dt, int dimension);
+void solver_advance_step(float* dt, int dimension);
 
-// void compute_new_states();
-// void set_boundaries();
-// void compute_conserved_states();
-// double compute_dt();
+void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim);
+void solver_update_state(cell* left, cell* right, float dtdx);
 
 #endif

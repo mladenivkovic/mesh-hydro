@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "params.h"
 #include "utils.h"
@@ -129,6 +130,35 @@ void params_init_derived(){
 
   /* Compute dx */
   pars.dx = BOXLEN / pars.nx;
+
+
+  /* -----------------------------------------------------------------------------------
+   * If the user set dt_out, pre-compute the output times just like we would have if we
+   * used a outputtime file to specify the output times in order to avoid misbehaviour 
+   * with * floating point divisions
+   * ----------------------------------------------------------------------------------- */
+
+  if (pars.dt_out > 0){
+    /* set the flag */
+    pars.use_toutfile = 1;
+
+    /* now get output times */
+    int nout;
+
+    if (pars.tmax > 0){
+      nout = floor(pars.tmax / pars.dt_out) + 1; /* add 1 for good measure */
+    } else{
+      /* assume maximally 1e6 outputs */
+      nout = 1000000;
+    }
+
+    pars.outputtimes = malloc(nout * sizeof(float));
+    pars.noutput_tot = nout;
+    for (int i = 0; i < nout; i++){
+      pars.outputtimes[i] = i * pars.dt_out;
+    }
+
+  }
 }
 
 
@@ -177,14 +207,15 @@ void params_print_log(){
   }
 
   if (pars.use_toutfile){
-    log_message("Using output times file:     %s\n", pars.toutfilename);
-  } else{
     if (pars.dt_out == 0.0){
-      log_message("foutput:                     %d\n", pars.foutput);
-    } else {
-      log_message("dt_out:                      %d\n", pars.dt_out);
+      log_message("Using output times file:     %s\n", pars.toutfilename);
+    } else{
+      log_message("dt_out:                      %g\n", pars.dt_out);
     }
+  } else{
+    log_message("foutput:                     %d\n", pars.foutput);
   }
+
   log_message("output file basename:        %s\n", pars.outputfilename);
   log_message("-----------------------------------------------------------------------------------------\n");
 }

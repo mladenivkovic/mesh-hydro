@@ -13,7 +13,9 @@
 /* ---------------------- */
 
 /* keep one global velocity, and keep it constant */
+#ifdef ADVECTION
 #define ADVECTION_KEEP_VELOCITY_CONSTANT
+#endif
 
 
 

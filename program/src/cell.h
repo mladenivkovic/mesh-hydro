@@ -1,4 +1,4 @@
-/* Cell related stuff */
+/* Cell and grid related stuff */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
@@ -22,8 +22,6 @@ typedef struct{
   pstate pflux;  /* fluxes of primitive variables */
   cstate cflux;  /* fluxes of conserved variables */
 
-  float wavevel; /* highest wave velocity */
-
 } cell;
 
 
@@ -42,6 +40,8 @@ void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR
 void cell_copy_boundary_data(cell* real, cell* ghost);
 void cell_copy_boundary_data_reflective(cell* real, cell* ghost);
 void cell_reset_fluxes();
+void cell_get_pstates_from_cstates();
+void cell_get_cstates_from_pstates();
 
 float cell_get_total_mass();
 

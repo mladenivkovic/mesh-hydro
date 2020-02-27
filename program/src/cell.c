@@ -1,4 +1,4 @@
-/* Cell related stuff */
+/* Cell and grid related stuff */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
@@ -188,7 +188,6 @@ void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR
       cell_copy_boundary_data(realL[0], ghostL[i]);
       cell_copy_boundary_data(realR[BC-1], ghostR[i]);
     }
-
   }
 }
 
@@ -227,8 +226,6 @@ void cell_copy_boundary_data_reflective(cell* real, cell* ghost){
    * condition, where we need to invert the velocities.
    * --------------------------------------------------------- */
 
-  printf("BOUNDARY: Copying from %s -> %s\n", cell_get_index_string(real), cell_get_index_string(ghost));
-
   ghost->prim.rho = real->prim.rho;
   ghost->prim.u[0] = - real->prim.u[0];
   ghost->prim.u[1] = - real->prim.u[1];
@@ -264,6 +261,56 @@ void cell_reset_fluxes(){
     }
   }
 
+#endif
+}
+
+
+
+
+
+void cell_get_pstates_from_cstates(){
+  /* ---------------------------------------------
+   * Computes the primitive state from conserved
+   * states for all cells 
+   * --------------------------------------------- */
+
+#if NDIM == 1
+  for (int i = BC; i < pars.nx + BC; i++){
+    cell* c = &grid[i];
+    gas_cons_to_prim(&c->cons, &c->prim);
+  }
+#elif NDIM == 2
+  for (int i = BC; i < pars.nx + BC; i++){
+    for (int j = BC; j < pars.nx + BC; j++){
+      cell* c = &grid[i][j];
+      gas_cons_to_prim(&c->cons, &c->prim);
+    }
+  }
+#endif
+}
+
+
+
+
+
+void cell_get_cstates_from_pstates(){
+  /* ---------------------------------------------
+   * Computes the conserve state from primitive
+   * states for all cells 
+   * --------------------------------------------- */
+
+#if NDIM == 1
+  for (int i = BC; i < pars.nx + BC; i++){
+    cell* c = &grid[i];
+    gas_prim_to_cons(&c->prim, &c->cons);
+  }
+#elif NDIM == 2
+  for (int i = BC; i < pars.nx + BC; i++){
+    for (int j = BC; j < pars.nx + BC; j++){
+      cell* c = &grid[i][j];
+      gas_prim_to_cons(&c->prim, &c->cons);
+    }
+  }
 #endif
 }
 

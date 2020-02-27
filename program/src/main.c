@@ -70,8 +70,8 @@ int main(int argc, char* argv[]){
   /* read in output times if necessary */
   if (pars.use_toutfile) io_read_toutfile();
 
-  params_init_derived(); /* process the parameters you got. */
   params_check();        /* check whether we can work with this setup. */
+  params_init_derived(); /* process the parameters you got. */
 
   /* print / announce stuff for logging */
   print_compile_defines();
@@ -93,7 +93,8 @@ int main(int argc, char* argv[]){
   solver_advection_check_global_velocity();
 #endif
 
-
+  /* translate the read-in primitive vars to conservative ones */
+  cell_get_cstates_from_pstates();
 
   /* Initialize counters and time */
   int step = 0;         /* step counter */
@@ -115,7 +116,6 @@ int main(int argc, char* argv[]){
   while(1) {
     if (pars.tmax > 0 && t >= pars.tmax) break; 
     if (pars.nsteps>0 && step == pars.nsteps) break;
-
 
     step_start = clock(); /* timer */
 
