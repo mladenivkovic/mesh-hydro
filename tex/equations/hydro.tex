@@ -79,6 +79,20 @@ This time step restriction is imposed by the CFL condition:
 where $S_{max}^n$ is the highest wave propagation speed at the current time, and $C_{cfl} \in [0, 1($ is the Courant number.
 
 
+However, this is not the most practical way of doing things.
+In 2D, using dimensional splitting, we'd have to first solve everything in one direction to find the wave speeds, then advance the time step of the sweep, then do the other sweep and hope that the maximal wave velocity won't be greater than the one of the previous sweep.
+Or re-do the first sweep iteratively until we get decent time steps.
+
+Instead, we use the estimate
+
+\begin{align}
+	S^n_{max} = \max\{ |u_i^n| + a_i^n \}
+\end{align}
+
+This is not always accurate, and the wave speed can be underestimated, leading to instabilities.
+To combat this, we just need to choose a lower $C_{cfl}$.
+Toro recommends to use $C_{cfl} < 0.9$.
+
 
 
 

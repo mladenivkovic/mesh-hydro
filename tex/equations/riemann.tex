@@ -177,9 +177,6 @@ and the shock speed is
 where $a_R$ is the sound speed in the left state $U_L$. $f_R$ is given in equation \ref{eq:riemann-pstar}.
 
 
-\todo{check $u^*$: is + $B_R$ correct?\\ actually, check all equations }
-
-
 
 
 
@@ -364,7 +361,22 @@ with
 \todo{add image of riemann solution with all three wave types. Label it fig:riemann-solved}
 
 
-
+\begin{figure}
+	\centering
+	\includegraphics[width=.9\textwidth]{./figures/riemann_IC.pdf}%
+	\\
+	\includegraphics[width=.9\textwidth]{./figures/riemann_exact_solution.pdf}%
+	\caption{
+		Top row: The initial conditions to a classical Riemann problem, called the Sod shock.\\
+%
+		Bottom row: The exact solution of the problem at $t = 0.2$.
+		The solution consists of a left facing rarefaction wave (between the two red dotted lines), easily recognisable through its non-linear shape.
+		To the right (orange dotted line) is a shock wave, across which all three primitive quantities (density, pressure, bulk velocity) change as a jump discontinuity.
+		The two waves enclose the third middle wave (green dotted line), which is a contact wave.
+		The contact wave is a jump discontinuity just like a shock wave, but only the density changes; Velocity and pressure remain constant.
+		\label{fig:riemann-solved}
+		}%
+\end{figure}
 
 
 
