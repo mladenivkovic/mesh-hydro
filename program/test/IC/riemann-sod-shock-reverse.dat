@@ -1,0 +1,9 @@
+/* sod test initial conditions */
+/* right rarefaction, a contact and a left shock */
+filetype = two-state
+rho_R =  1.0
+u_R   =  0.0
+p_R   =  1.0
+rho_L =  0.125
+u_L   =  0.0
+p_L   =  0.1

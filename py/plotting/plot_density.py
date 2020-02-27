@@ -25,4 +25,4 @@ if __name__ == "__main__":
     elif ndim == 2:
         fig = plot_2D_density_only(rho, t=t)
 
-    save_plot(fig, fname)
+    save_plot(fig, fname, case="density")

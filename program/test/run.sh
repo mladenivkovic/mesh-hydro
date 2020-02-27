@@ -24,14 +24,14 @@ genparamfile() {
     f=paramfile.txt
     echo "// parameter file for hydro program" > $f
     echo ""                 >> $f
-    echo "verbose = 2"      >> $f
+    echo "verbose = 1"      >> $f
     echo "nx = 200"         >> $f
     echo "nstep_log = 100"  >> $f
     echo "nsteps = $1"      >> $f
     echo "tmax = $2"        >> $f
     echo "foutput = $3"     >> $f
     echo "dt_out = $4"      >> $f
-    if [ "$5" == "NO_BASENAME" ]; then
+    if [ "$5" != "NO_BASENAME" ]; then
         echo "basename = $5"    >> $f
     fi
     echo "ccfl = $6"        >> $f
@@ -91,8 +91,11 @@ rm -f *.out *.log
 
 
 #==========================
-# ADVECTION
+# FUNCTIONS FOR TESTS
 #==========================
+
+# so they'll be easier to call for specific purposes/tests in groups
+
 
 advection_pwconst_1D(){
     #-------------------
@@ -118,6 +121,8 @@ advection_pwconst_1D(){
     errexit $?
     $plotdir/plot_all_density.py advection-1D-pwconst-negvel-0000.out
 }
+
+
 
 
 advection_pwconst_2D(){
@@ -281,6 +286,9 @@ advection_pwlin_limiters_2D(){
 
 
 riemann_vacuum(){
+    #----------------------------
+    # Test the vacuum solver
+    #----------------------------
 
     for RIEMANN in EXACT; do
 
@@ -307,7 +315,6 @@ riemann_vacuum(){
 
     done
 
-
 }
 
 
@@ -316,6 +323,9 @@ riemann_vacuum(){
 
 
 riemann_solver(){
+    #-----------------------------
+    # Test various Riemann solvers
+    #-----------------------------
 
     for RIEMANN in EXACT; do
 
@@ -324,37 +334,45 @@ riemann_solver(){
         make -f Makefile-Riemann clean && make -f Makefile-Riemann
         errexit $?
 
-        # positive velocity
-        # genparamfile nsteps tmax foutput dt_out basename ccfl
-        genparamfile 0 0.01 0 0 "NO_BASENAME" 1
-        ./riemann paramfile.txt ./IC/riemann-sod-shock.dat
-        errexit $?
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+            # genparamfile nsteps tmax foutput dt_out basename ccfl
+            genparamfile 0 0.25 0 0 "NO_BASENAME" 1
+            ./riemann paramfile.txt ./IC/"$icprefix".dat
+            errexit $?
+
+            # ./overplot_riemann_solvers.py "$icprefix"
+            $plotdir/plot_riemann_result.py "$icprefix"-RIEMANN-EXACT-0001.out ./IC/"$icprefix".dat
+        done
 
     done
-    $plotdir/plot_all_results.py riemann-sod-shock-*-0001.out
-
 }
 
 
 
 
+#=====================================
+# Now actually run the tests
+#=====================================
 
-# advection_pwconst_1D
-# advection_pwconst_2D
-# advection_pwlin_1D
-# advection_pwlin_2D
-# advection_pwlin_limiters_1D
-# advection_pwlin_limiters_2D
+
+advection_pwconst_1D
+advection_pwconst_2D
+advection_pwlin_1D
+advection_pwlin_2D
+advection_pwlin_limiters_1D
+advection_pwlin_limiters_2D
 
 riemann_vacuum
-# riemann_solver
+riemann_solver
 
 
 
 
-#---------------
+
+
+#=====================================
 # create TeX
-#---------------
-# cd TeX
-# ./run.sh
-# cd .
+#=====================================
+cd TeX
+./run.sh
+cd .
