@@ -24,8 +24,8 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension){
    * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
-  if (left->rho == 0){ return(1); }
-  if (right->rho == 0){ return(1); }
+  if (left->rho <= SMALLRHO){ return(1); }
+  if (right->rho <= SMALLRHO){ return(1); }
 
   float delta_u = right->u[dimension] - left->u[dimension];
   float u_crit = 2./GM1 * (gas_soundspeed(left) + gas_soundspeed(right));
@@ -56,14 +56,14 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
    * ------------------------------------------------------------------------- */
 
 
-  if (left->rho==0 && right->rho == 0){
-    sol->rho = 0;
-    sol->u[dim] = 0;
-    sol->p = 0;
+  if (left->rho <= SMALLRHO && right->rho == SMALLRHO){
+    sol->rho = SMALLRHO;
+    sol->u[dim] = SMALLU;
+    sol->p = SMALLP;
     return;
   }
 
-  if (left->rho==0){
+  if (left->rho <= SMALLRHO){
     /*------------------------*/
     /* Left vacuum state      */
     /*------------------------*/
@@ -73,9 +73,13 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
     if (xovert <= SR){
       /* left vacuum */
-      sol->rho = 0.;
+      sol->rho = SMALLRHO;
+#ifdef USE_AS_RIEMANN_SOLVER
       sol->u[dim] = SR;
-      sol->p = 0.;
+#else
+      sol->u[dim] = SMALLU;
+#endif
+      sol->p = SMALLP;
     } 
     else if (xovert < SHR){
       /* inside rarefaction */
@@ -92,7 +96,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
     }
   }
 
-  else if (right->rho==0){
+  else if (right->rho<=SMALLRHO){
     /*------------------------*/
     /* Right vacuum state     */
     /*------------------------*/
@@ -103,9 +107,13 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
     if (xovert >= SL){
       /* right vacuum */
-      sol->rho = 0.;
+      sol->rho = SMALLRHO;
+#ifdef USE_AS_RIEMANN_SOLVER
       sol->u[dim] = SL;
-      sol->p = 0.;
+#else
+      sol->u[dim] = SMALLU;
+#endif
+      sol->p = SMALLP;
     }
     else if (xovert > SHL){
       /* inside rarefaction */
@@ -148,9 +156,13 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
     }
     else if (xovert < SR) {
       /* vacuum region */
-      sol->rho = 0;
-      sol->u[dim] = 0.5 * (SL + SR); /* just made something up here */
-      sol->p = 0;
+      sol->rho = SMALLRHO;
+#ifdef USE_AS_RIEMANN_SOLVER
+      sol->u[dim] = 0.5*(SL + SR);
+#else
+      sol->u[dim] = SMALLU;
+#endif
+      sol->p = SMALLP;
     }
     else if (xovert < SHR){
       /* inside rarefaction fan from left to right */

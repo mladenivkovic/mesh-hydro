@@ -358,8 +358,6 @@ with
 
 
 
-\todo{add image of riemann solution with all three wave types. Label it fig:riemann-solved}
-
 
 \begin{figure}
 	\centering
@@ -668,6 +666,13 @@ There are three cases to consider:
 
 
 
+
+
+
+
+
+
+
 %====================================================================
 \subsection{Sampling the Solution}\label{chap:sampling-solution}
 %====================================================================
@@ -685,3 +690,36 @@ The flow chart of decision making and finally which relations to use is shown in
 \end{sidewaysfigure}
 
 Initially all we need to compute is the star states, then we sample the solution at the given point that we're interested in, and the flowchart will tell us which states we need to compute using which relations.
+
+
+
+
+
+
+
+
+
+
+%====================================================================
+\subsection{Implementation Details}
+%====================================================================
+
+
+The specific Riemann solvers are \texttt{/program/src/riemann} directory.
+If we have a vacuum condition, we always use the vacuum solver, which is given above.
+It's not iterative, so no reason to do approximate solutios there.
+Note however that for the Godunov method, we may have problems with the vacuum solution.
+The vacuum solution of the Riemann problem gives non-zero velocities in regions where $\rho = p = E = 0$.
+So if we have for example a left vacuum, until the initial state boundary we will typically have $\U = 0$, while the Riemann problem will give $u \neq 0$ for the flux;
+So jump discontinuities will form.
+
+A way to deal with this is to not set the density and pressure to zero, but to a very small number, I employ \texttt{SMALLRHO} and \texttt{SMALLP} in the code.
+Also, instead of returning a nonzero-velocity in the vacuum, return also something very small, \texttt{SMALLU}.
+This makes the code a bit more stable, but it will deviate from the solution of the exact Riemann solver.
+
+
+However, this exception handling is only used when the code isn't employed as a Riemann solver only.
+To differentiate between the cases, the \verb|-DUSE_AS_RIEMANN_SOLVER| flag should be passed to the compiler if you want to run the code as a Riemann solver only.
+
+
+

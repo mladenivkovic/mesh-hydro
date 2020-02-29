@@ -62,6 +62,21 @@
 /* iteration tolerance */
 #define EPSILON_ITER 1e-6
 
+/* "nonzero zeros" for vacuum */
+#ifdef USE_AS_RIEMANN_SOLVER
+/* set the "small" values to actually zero, so that only correct vacuum sates 
+ * are recognized as such */
+#define SMALLRHO 0.
+#define SMALLU 0.
+#define SMALLP 0.
+#else
+/* cheat for stability */
+#define SMALLRHO 1e-8
+#define SMALLU 1e-8
+#define SMALLP 1e-8
+#endif
+
+
 
 /* define solvers as integers */
 #define ADVECTION_PWCONST 1

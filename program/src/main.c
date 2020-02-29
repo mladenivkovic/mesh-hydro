@@ -92,9 +92,9 @@ int main(int argc, char* argv[]){
 #ifdef ADVECTION_KEEP_VELOCITY_CONSTANT
   solver_advection_check_global_velocity();
 #endif
-
   /* translate the read-in primitive vars to conservative ones */
   cell_get_cstates_from_pstates();
+
 
   /* Initialize counters and time */
   int step = 0;         /* step counter */

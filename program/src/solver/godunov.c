@@ -166,6 +166,9 @@ void solver_compute_fluxes(float* dt, int dimension){
     solver_compute_cell_pair_flux(left, right, dt, /*dimension=*/0);
   }
 
+  /* cell_print_grid("pre"); */
+  /* cell_print_grid("v_x"); */
+
 #elif NDIM == 2
 
   if (dimension == 0){
