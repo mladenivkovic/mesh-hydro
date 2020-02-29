@@ -185,8 +185,8 @@ void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR
     /* transmissive boundary conditions */
     /* -------------------------------- */
     for (int i = 0; i < BC; i++){
-      cell_copy_boundary_data(realL[0], ghostL[i]);
-      cell_copy_boundary_data(realR[BC-1], ghostR[i]);
+      cell_copy_boundary_data(realL[i], ghostL[i]);
+      cell_copy_boundary_data(realR[BC-1-i], ghostR[i]);
     }
   }
 }
@@ -376,6 +376,7 @@ void cell_print_grid_part(char field[4], int* limits){
    *  "fux": velocity / momentum flux in x
    *  "fuy": velocity / momentum flux in y
    *  "fpr": pressure flux
+   *  "ene": energy
    *
    *  limits: array of indices for the boundary of
    *          what to print; i.e. [imin, imax, jmin, jmax]
@@ -414,6 +415,8 @@ void cell_print_grid_part(char field[4], int* limits){
       printf("%8.3f", grid[i].pflux.u[1]);
     } else if (strcmp(field, "fpr") == 0){
       printf("%8.3f", grid[i].pflux.p);
+    } else if (strcmp(field, "ene") == 0){
+      printf("%8.3f", grid[i].cons.E);
     }
   }
   printf("\n");
@@ -451,6 +454,8 @@ void cell_print_grid_part(char field[4], int* limits){
       } else if (strcmp(field, "fuy") == 0){
         len = 8;
       } else if (strcmp(field, "fpr") == 0){
+        len = 8;
+      } else if (strcmp(field, "ene") == 0){
         len = 8;
       }
 
@@ -491,6 +496,8 @@ void cell_print_grid_part(char field[4], int* limits){
         printf("%8.3f", grid[i][j].pflux.u[1]);
       } else if (strcmp(field, "fpr") == 0){
         printf("%8.3f", grid[i][j].pflux.p);
+      } else if (strcmp(field, "ene") == 0){
+        printf("%8.3f", grid[i][j].cons.E);
       }
     }
     printf("\n");

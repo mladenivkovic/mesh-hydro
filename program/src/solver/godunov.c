@@ -35,7 +35,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
    * ------------------------------------------------------- */
 
   solver_init_step();
-  solver_get_dt(dt);
+  solver_get_dt(dt, step);
   /* check this here in case you need to limit time step for output */
   *write_output = io_is_output_step(*t, dt, step); 
 
@@ -79,7 +79,7 @@ void solver_init_step(){
 
 
 
-void solver_get_dt(float* dt){
+void solver_get_dt(float* dt, int step){
   /* ---------------------------------------------- 
    * Computes the maximal allowable time step size
    * find max velocity present, then apply Ccfl
@@ -89,9 +89,9 @@ void solver_get_dt(float* dt){
 
 
 #if NDIM == 1
-  float umax = 0;
+  float umax = 0.;
 
-  for (int i = BC; i <= pars.nx + BC; i++){
+  for (int i = BC; i < pars.nx + BC; i++){
     float uxabs = fabs(grid[i].prim.u[0]);
     float a = gas_soundspeed(&grid[i].prim);
     float S = uxabs + a;
@@ -100,14 +100,13 @@ void solver_get_dt(float* dt){
 
   *dt = pars.ccfl * pars.dx / umax;
 
-
 #elif NDIM == 2
 
   float uxmax = 0;
   float uymax = 0;
 
-  for (int i = BC; i <= pars.nx + BC; i++){
-    for (int j = BC; j <= pars.nx + BC; j++){
+  for (int i = BC; i < pars.nx + BC; i++){
+    for (int j = BC; j < pars.nx + BC; j++){
       float uxabs = fabs(grid[i][j].prim.u[0]);
       float a = gas_soundspeed(&(grid[i]->prim));
       float S = uxabs + a;
@@ -133,6 +132,9 @@ void solver_get_dt(float* dt){
         *dt, pars.force_dt);
     }
   }
+
+  
+  if (step <=5) *dt *= 0.2; /* sometimes there might be trouble with sharp discontinuities at the beginning, so reduce the timestep for the first few steps */
 
   if (*dt <= 0.0) throw_error("Got weird time step? dt=%12.8f", *dt);
 }
@@ -263,5 +265,4 @@ void solver_update_state(cell* left, cell* right, float dtdx){
  right->cons.rhou[0]  = right->cons.rhou[0] + dtdx * ( left->cflux.rhou[0]  - right->cflux.rhou[0] );
  right->cons.rhou[1]  = right->cons.rhou[1] + dtdx * ( left->cflux.rhou[1]  - right->cflux.rhou[1] );
  right->cons.E        = right->cons.E       + dtdx * ( left->cflux.E        - right->cflux.E );
-  
 }

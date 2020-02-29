@@ -51,7 +51,7 @@ void gas_prim_to_cons(pstate* p, cstate* c){
   c->rho = p->rho;
   c->rhou[0] = p->rho * p->u[0];
   c->rhou[1] = p->rho * p->u[1];
-  c->E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / p->rho / GM1;
+  c->E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / GM1;
 }
 
 
@@ -66,7 +66,8 @@ void gas_cons_to_prim(cstate *c, pstate* p){
   p->rho = c->rho;
   p->u[0] = c->rhou[0]/c->rho;
   p->u[1] = c->rhou[1]/c->rho;
-  p->p = GM1 * c->rho * ( c->E - 0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1] ) / c->rho ); 
+  p->p = GM1 * ( c->E - 0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1] ) / c->rho );
+  /* p->p = GM1 * c->rho * ( c->E - 0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1] ) / c->rho ); */
 }
 
 
@@ -85,7 +86,7 @@ void gas_get_cflux_from_pstate(pstate *p, cstate *f, int dimension){
 
   
   /* get energy */
-  float E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / p->rho / GM1;
+  float E = 0.5 * p->rho * (p->u[0] * p->u[0] + p->u[1] * p->u[1]) + p->p / GM1;
 
   f->rho = p->rho * p->u[dimension];
   f->rhou[dimension] = p->rho * p->u[dimension] * p->u[dimension] + p->p;

@@ -39,7 +39,6 @@
 
 /* Physical constants */
 
-#define PI 3.14159265358979
 #define GAMMA (5./3.)
 
 #define GM1 (GAMMA-1.)

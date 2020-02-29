@@ -59,10 +59,10 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
 
   float pLRbeta = pow(left->p/right->p, BETA);
 
-  *ustar = ( (pLRbeta  - 1.) / GM1HALF + left->u[dim] * aLinv * pLRbeta + right->u[dim]/aRinv ) /
+  *ustar = ( (pLRbeta  - 1.) / GM1HALF + left->u[dim] * aLinv * pLRbeta + right->u[dim]*aRinv ) /
               ( aRinv + aLinv * pLRbeta  );
 
-  *pstar = 0.5 * (right->p * pow((1. + aRinv * GM1HALF * (*ustar - right->u[dim])), 1./BETA) + 
+  *pstar = 0.5 * (right->p * pow((1. + aRinv * GM1HALF * (*ustar - right->u[dim])), 1./BETA) +
                   left->p  * pow((1. + aLinv * GM1HALF * (left->u[dim]  - *ustar)), 1./BETA));
 
   debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar);

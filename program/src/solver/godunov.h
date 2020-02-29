@@ -10,7 +10,7 @@
 #define GODUNOV_H
 
 void solver_init_step();
-void solver_get_dt(float* dt);
+void solver_get_dt(float* dt, int step);
 void solver_compute_fluxes(float* dt, int dimension);
 void solver_advance_step(float* dt, int dimension);
 
