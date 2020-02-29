@@ -29,6 +29,7 @@ void gas_init_cstate(cstate *c);
 void gas_prim_to_cons(pstate* p, cstate* c);
 void gas_cons_to_prim(cstate *c, pstate* p);
 void gas_get_cflux_from_pstate(pstate *p, cstate *f, int dimension);
+void gas_get_cflux_from_cstate(cstate *c, cstate *f, int dimension);
 
 float gas_soundspeed(pstate *s);
 float gas_energy(pstate* s);

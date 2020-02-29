@@ -8,8 +8,15 @@
 #define RIEMANN_HLLC_H
 #include "gas.h"
 
-extern void compute_riemann(pstate* left, pstate* right, pstate* starL, pstate* starR, pstate* intercell);
-extern void compute_fluxes();
-extern void compute_wave_speeds(cstate left, cstate right,  double* SL, double* SR);
-extern void Fhllc(double Sstar, double Sk, pstate wk, cstate uk, cstate fk, cstate* flux);
+void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, 
+    float xovert, int dimension);
+
+void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, 
+    float* SL, float* SR, int dimension);
+
+float qLR(float pstar, float pLR);
+
+void riemann_sample_solution(pstate* left, pstate* right, float SL, 
+    float SR, cstate* sol, float xovert, int dim);
+
 #endif

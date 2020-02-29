@@ -3,14 +3,14 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include "params.h"
 #include "gas.h"
 #include "riemann.h"
+#include "params.h"
 #include "utils.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 extern params pars;
 

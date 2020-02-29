@@ -569,7 +569,59 @@ A good choice for $p_0$ is coming from the linearised solution of the primitive 
 %====================================================================
 
 
+The HLLC solver is based on the approximation that we have 3 waves which are jump discontinuities, travelling with the speeds $S_L$, $S^*$, and $S_R$, respectively.
+Using integral relations and Rankine-Hugeniot relations, we directly find an expression for the fluxes $\F$:
 
+
+\begin{align}
+	\F_{i+\half} = \begin{cases}
+		\F_L ~~~~ &\text{ if }		~~	\frac{x}{t} \leq S_L \\
+		\F^*_L ~~~~ &\text{ if }	~~  S_L \leq \frac{x}{t} \leq S^* \\
+		\F^*_R ~~~~ &\text{ if }	~~	S^* \leq \frac{x}{t} \leq S_R \\
+		\F_R ~~~~ &\text{ if }		~~	S_R \leq \frac{x}{t} \\
+	\end{cases}
+\end{align}
+
+where $x/t = 0$ at the boundary of a cell, $i+\half$, and with
+
+\begin{align*}
+	S^* &=
+		\frac{p_R - p_L  + \rho_L u_L (S_L - u_L) - \rho_R u_R (S_R - u_R)}
+			{\rho_L (S_L - u_L) - \rho_R (S_R - u_R) }\\
+	\U^*_{L,R} &=
+		\rho_{L,R} \frac{ S_{L,R} - u_{L,R}}{S_{L,R} - S^*} 
+		\begin{pmatrix}
+			1\\
+			S^*\\
+			v_{L,R}\\
+			w_{L,R}\\
+			\frac{E_{L,R}}{\rho_{L,R}} + (S^* - u_{L,R}) \left( S^* + \frac{p_{L,R}}{\rho_{L,R}(S_{L,R} - u_{L,R})} \right)
+		\end{pmatrix} \\
+	\F^*_{L,R} &=
+		\F_{L, R} + S_{L,R} ( \U^*_{L,R} - \U_{L,R} )
+\end{align*}
+
+for the flux in $x$ - direction;
+For $y$ and $z$ direction, you'll need to exchange the velocity components with $S^*$ appropriately.
+$\U_{L,R}$ are the given initial states, and $\F_{L,R} = \F(\U_{L,R})$ the corresponding initial states.
+
+
+
+What we still lack is estimates for the left and right wave speeds, $S_L$ and $S_R$.
+There are multiple ways to get good and robust estimates.
+The one I implemented is:
+
+\begin{align}
+	S_L  &= u_L - a_L q_L \\
+	S_R  &= u_R + a_R q_R \\
+	q_{L,R} &= 
+		\begin{cases}
+			1	~~~~ & \text{ if } p^* \leq p_{L,R} ~~~~ \text{(rarefaction)}\\
+			\sqrt{1 + \frac{\gamma - 1}{2 \gamma} \left(\frac{p^*}{p_{L,R}} - 1 \right)}	~~~~ & \text{ if } p^* > p_{L,R} ~~~~ \text{(shock)}\\
+		\end{cases} \\
+	p^* &= \max(0, p_{PV})\\
+	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R)
+\end{align}
 
 
 

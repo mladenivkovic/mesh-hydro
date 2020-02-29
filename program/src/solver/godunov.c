@@ -166,8 +166,6 @@ void solver_compute_fluxes(float* dt, int dimension){
     solver_compute_cell_pair_flux(left, right, dt, /*dimension=*/0);
   }
 
-  /* cell_print_grid("pre"); */
-  /* cell_print_grid("v_x"); */
 
 #elif NDIM == 2
 
@@ -199,10 +197,10 @@ void solver_compute_fluxes(float* dt, int dimension){
 void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
-   * left:   pointer to cell which stores the left state
-   * right:   pointer to cell which stores the left state
-   * dt:     current time step
-   * dim: integer along which dimension to advect. 0: x. 1: y.
+   * left:  pointer to cell which stores the left state
+   * right: pointer to cell which stores the right state
+   * dt:    current time step
+   * dim:   integer along which dimension to advect. 0: x. 1: y.
    *
    * Here, we just solve the Riemann problem between the left and right
    * primitive states, and sample the solution at x = x/t = 0, because
@@ -211,6 +209,10 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
    * -------------------------------------------------------------------- */
 
 
+#if RIEMANN == HLLC
+  /* the HLLC solver gives us the flux directly. */
+  riemann_solve_hllc(&left->prim, &right->prim, &left->cflux, /*xovert=*/0.0, dim);
+#else
   pstate solution;
   gas_init_pstate(&solution);
 
@@ -219,6 +221,7 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
 
   /* from the primitive states, compute and store F_{i+1/2} */
   gas_get_cflux_from_pstate(&solution, &left->cflux, dim);
+#endif
 }
 
 
