@@ -31,7 +31,9 @@ genmakefile(){
 make -f Makefile-individual-execnames clean
 
 
+#---------------------------
 # Vanilla advection
+#---------------------------
 for ndim in 1 2; do
     for solver in ADVECTION_PWLIN ADVECTION_PWCONST; do
 
@@ -43,7 +45,9 @@ done
 
 
 
+#---------------------------
 # slope limiters
+#---------------------------
 for ndim in 1 2; do
     for LIMITER in MINMOD SUPERBEE MC VANLEER; do
 
@@ -53,3 +57,14 @@ for ndim in 1 2; do
     done
 done
 
+
+#---------------------------
+# Godunov
+#---------------------------
+for ndim in 1 2; do
+    for RIEMANN in EXACT TRRS TSRS HLLC; do
+        make -f Makefile-individual-execnames clean
+        genmakefile $ndim GODUNOV $RIEMANN NONE hydro-godunov-"$RIEMANN"-"$ndim"D
+        make -f Makefile-individual-execnames
+    done
+done

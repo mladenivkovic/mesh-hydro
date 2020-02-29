@@ -10,9 +10,11 @@
 EXEC = riemann  
 
 # set which Riemann solver to use.
-# Choices: EXACT, TRRS, TSRS, HLL, HLLC
-RIEMANN = EXACT
+# Choices: EXACT, TRRS, TSRS, HLLC
 # RIEMANN = NONE
+# RIEMANN = EXACT
+# RIEMANN = TRRS
+RIEMANN = TSRS
 
 
 # set default values if not defined otherwise
@@ -30,7 +32,7 @@ include processing.mk
 
 
 # override defines and objects
-DEFINES= -DNDIM=1 -DSOLVER=0 -DRIEMANN=$(RIEMANNINT) -DLIMITER=0 -DCOMPDATE="$(COMPILEDATE)" 
+DEFINES= -DNDIM=1 -DSOLVER=0 -DRIEMANN=$(RIEMANNINT) -DLIMITER=0 -DCOMPDATE="$(COMPILEDATE)" -DUSE_AS_RIEMANN_SOLVER
 OBJECTS=$(RIEMANN_OBJECTS)
 
 
