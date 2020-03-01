@@ -86,9 +86,20 @@ if __name__ == "__main__":
         ls = linestyles[i % len(linestyles)]
 
         ndim, rho, u, p, t, step = read_output(fname)
-        kwargs = label_to_kwargs(solver)
-        kwargs["linestyle"] = ls
-        fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
+
+        if ndim == 1:
+            kwargs = label_to_kwargs(solver)
+            kwargs["linestyle"] = ls
+            fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
+        elif ndim == 2:
+
+            rho = np.mean(rho, axis=0)
+            u = np.mean(u[:, :, 0], axis=0)
+            p = np.mean(p, axis = 0)
+            label = "t = {0:.3f}; mean value along y".format(t)
+            kwargs = {"label":label}
+            kwargs["linestyle"] = ls
+            fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
 
 
     fig.suptitle(r"t = {0:.3f}".format(t))
@@ -105,7 +116,7 @@ if __name__ == "__main__":
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs = kwargs)
 
-        save_plot(fig, fname_force = "GODUNOV-"+icprefix+".png")
+        save_plot(fig, fname_force = "GODUNOV-"+icprefix+"-{0:1d}D.png".format(ndim))
 
     else:
         print("Can't work with non-riemann ICs.")

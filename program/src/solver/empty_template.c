@@ -72,7 +72,8 @@ void solver_compute_fluxes(){
   /* ---------------------------------------------
    * Computes the actual fluxes between cells
    * --------------------------------------------- */
-   debugmessage("Called solver_compute_fluxes");
+
+  debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 }
 
 

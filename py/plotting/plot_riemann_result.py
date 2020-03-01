@@ -39,9 +39,9 @@ if __name__ == "__main__":
     label = t
 
     if ndim == 2:
-        rho = np.mean(rho, axis=1)
-        u = np.mean(u[:, :, 0], axis=1)
-        p = np.mean(p, axis = 1)
+        rho = np.mean(rho, axis=0)
+        u = np.mean(u[:, :, 0], axis=0)
+        p = np.mean(p, axis = 0)
         label = "t = {0:.3f}; mean value along y".format(t)
 
     nsim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])

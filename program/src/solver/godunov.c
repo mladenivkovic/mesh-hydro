@@ -153,7 +153,7 @@ void solver_compute_fluxes(float* dt, int dimension){
    * neighbour at i-1
    * ----------------------------------------------------------- */
 
-  debugmessage("Called solver_compute_fluxes");
+  debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
   cell *left; /* this cell */
   cell *right; /* the right neighbour */
@@ -174,6 +174,7 @@ void solver_compute_fluxes(float* dt, int dimension){
       for (int j = BC-1; j < pars.nx + BC; j++){
         left = &(grid[i][j]);
         right = &(grid[i+1][j]);
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
@@ -182,6 +183,7 @@ void solver_compute_fluxes(float* dt, int dimension){
       for (int j = BC-1; j < pars.nx + BC; j++){
         left = &(grid[i][j]);
         right = &(grid[i][j+1]);
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }

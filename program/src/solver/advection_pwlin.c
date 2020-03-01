@@ -160,7 +160,7 @@ void solver_compute_fluxes(float* dt, int dimension){
    * splitting.
    * ------------------------------------------------------ */
 
-  debugmessage("Called solver_compute_fluxes");
+  debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
   cell *c; /* this cell */
   cell *uw; /* the cell upwind of the flux at the interface of *c */

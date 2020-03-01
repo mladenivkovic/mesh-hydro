@@ -82,7 +82,13 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
     float dfpdpL = dfpdp(pguess, left,  AL, BL, aL);
     float dfpdpR = dfpdp(pguess, right, AR, BR, aR);
     pguess = pold - (fL + fR + delta_u)/(dfpdpL + dfpdpR);
-    if (pguess < EPSILON_ITER) pguess = EPSILON_ITER;
+    if (pguess < EPSILON_ITER) pguess = SMALLP;
+    if (niter > 100) {
+      printf("Iteration for central pressure needs more than %d steps. "
+              "Force-quitting iteration. Old-to-new ratio is %g\n", 
+              niter, fabs(1 - pguess/pold));
+      break;
+    } 
   }
   while (2*fabs((pguess-pold)/(pguess+pold)) >= EPSILON_ITER);
 

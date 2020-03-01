@@ -239,7 +239,8 @@ void io_read_ic_twostate(int skip){
     }
     for (int i = pars.nx/2 + BC; i < pars.nx + BC; i++){
       grid[i][j].prim.rho = right.rho;
-      grid[i][j].prim.u[0] = 0;
+      grid[i][j].prim.u[0] = right.u[0];
+      grid[i][j].prim.u[1] = 0;
       grid[i][j].prim.p = right.p;
     }
 
