@@ -284,6 +284,75 @@ def plot_2D(rho, u, p, t = None, kwargs={}):
 
 
 
+def plot_2D_velnorm(rho, u, p, t = None, kwargs={}):
+    """
+    Create a plot from 2D data. Plot velocity norm, not components.
+    rho, u, p:   np arrays of physical quantities
+    t:           time of the simulation
+
+    kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
+    """
+
+    unorm = np.sqrt(u[:,:,0]**2 + u[:,:,1]**2)
+
+    fig = plt.figure(figsize=(16, 5))
+
+    nx = rho.shape[0]
+
+    ax1 = fig.add_subplot(1, 3, 1)
+    im1 = ax1.imshow(rho,
+            origin='lower', 
+            extent=(0,1,0,1),
+             **kwargs,
+            )
+    ax1.set_title('density')
+
+    ax2 = fig.add_subplot(1, 3, 2)
+    im2 = ax2.imshow(u[:,:,0],
+            origin='lower', 
+            extent=(0,1,0,1),
+             **kwargs,
+            )
+    ax2.set_title('velocity norm')
+
+    ax3 = fig.add_subplot(1, 3, 3)
+    im3 = ax3.imshow(p, 
+            origin='lower', 
+            extent=(0,1,0,1),
+             **kwargs,
+            )
+    ax3.set_title('pressure')
+
+    for ax in fig.axes:
+        ax.set_xlabel("x")
+        ax.set_xlim(0,1)
+        ax.set_ylabel("y")
+        ax.set_ylim(0,1)
+
+
+    for im, ax in [(im1, ax1), (im2, ax2), (im3, ax3)]:
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.05)
+        fig.colorbar(im, cax=cax)
+
+
+    if t is not None:
+        if isinstance(t, str):
+            text = t
+        elif isinstance(t, float):
+            text = r"$t = ${0:.3f}".format(t)
+        else:
+            raise ValueError("Got weird data type for label (t). t=", t, "type(t)=", type(t))
+        plt.figtext(0.05, 0.95, text)
+
+    return fig
+
+
+
+
+
+
+
 def plot_2D_in_3D(rho, u, p, t = None, kwargs={}):
     """
     Create a 3D plot from 2D data.
