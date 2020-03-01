@@ -117,7 +117,7 @@ void cell_set_boundary(){
     ghostL[i] = &(grid[i]);
     ghostR[i] = &(grid[pars.nx+BC+i]);
   }
-  cell_real_to_ghost(realL, realR, ghostL, ghostR);
+  cell_real_to_ghost(realL, realR, ghostL, ghostR, /*dimension=*/0);
 
 #elif NDIM == 2
 
@@ -129,7 +129,7 @@ void cell_set_boundary(){
       ghostL[i] = &(grid[i][j]);
       ghostR[i] = &(grid[pars.nx+BC+i][j]);
     }
-    cell_real_to_ghost(realL, realR, ghostL, ghostR);
+    cell_real_to_ghost(realL, realR, ghostL, ghostR, /*dimension=*/0);
   }
 
   /* now do all upper-lower boundaries */
@@ -140,7 +140,7 @@ void cell_set_boundary(){
       ghostL[j] = &(grid[i][j]);
       ghostR[j] = &(grid[i][pars.nx+BC+j]);
     }
-    cell_real_to_ghost(realL, realR, ghostL, ghostR);
+    cell_real_to_ghost(realL, realR, ghostL, ghostR, /*dimension=*/1);
   }
 
 #endif
@@ -150,14 +150,16 @@ void cell_set_boundary(){
 
 
 
-void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR){
+void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR, int dimension){
   /* ------------------------------------------------------------
    * apply the boundary conditions from real to ghost cells
    *
-   * realL: array of pointers to real cells with lowest index
-   * realR: array of pointers to real cells with highest index
-   * ghostL: array of pointers to ghost cells with lowest index
-   * ghostR: array of pointers to ghost cells with highest index
+   * realL:     array of pointers to real cells with lowest index
+   * realR:     array of pointers to real cells with highest index
+   * ghostL:    array of pointers to ghost cells with lowest index
+   * ghostR:    array of pointers to ghost cells with highest index
+   * dimension: dimension integer. 0 for x, 1 for y. Needed for
+   *            reflective boundary conditions.
    *
    * all arguments are arrays of size BC, defined in defines.h
    * lowest array index is also lowest index of cell in grid
@@ -176,8 +178,8 @@ void cell_real_to_ghost(cell** realL, cell** realR, cell** ghostL, cell** ghostR
     /* reflective boundary conditions */
     /* ------------------------------ */
     for (int i = 0; i < BC; i++){
-      cell_copy_boundary_data_reflective(realL[i], ghostL[BC-1-i]);
-      cell_copy_boundary_data_reflective(realR[i], ghostR[BC-1-i]);
+      cell_copy_boundary_data_reflective(realL[i], ghostL[BC-1-i], dimension);
+      cell_copy_boundary_data_reflective(realR[i], ghostR[BC-1-i], dimension);
     }
 
 
@@ -219,21 +221,25 @@ void cell_copy_boundary_data(cell* real, cell* ghost){
 
 
 
-void cell_copy_boundary_data_reflective(cell* real, cell* ghost){
+void cell_copy_boundary_data_reflective(cell* real, cell* ghost, int dimension){
   /* ---------------------------------------------------------
    * Copies the actual data needed for boundaries from a real 
    * cell to a ghost cell. Here for a reflective boundary 
    * condition, where we need to invert the velocities.
+   *
+   * cell* real: pointer to real cell from which we take data
+   * cell* ghost: pointer to ghost cell into which we copy data
+   * int dimension: in which dimension the reflection is supposed to be
    * --------------------------------------------------------- */
 
   ghost->prim.rho = real->prim.rho;
-  ghost->prim.u[0] = - real->prim.u[0];
-  ghost->prim.u[1] = - real->prim.u[1];
+  ghost->prim.u[dimension] = - real->prim.u[dimension];
+  ghost->prim.u[(dimension + 1) % 2] = real->prim.u[(dimension + 1) % 2];
   ghost->prim.p = real->prim.p;
 
   ghost->cons.rho = real->cons.rho;
-  ghost->cons.rhou[0] = - real->cons.rhou[0];
-  ghost->cons.rhou[1] = - real->cons.rhou[1];
+  ghost->cons.rhou[dimension] = - real->cons.rhou[dimension];
+  ghost->cons.rhou[(dimension + 1) % 2] = real->cons.rhou[(dimension + 1) % 2];
   ghost->cons.E = real->cons.E;
 }
 

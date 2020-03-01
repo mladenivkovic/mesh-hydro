@@ -18,7 +18,7 @@ void gas_init_pstate(pstate* s){
   /*-------------------------------------------------*/
 
   s->rho  = 0;
-  s->u = malloc(2 * sizeof(float));
+  /* s->u = malloc(2 * sizeof(float)); */
   s->u[0] = 0;
   s->u[1] = 0;
   s->p    = 0;
@@ -33,7 +33,7 @@ void gas_init_cstate(cstate *s){
   /*-------------------------------------------------*/
 
   s->rho   = 0;
-  s->rhou = malloc(2 * sizeof(float));
+  /* s->rhou = malloc(2 * sizeof(float)); */
   s->rhou[0] = 0;
   s->rhou[1] = 0;
   s->E     = 0;
@@ -74,6 +74,8 @@ void gas_cons_to_prim(cstate *c, pstate* p){
     p->u[0] = c->rhou[0]/c->rho;
     p->u[1] = c->rhou[1]/c->rho;
     p->p = GM1 * ( c->E - 0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1] ) / c->rho );
+    /* do some exception handling. Sometimes the time step is too large, and we end up with negative pressures. */
+    if (p->p <= SMALLP) p->p = SMALLP;
   }
 }
 
@@ -137,7 +139,7 @@ float gas_soundspeed(pstate* s){
   /*-----------------------------------------*/
   /* compute sound speed of ideal gas        */
   /*-----------------------------------------*/
-  return sqrtf(GAMMA * s->p / s->rho);
+  return sqrt(GAMMA * s->p / s->rho);
 }
 
 

@@ -127,7 +127,6 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
 
 
 
-
   /* -------------------------------------------- */ 
   /* compute left and right conserved star states */
   /* -------------------------------------------- */ 

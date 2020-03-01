@@ -10,7 +10,7 @@
 /* primitive state */
 typedef struct {
   float rho;  /* density */
-  float* u;   /* velocity vector. u[0] = ux, u[1] = uy */
+  float u[2];   /* velocity vector. u[0] = ux, u[1] = uy */
   float p;    /* pressure */
 } pstate;
 
@@ -18,7 +18,7 @@ typedef struct {
 /* conserved state */
 typedef struct {
   float rho;    /* density */
-  float *rhou;  /* specific momentum. rhou[0] in x direction, rhou[1] in y direction */
+  float rhou[2];  /* specific momentum. rhou[0] in x direction, rhou[1] in y direction */
   float E;      /* specific energy */
 } cstate; 
 
@@ -33,6 +33,5 @@ void gas_get_cflux_from_cstate(cstate *c, cstate *f, int dimension);
 
 float gas_soundspeed(pstate *s);
 float gas_energy(pstate* s);
-
 
 #endif

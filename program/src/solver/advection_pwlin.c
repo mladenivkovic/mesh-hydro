@@ -39,6 +39,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   *write_output = io_is_output_step(*t, dt, step); 
 
 #if NDIM == 1
+
   solver_compute_fluxes(dt, /*dimension =*/0);
   solver_advance_step(dt);
 
@@ -47,11 +48,11 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   int dimension = step % 2; /* gives 0 or 1, switching each step */
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt);
-  cell_reset_fluxes();
+
   dimension = (dimension + 1) % 2; /* 1 -> 0 or 0 -> 1 */
+  solver_init_step();
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt);
-  /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
 
 #endif
 }
@@ -143,7 +144,7 @@ void solver_get_dt(float* dt){
     }
   }
 
-  if (*dt <= 0.0) throw_error("Got weird time step? dt=%12.8f");
+  if (*dt <= DT_MIN) throw_error("Got weird time step? dt=%12.4e", *dt);
 }
 
 
@@ -273,7 +274,6 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
 #endif
   c->pflux.p += uw->prim.u[dim] * ( uw->prim.p +  0.5 * su.p * dsu ) -
                dw->prim.u[dim] * ( dw->prim.p +  0.5 * sd.p * dsd );
-
 }
 
 
@@ -307,19 +307,19 @@ void solver_advance_step(float* dt){
 
 
 void solver_update_state(cell *c, float dtdx){
-    /* ------------------------------------------------------
-     * Update the state using the fluxes in the cell and dt
-     * dtdx: dt / dx
-     * ------------------------------------------------------ */
+  /* ------------------------------------------------------
+   * Update the state using the fluxes in the cell and dt
+   * dtdx: dt / dx
+   * ------------------------------------------------------ */
 
-    c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
+  c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-    c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
+  c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
 #if NDIM >= 2
-    c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
+  c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
 #endif
 #endif
-    c->prim.p = c->prim.p + dtdx * c->pflux.p;
+  c->prim.p = c->prim.p + dtdx * c->pflux.p;
 }
 
 

@@ -40,6 +40,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   *write_output = io_is_output_step(*t, dt, step); 
 
 #if NDIM == 1
+
   solver_compute_fluxes(dt, /*dimension =*/0);
   solver_advance_step(dt, /*dimension=*/0);
 
@@ -48,8 +49,9 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   int dimension = step % 2; /* gives 0 or 1, switching each step */
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt, dimension);
-  cell_reset_fluxes();
+
   dimension = (dimension + 1) % 2; /* 1 -> 0 or 0 -> 1 */
+  solver_init_step();
   solver_compute_fluxes(dt, dimension);
   solver_advance_step(dt, dimension);
   /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
@@ -108,7 +110,7 @@ void solver_get_dt(float* dt, int step){
   for (int i = BC; i < pars.nx + BC; i++){
     for (int j = BC; j < pars.nx + BC; j++){
       float uxabs = fabs(grid[i][j].prim.u[0]);
-      float a = gas_soundspeed(&(grid[i]->prim));
+      float a = gas_soundspeed(&grid[i][j].prim);
       float S = uxabs + a;
       if (S > uxmax){ uxmax = S; }
       float uyabs = fabs(grid[i][j].prim.u[1]);
@@ -136,7 +138,7 @@ void solver_get_dt(float* dt, int step){
   
   if (step <=5) *dt *= 0.2; /* sometimes there might be trouble with sharp discontinuities at the beginning, so reduce the timestep for the first few steps */
 
-  if (*dt <= 0.0) throw_error("Got weird time step? dt=%12.8f", *dt);
+  if (*dt <= DT_MIN) throw_error("Got weird time step? dt=%12.4e", *dt);
 }
 
 
@@ -269,8 +271,8 @@ void solver_update_state(cell* left, cell* right, float dtdx){
    * at i-1/2
    * ------------------------------------------------------ */
 
- right->cons.rho      = right->cons.rho     + dtdx * ( left->cflux.rho      - right->cflux.rho );
- right->cons.rhou[0]  = right->cons.rhou[0] + dtdx * ( left->cflux.rhou[0]  - right->cflux.rhou[0] );
- right->cons.rhou[1]  = right->cons.rhou[1] + dtdx * ( left->cflux.rhou[1]  - right->cflux.rhou[1] );
- right->cons.E        = right->cons.E       + dtdx * ( left->cflux.E        - right->cflux.E );
+  right->cons.rho      = right->cons.rho     + dtdx * ( left->cflux.rho      - right->cflux.rho );
+  right->cons.rhou[0]  = right->cons.rhou[0] + dtdx * ( left->cflux.rhou[0]  - right->cflux.rhou[0] );
+  right->cons.rhou[1]  = right->cons.rhou[1] + dtdx * ( left->cflux.rhou[1]  - right->cflux.rhou[1] );
+  right->cons.E        = right->cons.E       + dtdx * ( left->cflux.E        - right->cflux.E );
 }

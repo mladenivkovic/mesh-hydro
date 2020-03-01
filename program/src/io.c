@@ -527,7 +527,7 @@ void io_write_output(int *outstep, int step,  float t){
   for (int i=BC; i<pars.nx+BC; i++){
     cell c = grid[i];
     pstate s = c.prim;
-    fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f\n", c.x, s.rho, s.u[0], s.p);
+    fprintf(outfilep, "%12.6e %12.6e %12.6e %12.6e\n", c.x, s.rho, s.u[0], s.p);
   }
 
 #elif NDIM == 2
@@ -537,7 +537,7 @@ void io_write_output(int *outstep, int step,  float t){
     for (int i = BC; i < pars.nx + BC; i++){
       cell c = grid[i][j];
       pstate s = c.prim;
-      fprintf(outfilep, "%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n", c.x, c.y, s.rho, s.u[0], s.u[1], s.p);
+      fprintf(outfilep, "%12.6e %12.6e %12.6e %12.6e %12.6e %12.6e\n", c.x, c.y, s.rho, s.u[0], s.u[1], s.p);
     }
   }
 

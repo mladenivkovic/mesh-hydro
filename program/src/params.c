@@ -148,14 +148,14 @@ void params_init_derived(){
     if (pars.tmax > 0){
       nout = floor(pars.tmax / pars.dt_out) + 1; /* add 1 for good measure */
     } else{
-      /* assume maximally 1e6 outputs */
-      nout = 1000000;
+      /* assume maximally 9999 outputs */
+      nout = 9999;
     }
 
     pars.outputtimes = malloc(nout * sizeof(float));
     pars.noutput_tot = nout;
     for (int i = 0; i < nout; i++){
-      pars.outputtimes[i] = i * pars.dt_out;
+      pars.outputtimes[i] = (i+1) * pars.dt_out;
     }
 
   }

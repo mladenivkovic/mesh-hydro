@@ -21,8 +21,8 @@
 /* Physical constants */
 
 static const float GAMMA = 5./3.;
-static const float GM1 = GAMMA-1.;
-static const float GP1 = GAMMA+1.;
+static const float GM1 = GAMMA - 1.;
+static const float GP1 = GAMMA + 1.;
 static const float GP1OGM1 = GP1/GM1;
 static const float GM1OGP1 = GM1/GP1;
 static const float ONEOVERGAMMA = 1./GAMMA;
@@ -60,6 +60,10 @@ static const float BETA = GM1HALF / GAMMA;
 /* iteration tolerance */
 #define EPSILON_ITER 1e-6
 
+
+/* minimal timestep size */
+#define DT_MIN 1e-8
+
 /* "nonzero zeros" for vacuum */
 #ifdef USE_AS_RIEMANN_SOLVER
 /* set the "small" values to actually zero, so that only correct vacuum sates 
@@ -69,9 +73,9 @@ static const float BETA = GM1HALF / GAMMA;
 #define SMALLP 0.
 #else
 /* cheat for stability in Godunov type finite volume schemes*/
-#define SMALLRHO 1e-8
-#define SMALLU 1e-8
-#define SMALLP 1e-8
+#define SMALLRHO 1e-6
+#define SMALLU 1e-6
+#define SMALLP 1e-6
 #endif
 
 
