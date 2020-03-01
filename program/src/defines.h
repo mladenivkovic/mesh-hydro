@@ -18,10 +18,31 @@
 #endif
 
 
+/* Physical constants */
+
+static const float GAMMA = 5./3.;
+static const float GM1 = GAMMA-1.;
+static const float GP1 = GAMMA+1.;
+static const float GP1OGM1 = GP1/GM1;
+static const float GM1OGP1 = GM1/GP1;
+static const float ONEOVERGAMMA = 1./GAMMA;
+static const float GM1HALF = 0.5*GM1;
+static const float BETA = GM1HALF / GAMMA;
 
 
-/* -------------------------------------- */
-/* you shouldn't be modifying stuff below
+/* boundary cells */
+#define BC 2 /* how many virtual/ghost boundary cells on each side to make */
+#define BCTOT 2*BC
+
+/* boxsize */
+#define BOXLEN 1.
+
+
+
+
+
+/* -------------------------------------- *
+ * you shouldn't be modifying stuff below
  * this line unless you know what you're
  * doing                                  */
 
@@ -36,29 +57,6 @@
 #define STR(x) STR_(x)
 #define STR_(x) #x
 
-
-/* Physical constants */
-
-#define GAMMA (5./3.)
-
-#define GM1 (GAMMA-1.)
-#define GP1 (GAMMA+1.)
-#define GP1OGM1 ((GP1)/(GM1))
-#define GM1OGP1 ((GM1)/(GP1))
-#define ONEOVERGAMMA (1./GAMMA)
-#define GM1HALF (0.5*(GM1))
-#define BETA ((GM1HALF) / GAMMA)
-
-
-/* boundary cells */
-#define BC 2 /* how many virtual/ghost boundary cells on each side to make */
-#define BCTOT 2*BC
-
-
-/* boxsize */
-#define BOXLEN 1.
-
-
 /* iteration tolerance */
 #define EPSILON_ITER 1e-6
 
@@ -70,7 +68,7 @@
 #define SMALLU 0.
 #define SMALLP 0.
 #else
-/* cheat for stability */
+/* cheat for stability in Godunov type finite volume schemes*/
 #define SMALLRHO 1e-8
 #define SMALLU 1e-8
 #define SMALLP 1e-8
