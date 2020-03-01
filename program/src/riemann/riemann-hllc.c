@@ -140,13 +140,9 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
   UstarL.rhou[dim] = lcomp * Sstar;
   UstarL.rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
 
-  if (left->rho > 0) {
-    float EL= 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
-    UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
-        (Sstar + left->p / (left->rho * SLMUL)));
-  } else {
-    UstarL.E = SMALLRHO * SMALLU * SMALLU;
-  }
+  float EL= 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
+  UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
+      (Sstar + left->p / (left->rho * SLMUL)));
 
 
   cstate UstarR;
@@ -157,13 +153,9 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
   UstarR.rhou[dim] = rcomp * Sstar;
   UstarR.rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
 
-  if (right->rho > 0) {
-    float ER= 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
-    UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
-        (Sstar + right->p / (right->rho * SRMUR)));
-  } else {
-    UstarR.E = SMALLRHO * SMALLU * SMALLU;
-  }
+  float ER= 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
+  UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
+      (Sstar + right->p / (right->rho * SRMUR)));
 
 
 
@@ -202,10 +194,10 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
   cstate FstarR;
   gas_init_cstate(&FstarR);
 
-  FstarR.rho = FR.rho + SL * (UstarR.rho - UR.rho);
-  FstarR.rhou[0] = FR.rhou[0] + SL * (UstarR.rhou[0] - UR.rhou[0]);
-  FstarR.rhou[1] = FR.rhou[1] + SL * (UstarR.rhou[1] - UR.rhou[1]);
-  FstarR.E = FR.E + SL * (UstarR.E - UR.E);
+  FstarR.rho = FR.rho + SR * (UstarR.rho - UR.rho);
+  FstarR.rhou[0] = FR.rhou[0] + SR * (UstarR.rhou[0] - UR.rhou[0]);
+  FstarR.rhou[1] = FR.rhou[1] + SR * (UstarR.rhou[1] - UR.rhou[1]);
+  FstarR.E = FR.E + SR * (UstarR.E - UR.E);
 
 
 

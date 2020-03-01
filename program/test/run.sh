@@ -398,7 +398,7 @@ function godunov_1D() {
 
 
     # for RIEMANN in EXACT TSRS; do
-    for RIEMANN in EXACT TRRS TSRS; do
+    for RIEMANN in EXACT TRRS TSRS HLLC; do
 
         # genmakefile ndim solver riemann limiter
         genmakefile 1 GODUNOV $RIEMANN NONE
@@ -457,4 +457,4 @@ godunov_1D
 #=====================================
 # create TeX
 #=====================================
-# generate_tex
+generate_tex

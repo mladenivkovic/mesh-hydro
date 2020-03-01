@@ -7,6 +7,7 @@
 #ifndef RIEMANN_H
 #define RIEMANN_H
 
+#include "defines.h"
 
 #if RIEMANN == EXACT
 #include "riemann/riemann-exact.h"
@@ -17,7 +18,6 @@
 #elif RIEMANN == HLLC
 #include "riemann/riemann-hllc.h"
 #endif
-
 
 void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, int dimension);
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension);

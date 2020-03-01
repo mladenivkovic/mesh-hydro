@@ -4,8 +4,8 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "gas.h"
-#include "riemann.h"
 #include "params.h"
+#include "riemann.h"
 #include "utils.h"
 
 #include <math.h>
