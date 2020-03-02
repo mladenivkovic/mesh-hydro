@@ -13,8 +13,8 @@ EXEC = riemann
 # Choices: EXACT, TRRS, TSRS, HLLC
 # RIEMANN = NONE
 # RIEMANN = EXACT
-# RIEMANN = TRRS
-RIEMANN = TSRS
+RIEMANN = TRRS
+# RIEMANN = TSRS
 
 
 # set default values if not defined otherwise
@@ -26,6 +26,14 @@ RIEMANN = EXACT
 endif
 
 
+# if there is a defines.mk present, overwrite the
+# definitions above with its contents
+ifneq ("$(wildcard defines.mk)","")
+include defines.mk
+endif
+
+
+# process the definitions
 include processing.mk
 
 
@@ -90,4 +98,4 @@ $(EXEC): $(OBJECTS)
 .PHONY: clean # keeps makefile from doing something with a file named clean
 
 clean:
-	rm -f $(EXEC) *.o
+	rm -f *.o

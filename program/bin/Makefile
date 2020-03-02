@@ -17,6 +17,7 @@ NDIM = 1
 RIEMANN = EXACT
 # RIEMANN = TRRS
 # RIEMANN = TSRS
+# RIEMANN = HLLC
 
 
 # set which hydro solver to use.
@@ -34,6 +35,16 @@ LIMITER = NONE
 # LIMITER = VANLEER
 
 
+
+# if there is a defines.mk present, overwrite the
+# definitions above with its contents
+ifneq ("$(wildcard defines.mk)","")
+include defines.mk
+endif
+
+
+# process the definitions
+include processing.mk
 
 
 include processing.mk
@@ -80,9 +91,6 @@ default: $(EXEC)
 $(EXEC): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-riemann: $(RIEMANN_OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -DNDIM=1
-
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
@@ -97,4 +105,4 @@ riemann: $(RIEMANN_OBJECTS)
 .PHONY: clean # keeps makefile from doing something with a file named clean
 
 clean:
-	rm -f $(EXEC) *.o
+	rm -f *.o
