@@ -29,6 +29,7 @@ You can pick between:
 at compile time by setting the corresponding values in the Makefile.
 
 To see what the code is able to do, you can for example run the test script in `./program/test` and have a look at the resulting `./program/test/test_results.pdf`
+(You'll need to add add `/py/module/` to your `PYTHONPATH` to be able to run the python plotting scripts.)
 
 
 
@@ -45,8 +46,11 @@ Contents
 
 Requirements
 ----------------------
-A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though. GNU make to compile without much hassle. The Makefile is set up for GCC.
-python 3 with numpy and matplotlib for plotting. Default LaTeX to create the TeX files.
+
+- A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though. 
+- GNU make to compile without much hassle. The Makefile is set up for GCC.
+- python 3 with numpy and matplotlib for plotting. 
+- LaTeX to create the TeX files. I hardcod the `pdflatex` command in the scripts.
 
 
 
@@ -78,12 +82,15 @@ in the parameter file, you need to specify `nx` and `tmax` only, pretty much all
 Things to keep in mind
 ----------------------------
 
+- If you want to use the included python modules and scripts, you need to add `/py/module/` to your `PYTHONPATH`.
 - this code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
 - All macros are in `defines.h`
 - boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
 - there is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
 - No advection solver uses a Riemann solver.
 - Piecewise constant advection can't apply slope limiters.
+- You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
+- You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)
 - ...
 
 
@@ -279,6 +286,66 @@ If no `basename` is given in the parameter file, the output file name will be ge
 e.g.
 
 `run-ADVECTION-NO_LIMITER-2D-0001.out`
+
+The output files are written in formatted text, and their content should be self-explainatory:
+
+
+
+
+**FOR 1D**:
+
+```
+# ndim =  1
+# nx =    <number of cells used>
+# t =     <current time, float>
+# nsteps =  <current step of the simulation>
+#            x          rho            u            p
+< x value of cell 0 > <density of cell 0> <velocity of cell 0> < pressure of cell 0>
+                            .
+                            .
+                            .
+                            .
+< x value of cell nx-1 > <density of cell nx-1> <velocity of cell nx-1> < pressure of cell nx-1>
+```
+
+
+
+
+
+**FOR 2D:**
+
+```
+# ndim =  2
+# nx =    <number of cells used>
+# t =     <current time, float>
+# nsteps =  <current step of the simulation>
+#            x            y          rho          u_x          u_y            p
+<x value of cell (0, 0)> <y value of cell (0, 0)> <density in cell (0, 0)> <x velocity in cell (0, 0)> <y velocity in cell (0, 0)> <pressure in cell (0, 0)>
+<x value of cell (1, 0)> <y value of cell (1, 0)> <density in cell (1, 0)> <x velocity in cell (1, 0)> <y velocity in cell (1, 0)> <pressure in cell (1, 0)>
+                                                 .
+                                                 .
+                                                 .
+<x value of cell (nx-1, 0)> <y value of cell (nx-1, 0)> <density in cell (nx-1, 0)> <x velocity cell (nx-1, 0)> <y velocity in cell (nx-1, 0)> <pressure in cell (nx-1, 0)>
+<x value of cell (0, 1)> <y value of cell (0, 1)> <density in cell (0, 1)> <x velocity in cell (0, 1)> <y velocity in cell (0, 1)> <pressure in cell (0, 1)>
+<x value of cell (1, 1)> <y value of cell (1, 1)> <density in cell (1, 1)> <x velocity in cell (1, 1)> <y velocity in cell (1, 1)> <pressure in cell (1, 1)>
+                                                 .
+                                                 .
+                                                 .
+<x value of cell (nx-1, 1)> <y value of cell (nx-1, 1)> <density in cell (nx-1, 1)> <x velocity cell (nx-1, 1)> <y velocity in cell (nx-1, 1)> <pressure in cell (nx-1, nx-1)>
+                                                 .
+                                                 .
+                                                 .
+<x value of cell (0, nx-1)> <y value of cell (0, nx-1)> <density in cell (0, nx-1)> <x velocity in cell (0, nx-1)> <y velocity in cell (0, nx-1)> <pressure in cell (0, nx-1)>
+<x value of cell (1, nx-1)> <y value of cell (1, nx-1)> <density in cell (1, nx-1)> <x velocity in cell (1, nx-1)> <y velocity in cell (1, nx-1)> <pressure in cell (1, nx-1)>
+                                                 .
+                                                 .
+                                                 .
+<x value of cell (nx-1, nx-1)> <y value of cell (nx-1, nx-1)> <density in cell (nx-1, nx-1)> <x velocity cell (nx-1, nx-1)> <y velocity in cell (nx-1, nx-1)> <pressure in cell (nx-1, nx-1)>
+```
+
+
+
+
 
 
 
