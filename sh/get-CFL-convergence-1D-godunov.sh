@@ -29,36 +29,24 @@ genparamfile() {
     echo "tmax = 0"         >> $f
     echo "ccfl = $1"        >> $f
     echo "basename = $2"    >> $f
-    echo "nstep_log = 1000"  >> $f
+    echo "nx = 5000"        >> $f
+    echo "nstep_log = 100"  >> $f
+    echo "boundary = 2"     >> $f
 }
 
 
 
-for shape in step gaussian; do
+icfile=$ICDIR/sod_test.dat
 
-    for nx in 500 ; do
+for ccfl in 0.9 0.8 0.7 0.6 0.5 0.4 0.3 0.2 0.1; do
 
-        icfile=$ICDIR/advection-1D-$shape-$nx.dat
+    cflform=`printf %.2f $ccfl`
 
-        for ccfl in 0.9 0.8 0.7 0.6 0.5 0.4 0.3 0.2 0.1; do
-
-            cflform=`printf %.8f $ccfl`
-
-            for limiter in MC MINMOD SUPERBEE VANLEER; do
-                genparamfile $ccfl ADVECTION_PWLIN-"$limiter"-$shape-"$cflform"
-                $EXECDIR/hydro-advection-$limiter-1D paramfile.txt $icfile | tee -a output.log
-            done
-
-            genparamfile $ccfl ADVECTION_PWLIN-"NO_LIMITER"-$shape-"$cflform"
-            $EXECDIR/execs/hydro-ADVECTION_PWLIN-1D paramfile.txt $icfile | tee -a output.log
-
-            genparamfile $ccfl ADVECTION_PWCONST-$shape-"$cflform"
-            $EXECDIR/hydro-ADVECTION_PWCONST-1D paramfile.txt $icfile | tee -a output.log
-
-        done
-
-    $EVALDIR/advection-1D-convergence-CCFL.py $shape
-
+    for RIEMANN in EXACT TSRS TRRS HLLC; do
+        genparamfile $ccfl GODUNOV-"$RIEMANN"-"$cflform"
+        $EXECDIR/hydro-godunov-$RIEMANN-1D paramfile.txt $icfile | tee -a output.log
     done
 
 done
+
+$EVALDIR/godunov-1D-convergence-CCFL.py $icfile
