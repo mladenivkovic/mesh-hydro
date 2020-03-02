@@ -54,6 +54,7 @@ Evaluations
 
 Contains plotting, comparing, and evaluation scripts for different tasks.
 E.g. compute and plot the convergence of a class of methods depending on grid spacing, dt, ...
+The scripts in there are meant to be called from bash scripts in `/sh`.
 
 
 

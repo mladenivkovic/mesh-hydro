@@ -511,6 +511,8 @@ def get_figname(fname, case = None):
             figname += "-riemann-solution"
         if case == "not-overplotted":
             pass
+        if case == "artsy":
+            figname += "-artsy"
  
 
     figname += "." + file_format
