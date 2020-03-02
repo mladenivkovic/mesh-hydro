@@ -109,6 +109,9 @@ int main(int argc, char* argv[]){
   log_extra("Writing initial output");
   io_write_output(&outcount, step, t);
 
+  log_message("\n");
+  log_message("%14s %14s %14s %14s  %14s\n",
+                "step", "time", "dt", "m_now/m_ini", "time step took");
 
   /* -------------------- 
    *   Main loop
@@ -135,7 +138,7 @@ int main(int argc, char* argv[]){
 
     /* announce */
     if (pars.nstep_log == 0 || step % pars.nstep_log == 0) {
-      log_message("%10d t = %12.6f dt = %12.6f m_tot = %12.6f step took %12.6fs\n",
+      log_message("%14d %14.6e %14.6e %14.6e %14.3es\n",
                   step, t, dt, cell_get_total_mass()/mtot_init, 
                   (float)(step_end - step_start) / CLOCKS_PER_SEC);
     }
@@ -147,10 +150,14 @@ int main(int argc, char* argv[]){
 
   all_end = clock();
 
+  /* don't use log_message, I want final stats even for verbose = 0 */
   printf("\n");
   printf("  Finished clean. Yay!\n");
-  printf("  Total runtime was %12.6fs, mtot = %12.6f, nsteps = %12d\n", 
-              (float)(all_end - all_start)/CLOCKS_PER_SEC, cell_get_total_mass()/mtot_init, step);
+  printf("  Final stats:\n");
+  printf("\n");
+  printf("    Total runtime was       %12.6fs\n", (float)(all_end - all_start)/CLOCKS_PER_SEC);
+  printf("    m_now/m_ini =           %12.6f\n", cell_get_total_mass()/mtot_init);
+  printf("    final number of steps = %12d\n", step);
 
   return(0);
 }

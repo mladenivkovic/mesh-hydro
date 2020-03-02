@@ -62,7 +62,7 @@ static const float BETA = GM1HALF / GAMMA;
 
 
 /* minimal timestep size */
-#define DT_MIN 1e-8
+#define DT_MIN 1e-10
 
 /* "nonzero zeros" for vacuum */
 #ifdef USE_AS_RIEMANN_SOLVER
