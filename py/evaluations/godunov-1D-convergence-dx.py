@@ -63,7 +63,7 @@ def L1norm(expected, obtained):
 
 
 
-nx = [5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000]
+nx = [5000, 10000, 20000, 50000, 80000, 100000]
 dx = [1/n for n in nx]
 
 solvers = ['EXACT', 'HLLC', 'TRRS', "TSRS"]

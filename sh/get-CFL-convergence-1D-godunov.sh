@@ -29,7 +29,7 @@ genparamfile() {
     echo "tmax = 0"         >> $f
     echo "ccfl = $1"        >> $f
     echo "basename = $2"    >> $f
-    echo "nx = 5000"        >> $f
+    echo "nx = 10000"       >> $f
     echo "nstep_log = 100"  >> $f
     echo "boundary = 2"     >> $f
 }

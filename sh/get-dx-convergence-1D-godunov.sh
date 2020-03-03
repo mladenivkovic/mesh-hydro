@@ -42,7 +42,7 @@ icfile=$ICDIR/sod_test.dat
 
 
 # start with high nx so the wave structure won't be out of the boundary at tmax
-for nx in 5000 10000 20000 50000 100000 200000 500000 1000000; do
+for nx in 5000 10000 20000 50000 80000 100000; do
 
     for RIEMANN in EXACT TSRS TRRS HLLC; do
         genparamfile $nx GODUNOV-"$RIEMANN"-"$nx"
