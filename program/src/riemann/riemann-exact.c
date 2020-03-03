@@ -69,7 +69,7 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
         (left->rho + right->rho) * (aL + aR);
   pguess = ppv;
 
-  if (pguess < EPSILON_ITER) pguess = EPSILON_ITER;
+  if (pguess < SMALLP) pguess = SMALLP;
 
   /* Newton-Raphson iteration */
   int niter = 0;
@@ -91,6 +91,8 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
     } 
   }
   while (2*fabs((pguess-pold)/(pguess+pold)) >= EPSILON_ITER);
+
+  if (pguess <= SMALLP) pguess = SMALLP;
 
   *ustar = left->u[dim] - fp(pguess, left,  AL, BL, aL);
   *pstar = pguess;
