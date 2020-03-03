@@ -3,7 +3,7 @@
 filetype = two-state
 rho_L = 1.0
 u_L   = 0.0
-p_L   = 1000.0
+p_L   = 100.0
 rho_R = 1.0
 u_R   = 0.0
 p_R   = 0.01

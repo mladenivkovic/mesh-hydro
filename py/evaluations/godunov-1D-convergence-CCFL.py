@@ -102,6 +102,15 @@ if __name__ == "__main__":
         ax.scatter(ccfl, accuracy, 
             c='C'+str(f))
 
+    # add a line with slope 0.5 starting at the lowest point for comparison
+    xp1 = ccfl[-1]
+    yp1 = accuracy[-1]
+    xp2 = ccfl[0]
+    slope = 0.5
+    yp2 = np.exp((slope * np.log(xp2/xp1)) + np.log(yp1))
+
+    ax.plot([xp1, xp2], [yp1, yp2], 'k:', label="slope 0.5")
+
 
     ax.legend(loc='upper left')
     ax.set_title("nx = {0:d}, nsteps = {1:d}".format(nx, nstep))

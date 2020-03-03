@@ -1,0 +1,117 @@
+%=========================================
+\section{Riemann Solvers}
+%=========================================
+
+
+
+%=========================================
+\subsection{Approximate Riemann Solutions}
+%=========================================
+
+
+
+
+
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-sod_test-0.100.png}
+	{fig:riemann-approximate-sod-test}
+	{
+		The Sod test solved using the exact and approximate Riemann solvers
+	}
+	
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-sod_test-0.200.png}
+	{fig:riemann-approximate-sod-test-later}
+	{
+		The Sod test solved using the exact and approximate Riemann solvers, at a later time
+	}
+	
+
+
+
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-sod_test_modified-0.100.png}
+	{fig:riemann-approximate-sod-test-modified}
+	{
+		The modified Sod test solved using the exact and approximate Riemann solvers
+	}
+	
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-sod_test_modified-0.200.png}
+	{fig:riemann-approximate-sod-test-modified-later}
+	{
+		The modified Sod test solved using the exact and approximate Riemann solvers, at a later time
+	}
+	
+
+
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-left_blast_wave-0.006.png}
+	{fig:riemann-approximate-left-blast-wave}
+	{
+		The left blast wave solved using the exact and approximate Riemann solvers
+	}
+	
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-left_blast_wave-0.013.png}
+	{fig:riemann-approximate-left-blast-wave-later}
+	{
+		The left blast wave solved using the exact and approximate Riemann solvers, at a later time
+	}
+	
+
+
+
+
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-right_blast_wave-0.006.png}
+	{fig:riemann-approximate-right-blast-wave}
+	{
+		The left blast wave solved using the exact and approximate Riemann solvers
+	}
+	
+
+\quickfigcap
+	{./figures/riemann/riemann-approximate-right_blast_wave-0.013.png}
+	{fig:riemann-approximate-right-blast-wave-later}
+	{
+		The left blast wave solved using the exact and approximate Riemann solvers, at a later time
+	}
+	
+
+
+
+
+	
+	
+	
+	
+%=========================================
+\subsection{Conclusions}
+%=========================================
+	
+	
+\begin{itemize}
+
+	\item 	The TSRS solver may have trouble with rarefactions, e.g. figs \ref{fig:riemann-approximate-sod-test} - \ref{fig:riemann-approximate-sod-test-modified-later}.
+			Which is to be expected, since it assumes that we have two shocks present.
+			It deals much better with shocks, e.g. figs \ref{fig:riemann-approximate-left-blast-wave} - \ref{fig:riemann-approximate-right-blast-wave-later}.
+	
+	\item 	The TRRS solver may have trouble with shocks, e.g. figs \ref{fig:riemann-approximate-left-blast-wave} - \ref{fig:riemann-approximate-right-blast-wave-later}.
+			Which is to be expected, since it assumes that we have two rarefactions present.
+			It deals much better with rarefactions, e.g. figs \ref{fig:riemann-approximate-sod-test} - \ref{fig:riemann-approximate-sod-test-modified-later}.
+			
+			
+	\item 	It looks like the results get worse over time.
+			Compare figs \ref{fig:riemann-approximate-sod-test} vs \ref{fig:riemann-approximate-sod-test-later}, \ref{fig:riemann-approximate-sod-test-modified} vs \ref{fig:riemann-approximate-sod-test-modified-later}, etc.
+			But recall that for the Riemann solver, we only solve the solution once, and then sample the solution for a given $x$ and $t$.
+			So once the four regions are determined initially, all the solver does is ``smear them out'' while sampling at a later time $t$.
+	
+\end{itemize}

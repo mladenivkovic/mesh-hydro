@@ -1,0 +1,159 @@
+%=============================================
+\section{Godunov's Method}
+%=============================================
+
+
+
+
+%==============================================================
+\subsection{Solving Riemann Problems using Godunov's Method}
+%==============================================================
+
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-left_blast_wave-1D.png}
+	{fig:godunov-1}
+	{
+		Solution to the left blast wave 
+		Riemann problem using Godunov's method and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-right_blast_wave-1D.png}
+	{fig:godunov-2}
+	{
+		Solution to the right blast wave 
+		Riemann problem using Godunov's method and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-sod_test-1D.png}
+	{fig:godunov-3}
+	{
+		Solution to the sod test
+		Riemann problem using Godunov's method and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-sod_test_modified-1D.png}
+	{fig:godunov-4}
+	{
+		Solution to the modified sod test
+		Riemann problem using Godunov's method and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+	
+
+
+
+
+%=======================================================================
+\subsection{Solving Vacuum Riemann Problems using Godunov's Method}
+%=======================================================================
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Order of Convergence Study}
+%==============================================================
+
+
+
+\quickfigcap
+	{./figures/godunov/godunov-convergence-dt-500.png}
+	{fig:godunov-convergence-dt}
+	{
+		Testing the method's convergence with respect to the time step $\Delta t$ on Sod test initial conditions.
+		For a fair comparison, both the cell width $\Delta x$ and the number of steps taken are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each Riemann solver used in the legend.
+	}
+
+
+\quickfigcap
+	{./figures/godunov/godunov-convergence-dx.png}
+	{fig:godunov-convergence-dx}
+	{
+		Testing the method's convergence with respect to the cell width $\Delta x$ on Sod test initial conditions.
+		For a fair comparison, the Courant number $C_{CFL}$ and the total number of steps are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each Riemann solver used in the legend.
+	}
+	
+\quickfigcap
+	{./figures/godunov/godunov-convergence-CFL-10000.png}
+	{fig:godunov-convergence-CFL}
+	{
+		Testing the method's convergence with respect to the Courant number $C_{CFL}$ on Sod test initial conditions.
+		The points are measurements, the lines are just connecting them.
+		The slope of $\half$ is plotted for comparison, and to demonstrate the deviation from it.
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Conclusions}
+%==============================================================
+
+
+\begin{itemize}
+
+
+	\item 	Similar to the piecewise constant advection, the method is diffusive around sharp jump discontinuities.
+			See figs. \ref{fig:godunov-1} - \ref{fig:godunov-4}.
+
+
+	\item \textbf{Order of Convergence}
+	
+		\begin{itemize}
+			
+			\item 	Looking at the time step dependence (fig. \ref{fig:godunov-convergence-dt}), we always get slopes around $\sim 0.5$.
+					Considering that a Sod test contains multiple jump discontinuities, this is absolutely as expected if we follow the same argumentation as for linear advection.
+					See eq. \ref{eq:advection-error-square-root} and derivation leading up to it for comparison.
+					All in all, it remains true that jump discontinuities reduce the order of convergence w.r.t. the time step.
+					
+			\item 	For the cell width dependence (fig. \ref{fig:godunov-convergence-dx}), we get a remarkable slope of $1.000$ for all solvers.
+					Even more remarkable, all the $L1$ norms are identical.
+					No approximate solver introduces more or less errors in this test case.
+			
+			\item 	For the $C_{cfl}$ dependence, we see that it deviates more stronger for higher $C_{CFL}$ from the $0.5$ power law that we get for small $\Delta t$.
+					However, it is significantly better than what we get for advection (fig. \ref{fig:advection-convergence-CFL-step}).
+					
+					Why?
+					
+					Well, we don't necessarily have constant time steps any more, nor do we have constant velocities.
+					It is conceivable that the errors ``correct themselves'' by demanding/allowing a smaller/larger timestep.
+					
+					What also might decrease the accuracy for high $C_{cfl}$ is that I  don't properly compute the emerging wave speeds, but estimate them;
+					So there is a possibility that for high $C_{cfl}$, things are just computed wrongly, i.e. the chosen time step is too large to be stable or accurate.
+			
+		\end{itemize}
+\end{itemize}
