@@ -73,6 +73,7 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
   float gR = sqrtf(AR / (pguess + BR));
   *pstar = (gL * left->p + gR * right->p - delta_u) /
             ( gL + gR );
+  if (SMALLP > *pstar) *pstar = SMALLP;
 
   *ustar = 0.5*(right->u[dim] + left->u[dim] + (*pstar - right->p)*gR - (*pstar - left->p)*gL);
 

@@ -9,17 +9,17 @@
 
 /* primitive state */
 typedef struct {
-  float rho;  /* density */
+  float rho;    /* density */
   float u[2];   /* velocity vector. u[0] = ux, u[1] = uy */
-  float p;    /* pressure */
+  float p;      /* pressure */
 } pstate;
 
 
 /* conserved state */
 typedef struct {
-  float rho;    /* density */
+  float rho;      /* density */
   float rhou[2];  /* specific momentum. rhou[0] in x direction, rhou[1] in y direction */
-  float E;      /* specific energy */
+  float E;        /* specific energy */
 } cstate; 
 
 

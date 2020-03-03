@@ -28,7 +28,6 @@ extern params pars;
 
 
 
-
 void solver_step(float *t, float* dt, int step, int* write_output){
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
