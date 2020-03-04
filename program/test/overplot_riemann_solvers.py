@@ -96,7 +96,7 @@ if __name__ == "__main__":
             rho = np.mean(rho, axis=0)
             u = np.mean(u[:, :, 0], axis=0)
             p = np.mean(p, axis = 0)
-            label = "t = {0:.3f}; mean value along y".format(t)
+            label = solver + "; mean value along y".format(t)
             kwargs = {"label":label}
             kwargs["linestyle"] = ls
             fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)

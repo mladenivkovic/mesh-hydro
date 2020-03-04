@@ -408,7 +408,7 @@ function godunov_1D() {
         # non-vacuum
         for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
             # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
-            genparamfile_transmissive 0 0.2 0 0 "NO_BASENAME" 0.9
+            genparamfile_transmissive 0 0.2 0 0 "$icprefix"-GODUNOV-1D-$RIEMANN 0.9
 
             ./hydro paramfile.txt ./IC/"$icprefix".dat
             errexit $?
@@ -416,7 +416,7 @@ function godunov_1D() {
 
         # vacuum
         for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
-            genparamfile_transmissive 0 0.01 0 0 "NO_BASENAME" 0.9
+            genparamfile_transmissive 0 0.01 0 0 "$icprefix"-GODUNOV-1D-$RIEMANN 0.9
 
             ./hydro paramfile.txt ./IC/"$icprefix".dat
             errexit $?
@@ -424,7 +424,7 @@ function godunov_1D() {
     done
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
-        ./overplot_riemann_solvers.py "$icprefix" GODUNOV
+        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-1D
     done
 }
 
@@ -447,7 +447,7 @@ function godunov_2D() {
         # non vacuum
         for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
             # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
-            genparamfile_transmissive 0 0.2 0 0 "NO_BASENAME" 0.9
+            genparamfile_transmissive 0 0.2 0 0 "$icprefix"-GODUNOV-2D-$RIEMANN 0.9
 
             ./hydro paramfile.txt ./IC/"$icprefix".dat
             errexit $?
@@ -455,7 +455,7 @@ function godunov_2D() {
 
         # vacuum
         for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
-            genparamfile_transmissive 0 0.01 0 0 "NO_BASENAME" 0.9
+            genparamfile_transmissive 0 0.01 0 0 "$icprefix"-GODUNOV-2D-$RIEMANN 0.9
 
             ./hydro paramfile.txt ./IC/"$icprefix".dat
             errexit $?
@@ -463,7 +463,7 @@ function godunov_2D() {
     done
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
-        ./overplot_riemann_solvers.py "$icprefix" GODUNOV
+        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-2D
     done
 
 
