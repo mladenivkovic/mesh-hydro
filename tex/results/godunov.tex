@@ -56,6 +56,93 @@
 %=======================================================================
 
 
+%=======================================================================
+\subsubsection{Left Vacuum State}
+%=======================================================================
+
+
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-left_vacuum-1D-0.001.png}
+	{fig:godunov-left-vacuum-1}
+	{
+		Left Vacuum Riemann problem at $t = 0.001$ for different Riemann solvers using Godunov's method
+	}
+	
+\quickfigcap
+	{./figures/godunov/GODUNOV-left_vacuum-1D-0.010.png}
+	{fig:godunov-left-vacuum-2}
+	{
+		Left Vacuum Riemann problem at $t = 0.010$ for different Riemann solvers using Godunov's method
+	}
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-left_vacuum-1D-0.020.png}
+	{fig:godunov-left-vacuum-3}
+	{
+		Left Vacuum Riemann problem at $t = 0.02$ for different Riemann solvers using Godunov's method
+	}
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-left_vacuum-1D-0.035.png}
+	{fig:godunov-left-vacuum-4}
+	{
+		Left Vacuum Riemann problem at $t = 0.035$ for different Riemann solvers using Godunov's method
+	}
+
+
+
+
+
+
+
+%=======================================================================
+\subsubsection{Vacuum Generating ICs}
+%=======================================================================
+
+
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-vacuum_generating-1D-0.001.png}
+	{fig:godunov-vacuum-generating-1}
+	{
+		Vacuum Generating Riemann problem at $t = 0.001$ for different Riemann solvers using Godunov's method
+	}
+	
+
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-vacuum_generating-1D-0.015.png}
+	{fig:godunov-vacuum-generating-2}
+	{
+		Vacuum Generating Riemann problem at $t = 0.015$ for different Riemann solvers using Godunov's method
+	}
+	
+
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-vacuum_generating-1D-0.030.png}
+	{fig:godunov-vacuum-generating-3}
+	{
+		Vacuum Generating Riemann problem at $t = 0.030$ for different Riemann solvers using Godunov's method
+	}
+	
+
+\quickfigcap
+	{./figures/godunov/GODUNOV-vacuum_generating-1D-0.040.png}
+	{fig:godunov-vacuum-generating-4}
+	{
+		Vacuum Generating Riemann problem at $t = 0.040$ for different Riemann solvers using Godunov's method
+	}
+	
+
+
+
+
+
+
+
+
 
 
 
@@ -130,6 +217,18 @@
 	\item 	Similar to the piecewise constant advection, the method is diffusive around sharp jump discontinuities.
 			See figs. \ref{fig:godunov-1} - \ref{fig:godunov-4}.
 
+
+
+
+	\item 	Godunov's method has some trouble dealing with vacuum.
+			The issue is on one hand that the Riemann solver would characterize the vacuum state with some escape velocity, while if we compute the primitive values of a cell state in vacuum using the conserved variables, we have no way of predicting this escape velocity inside the cell;
+			The cell might be in the interior of the vacuum state, so looking at neighbouring states and solving the Riemann problem there doesn't help.
+			We'd have to keep looking to the left or to the right to find the appropriate neighbour state, and this would only be a solution for Riemann problems, not if we want to solve arbitrary problems.
+			
+			On the other hand, the code was reprogrammed to return zero velocity when the Riemann solvers are used in Godunov's scheme.
+			This leads to very sharp jump discontinuities, see for example figs \ref{fig:godunov-left-vacuum-1} - \ref{fig:godunov-left-vacuum-4}.
+			
+			Similarly, some instabilities/inaccuracies/discontinuities develop in the vacuum-region in the vacuum generating case, figs. \ref{fig:godunov-vacuum-generating-1} - \ref{fig:godunov-vacuum-generating-4}.
 
 	\item \textbf{Order of Convergence}
 	
