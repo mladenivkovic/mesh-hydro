@@ -156,12 +156,14 @@ advection_pwconst_1D(){
     ./hydro paramfile.txt ./IC/advection-1D.dat
     errexit $?
     $plotdir/plot_all_density.py advection-1D-pwconst-0000.out
+    errexit $?
 
     # negative velocity
     genparamfile 0 10 0 1.0 advection-1D-pwconst-negvel 0.8
     ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
     errexit $?
     $plotdir/plot_all_density.py advection-1D-pwconst-negvel-0000.out
+    errexit $?
 }
 
 
@@ -183,24 +185,28 @@ advection_pwconst_2D(){
     ./hydro paramfile.txt ./IC/advection-2D.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwconst-0001.out
+    errexit $?
 
     # negative velocity
     genparamfile 0 1 0 0 advection-2D-pwconst-negvel 0.8
     ./hydro paramfile.txt ./IC/advection-2D-negvel.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwconst-negvel-0001.out
+    errexit $?
 
     # x only
     genparamfile 0 1 0 0 advection-2D-pwconst-x 0.8
     ./hydro paramfile.txt ./IC/advection-2D-x.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwconst-x-0001.out
+    errexit $?
 
     # y only
     genparamfile 0 1 0 0 advection-2D-pwconst-y 0.8
     ./hydro paramfile.txt ./IC/advection-2D-y.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwconst-y-0001.out
+    errexit $?
 }
 
 
@@ -224,12 +230,14 @@ advection_pwlin_1D(){
     ./hydro paramfile.txt ./IC/advection-1D.dat
     errexit $?
     $plotdir/plot_all_density.py advection-1D-pwlin-0000.out
+    errexit $?
 
     # negative velocity
     genparamfile 0 10 0 1.0 advection-1D-pwlin-negvel 0.8
     ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
     errexit $?
     $plotdir/plot_all_density.py advection-1D-pwlin-negvel-0000.out
+    errexit $?
 
 }
 
@@ -252,24 +260,28 @@ advection_pwlin_2D(){
     ./hydro paramfile.txt ./IC/advection-2D.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwlin-0001.out
+    errexit $?
 
     # negative velocity
     genparamfile 0 1 0 0 advection-2D-pwlin-negvel 0.8
     ./hydro paramfile.txt ./IC/advection-2D-negvel.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwlin-negvel-0001.out
+    errexit $?
 
     # x only
     genparamfile 0 1 0 0 advection-2D-pwlin-x 0.8
     ./hydro paramfile.txt ./IC/advection-2D-x.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwlin-x-0001.out
+    errexit $?
 
     # y only
     genparamfile 0 1 0 0 advection-2D-pwlin-y 0.8
     ./hydro paramfile.txt ./IC/advection-2D-y.dat
     errexit $?
     $plotdir/plot_density.py advection-2D-pwlin-y-0001.out
+    errexit $?
 }
 
 
@@ -294,6 +306,7 @@ advection_pwlin_limiters_1D(){
         ./hydro paramfile.txt ./IC/advection-1D.dat
         errexit $?
         $plotdir/plot_all_density.py advection-1D-$LIMITER-0000.out
+        errexit $?
     done
 }
 
@@ -319,6 +332,7 @@ advection_pwlin_limiters_2D(){
         ./hydro paramfile.txt ./IC/advection-2D.dat
         errexit $?
         $plotdir/plot_density.py advection-2D-$LIMITER-0001.out
+        errexit $?
 
     done
 
@@ -344,16 +358,19 @@ riemann_vacuum(){
         ./riemann paramfile.txt ./IC/riemann-left-vacuum.dat
         errexit $?
         $plotdir/plot_riemann_result.py riemann-left-vacuum-*0001.out ./IC/riemann-left-vacuum.dat
+        errexit $?
         
         genparamfile 0 0.01 0 0 "NO_BASENAME" 1
         ./riemann paramfile.txt ./IC/riemann-right-vacuum.dat
         errexit $?
         $plotdir/plot_riemann_result.py riemann-right-vacuum-*0001.out ./IC/riemann-right-vacuum.dat
+        errexit $?
 
         genparamfile 0 0.01 0 0 "NO_BASENAME" 1
         ./riemann paramfile.txt ./IC/riemann-vacuum-generating.dat
         errexit $?
         $plotdir/plot_riemann_result.py riemann-vacuum-generating*0001.out ./IC/riemann-vacuum-generating.dat
+        errexit $?
 
     done
 
@@ -383,6 +400,7 @@ riemann_solver(){
             errexit $?
 
             $plotdir/plot_riemann_result.py "$icprefix"-RIEMANN-EXACT-0001.out ./IC/"$icprefix".dat
+            errexit $?
         done
 
     done
@@ -425,6 +443,7 @@ function godunov_1D() {
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
         ./overplot_riemann_solvers.py "$icprefix" GODUNOV-1D
+        errexit $?
     done
 }
 
@@ -464,6 +483,7 @@ function godunov_2D() {
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
         ./overplot_riemann_solvers.py "$icprefix" GODUNOV-2D
+        errexit $?
     done
 
 
@@ -479,6 +499,7 @@ function godunov_2D() {
 # Now actually run the tests
 #=====================================
 
+# first check whether we can even plot stuff
 
 advection_pwconst_1D
 advection_pwconst_2D

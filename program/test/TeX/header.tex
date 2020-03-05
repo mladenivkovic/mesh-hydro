@@ -15,20 +15,17 @@
 %headsepline, 		% Uncomment to get a line under the header
 %]{scrartcl or scrreprt or scrbook} % The class file specifying the document structure
 
-\usepackage{amssymb, amsmath, color, dsfont, graphicx, float, setspace, tipa}
+\usepackage{amssymb, amsmath, color, graphicx, float, setspace, tipa}
 \usepackage[utf8]{inputenc} 
 \usepackage[english]{babel}
 \usepackage[pdfpagelabels,pdfstartview = FitH,bookmarksopen = true,bookmarksnumbered = true,linkcolor = black,plainpages = false,hypertexnames = false,citecolor = black, breaklinks]{hyperref}
 \usepackage{url}
-\usepackage{longtable} 		% Tables along multiple pages
 \usepackage{caption}
 \captionsetup{font=small,labelfont=bf, format=plain, justification=centering}
 \allowdisplaybreaks 		% allows page breaks in align/equation environment
 
 \usepackage{authblk} 		% titlepage stuff
 \usepackage[titletoc, title]{appendix}
-
-\usepackage{newclude} 		% use \include*{file} instead \include{} to omit pagebreak after include
 
 
 
@@ -102,10 +99,6 @@
 \newcommand{\F}{\mathbf{F}}                             % flux tensor
 \newcommand{\half}{\tfrac{1}{2}}
 
-% shortcut for TODO box
-\newcommand{\todo}[1]{\begin{mdframed}[style=todo,frametitle={TODO}] #1 \end{mdframed}}
-
-
 % quickly insert a figure without a caption
 % usage: \quickfig{filename}{label}
 \newcommand{\quickfig}[2]{
@@ -123,28 +116,6 @@
 
 
 
-%--------------------------------------------
-%     OPTIONAL
-%--------------------------------------------
-
-
-
-%% Change font
-%\newcommand{\changefont}[3]{
-%\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
-%\changefont{ppl}{m}{n} nach \begin{document} einsetzen
-
-%% Fig. instead of Figure, Tab. instead of Table
-%\usepackage[footnotesize]{caption2}
-%\addto\captionsngerman{\renewcommand{\figurename}{Fig.}}
-%\renewcommand{\tablename}{Tab.}%
-
-%\pagestyle{headings} % Write headings on each page
-
-%\usepackage{chngcntr} \counterwithout{figure}{section} % Integer only figure numbers, ignoring chapter numbers
-
-
-
 %-----------------------------------------------
 % FORMAT TITLE
 %-----------------------------------------------
@@ -157,38 +128,3 @@
 \addtokomafont{subsubsection}{\rmfamily\bfseries\boldmath}
 \addtokomafont{disposition}{\rmfamily} % table of contents and stuff
 \setkomafont{descriptionlabel}{\rmfamily\bfseries\boldmath}
-
-
-
-%-----------------------------------------------
-% TEXT IN BOXES
-%-----------------------------------------------
-
-\usepackage[framemethod=TikZ]{mdframed}
-
-%New Colors (needs to be after usepackage mdframed)
-\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
-\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
-\definecolor{caribbeangreen}{rgb}{0.0, 0.8, 0.6}
-\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
-
-\mdfdefinestyle{todo}{%
-	%rightline=true,
-	innerleftmargin=10,
-	innerrightmargin=10,
-	%frametitlerule=true,
-	%frametitlerulecolor=black,
-	frametitlebackgroundcolor=babyblueeyes,
-	frametitlerulewidth=2
-}
-
-
-\mdfdefinestyle{eyecatcher}{%
-	%rightline=true,
-	innerleftmargin=10,
-	innerrightmargin=10,
-	%frametitlerule=true,
-	%frametitlerulecolor=black,
-	frametitlebackgroundcolor=bittersweet,
-	frametitlerulewidth=2
-}
