@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper, onepage, english,singlespacing, parskip]{scrartcl}
+\documentclass[12pt, a4paper, english, singlespacing, parskip, bibliography=totoc ]{scrartcl}
 
 %\documentclass[
 %11pt, 				% The default document font size, options: 10pt, 11pt, 12pt
@@ -15,10 +15,7 @@
 %headsepline, 		% Uncomment to get a line under the header
 %]{scrartcl or scrreprt or scrbook} % The class file specifying the document structure
 
-\usepackage{lmodern} 		% Diese beiden packages sorgen für echte 
-\usepackage[T1]{fontenc}	% Umlaute.
-
-\usepackage{amssymb, amsmath, color, dsfont, graphicx, float, setspace, tipa}
+\usepackage{amssymb, amsmath, color, graphicx, float, setspace, tipa}
 \usepackage[utf8]{inputenc} 
 \usepackage[english]{babel}
 \usepackage[pdfpagelabels,
@@ -38,21 +35,13 @@
 
 \usepackage{authblk} 		% titlepage stuff
 \usepackage[titletoc, title]{appendix}
-
-\usepackage{newclude} 		% use \include*{file} instead \include{} to omit pagebreak after include
-\usepackage{csquotes}		% in-line quotations
-
-
+\usepackage{csquotes} 		% recommended when using babel and biblatex
 
 %===================
 % BIBLIOGRAPHY
 %===================
-\usepackage[backend=bibtex,
-			sorting=nyt,
-			bibencoding=ascii,
-			citestyle=authoryear]{biblatex}
-\addbibresource{references.bib}
-\usepackage{csquotes} 		% recommended when using babel and biblatex
+\usepackage[]{natbib}
+\bibliographystyle{unsrtnat}
 %DONT FORGET TO COMPILE THE BIBLIOGRAPHY WITH BIBTEX WHEN CHANGES ARE MADE.
 
 
@@ -70,16 +59,12 @@
 
 % Fig. instead of Figure, Tab. instead of Table
 %\usepackage[footnotesize]{caption2}
-%\addto\captionsenglish{\renewcommand{\figurename}{Fig.}}
 %\addto\captionsngerman{\renewcommand{\figurename}{Fig.}}
 %\renewcommand{\tablename}{Tab.}%
 
 %\pagestyle{headings} % Write headings on each page
 
 %\usepackage{chngcntr} \counterwithout{figure}{section} % Integer only figure numbers, ignoring chapter numbers
-
-
-
 
 
 
@@ -99,4 +84,4 @@
 
 
 % add my definitions here
-\include{my_defines}
+\input{my_defines}

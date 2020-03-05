@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper, english, singlespacing, parskip]{scrartcl}
+\documentclass[12pt, a4paper, english, singlespacing, parskip, bibliography=totoc ]{scrartcl}
 
 %\documentclass[
 %11pt, 				% The default document font size, options: 10pt, 11pt, 12pt
@@ -15,10 +15,18 @@
 %headsepline, 		% Uncomment to get a line under the header
 %]{scrartcl or scrreprt or scrbook} % The class file specifying the document structure
 
-\usepackage{amssymb, amsmath, color, dsfont, graphicx, float, setspace, tipa}
+\usepackage{amssymb, amsmath, color, graphicx, float, setspace, tipa}
 \usepackage[utf8]{inputenc} 
 \usepackage[english]{babel}
-\usepackage[pdfpagelabels,pdfstartview = FitH,bookmarksopen = true,bookmarksnumbered = true,linkcolor = black,plainpages = false,hypertexnames = false,citecolor = black, breaklinks]{hyperref}
+\usepackage[pdfpagelabels,
+			pdfstartview = FitH,
+			bookmarksopen = true,
+			bookmarksnumbered = true,
+			linkcolor = black,
+			plainpages = false,
+			hypertexnames = false,
+			citecolor = black,
+			breaklinks]{hyperref}
 \usepackage{url}
 \usepackage{longtable} 		% Tables along multiple pages
 \usepackage{caption}
@@ -27,13 +35,13 @@
 
 \usepackage{authblk} 		% titlepage stuff
 \usepackage[titletoc, title]{appendix}
+\usepackage{csquotes} 		% recommended when using babel and biblatex
 
-\usepackage{newclude} 		% use \include*{file} instead \include{} to omit pagebreak after include
-
-%bibliography
-\usepackage[backend=bibtex,sorting=nyt,style=authoryear]{biblatex}
-\addbibresource{references.bib}
-\usepackage{csquotes} 		%recommended when using babel and biblatex
+%===================
+% BIBLIOGRAPHY
+%===================
+\usepackage[]{natbib}
+\bibliographystyle{unsrtnat}
 %DONT FORGET TO COMPILE THE BIBLIOGRAPHY WITH BIBTEX WHEN CHANGES ARE MADE.
 
 
@@ -120,7 +128,7 @@
 \newcommand{\half}{1/2}
 
 % shortcut for TODO box
-\newcommand{\todo}[1]{\begin{mdframed}[style=todo,frametitle={TODO}] #1 \end{mdframed}}
+% \newcommand{\todo}[1]{\begin{mdframed}[style=todo,frametitle={TODO}] #1 \end{mdframed}}
 
 
 % quickly insert a figure without a caption
@@ -151,7 +159,7 @@
 %\fontfamily{#1} \fontseries{#2} \fontshape{#3} \selectfont}
 %\changefont{ppl}{m}{n} nach \begin{document} einsetzen
 
-%% Fig. instead of Figure, Tab. instead of Table
+% Fig. instead of Figure, Tab. instead of Table
 %\usepackage[footnotesize]{caption2}
 %\addto\captionsngerman{\renewcommand{\figurename}{Fig.}}
 %\renewcommand{\tablename}{Tab.}%
@@ -181,31 +189,31 @@
 % TEXT IN BOXES
 %-----------------------------------------------
 
-\usepackage[framemethod=TikZ]{mdframed}
+% \usepackage[framemethod=TikZ]{mdframed}
 
 %New Colors (needs to be after usepackage mdframed)
-\definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
-\definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
-\definecolor{caribbeangreen}{rgb}{0.0, 0.8, 0.6}
-\definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+% \definecolor{babyblueeyes}{rgb}{0.63, 0.79, 0.95}
+% \definecolor{ashgrey}{rgb}{0.7, 0.75, 0.71}
+% \definecolor{caribbeangreen}{rgb}{0.0, 0.8, 0.6}
+% \definecolor{bittersweet}{rgb}{1.0, 0.44, 0.37}
+%
+% \mdfdefinestyle{todo}{%
+%     %rightline=true,
+%     innerleftmargin=10,
+%     innerrightmargin=10,
+%     %frametitlerule=true,
+%     %frametitlerulecolor=black,
+%     frametitlebackgroundcolor=babyblueeyes,
+%     frametitlerulewidth=2
+% }
 
-\mdfdefinestyle{todo}{%
-	%rightline=true,
-	innerleftmargin=10,
-	innerrightmargin=10,
-	%frametitlerule=true,
-	%frametitlerulecolor=black,
-	frametitlebackgroundcolor=babyblueeyes,
-	frametitlerulewidth=2
-}
 
-
-\mdfdefinestyle{eyecatcher}{%
-	%rightline=true,
-	innerleftmargin=10,
-	innerrightmargin=10,
-	%frametitlerule=true,
-	%frametitlerulecolor=black,
-	frametitlebackgroundcolor=bittersweet,
-	frametitlerulewidth=2
-}
+% \mdfdefinestyle{eyecatcher}{%
+%     %rightline=true,
+%     innerleftmargin=10,
+%     innerrightmargin=10,
+%     %frametitlerule=true,
+%     %frametitlerulecolor=black,
+%     frametitlebackgroundcolor=bittersweet,
+%     frametitlerulewidth=2
+% }
