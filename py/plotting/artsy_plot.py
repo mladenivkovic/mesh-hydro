@@ -10,6 +10,11 @@
 # NOT INTENDED FOR GENERAL USE.
 #-------------------------------------
 
+
+# first things first: check whether you can import the hydro python modules
+from check_module_is_in_pythonpath import try_to_import
+try_to_import()
+
 import matplotlib
 from matplotlib import pyplot as plt
 #  matplotlib.use("Agg")

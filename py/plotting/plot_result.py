@@ -8,6 +8,11 @@
 #-------------------------------------
 
 
+# first things first: check whether you can import the hydro python modules
+from check_module_is_in_pythonpath import try_to_import
+try_to_import()
+
+
 
 from hydro_utils import get_only_cmdlinearg, label_to_kwargs
 from hydro_io import read_output

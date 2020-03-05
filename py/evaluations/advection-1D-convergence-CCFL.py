@@ -8,6 +8,11 @@
 # You also need to define which "shape" the output filenames have, as the first cmdlinearg
 #------------------------------------------------------------------------------------
 
+# first things first: check whether you can import the hydro python modules
+from check_module_is_in_pythonpath import try_to_import
+try_to_import()
+
+
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt

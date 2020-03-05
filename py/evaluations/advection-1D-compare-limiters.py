@@ -4,6 +4,11 @@
 # Meant to be called by the /sh/compare-slope-limiters-on-1D-advection.sh script
 #------------------------------------------------------------------------------------
 
+
+# first things first: check whether you can import the hydro python modules
+from check_module_is_in_pythonpath import try_to_import
+try_to_import()
+
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt

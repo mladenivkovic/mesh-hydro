@@ -11,6 +11,11 @@
 
 
 
+# first things first: check whether you can import the hydro python modules
+from check_module_is_in_pythonpath import try_to_import
+try_to_import()
+
+
 from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename, label_to_kwargs
 from hydro_io import read_output
 from hydro_plotting import plot_1D_density_only, plot_2D_density_only, save_plot
