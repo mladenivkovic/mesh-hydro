@@ -16,7 +16,7 @@ OBJECTS = main.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ) $(
 
 
 #Compiler to use
-CC=gcc -I$(IDIR) -static
+CC=gcc -I$(IDIR)
 
 
 # flags for gcc compiler

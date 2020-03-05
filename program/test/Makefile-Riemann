@@ -40,7 +40,7 @@ OBJECTS=$(RIEMANN_OBJECTS)
 
 
 #Compiler to use
-CC=gcc -I$(IDIR) -static
+CC=gcc -I$(IDIR)
 
 
 # flags for gcc compiler
