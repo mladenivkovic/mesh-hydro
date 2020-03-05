@@ -511,16 +511,16 @@ function godunov_2D() {
 
 # first check whether we can even plot stuff
 
-# advection_pwconst_1D
-# advection_pwconst_2D
-# advection_pwlin_1D
-# advection_pwlin_2D
-# advection_pwlin_limiters_1D
-# advection_pwlin_limiters_2D
-#
-# riemann_vacuum
-# riemann_solver
-# godunov_1D
+advection_pwconst_1D
+advection_pwconst_2D
+advection_pwlin_1D
+advection_pwlin_2D
+advection_pwlin_limiters_1D
+advection_pwlin_limiters_2D
+
+riemann_vacuum
+riemann_solver
+godunov_1D
 godunov_2D
 
 
