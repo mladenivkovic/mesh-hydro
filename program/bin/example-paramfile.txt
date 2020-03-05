@@ -17,4 +17,4 @@ force_dt = 0        /* force a time step size. If a smaller time step is require
 foutput = 0         /* output frequency in number of steps. 0: write only IC and end result.*/
 dt_out = 0          /* after what time interval to drop an output. 0: write only IC and end result. */
 dtoutlist = f.txt   /* file for specific output times. !! WILL OVERWRITE FOUTPUT AND DT_OUT !!*/
-basename = output   /* basename for output files. !! REMOVE LINE FOR DEFAULT GENERATED FILE NAME !!*/
+basename = output/* basename for output files. !! REMOVE LINE FOR DEFAULT GENERATED FILE NAME !!*/

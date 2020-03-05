@@ -487,6 +487,16 @@ function godunov_2D() {
     done
 
 
+    # do kelvin helmholtz only for one
+    genmakefile 2 GODUNOV HLLC NONE
+    make clean && make
+    errexit $?
+
+    # genparamfile nsteps tmax foutput dt_out basename ccfl
+    genparamfile 0 3 0 0 "kelvin-helmholtz" 0.8
+    ./hydro paramfile.txt ./IC/kelvin-helmholtz-128.dat
+    $plotdir/plot_result.py kelvin-helmholtz-0001.out
+    errexit $?
 
 }
 
@@ -501,16 +511,16 @@ function godunov_2D() {
 
 # first check whether we can even plot stuff
 
-advection_pwconst_1D
-advection_pwconst_2D
-advection_pwlin_1D
-advection_pwlin_2D
-advection_pwlin_limiters_1D
-advection_pwlin_limiters_2D
-
-riemann_vacuum
-riemann_solver
-godunov_1D
+# advection_pwconst_1D
+# advection_pwconst_2D
+# advection_pwlin_1D
+# advection_pwlin_2D
+# advection_pwlin_limiters_1D
+# advection_pwlin_limiters_2D
+#
+# riemann_vacuum
+# riemann_solver
+# godunov_1D
 godunov_2D
 
 
