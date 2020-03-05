@@ -20,7 +20,7 @@
 
 /* Physical constants */
 
-#define GAMMA  5./3.
+#define GAMMA  (5./3.)
 static const float GM1 = GAMMA - 1.;
 static const float GP1 = GAMMA + 1.;
 static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
