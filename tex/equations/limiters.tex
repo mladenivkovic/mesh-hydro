@@ -84,10 +84,10 @@ This defines $\phi$, which will be discussed later. Finally:
 \begin{align}
 	\F_{i-\half}^{n+\half} = 
 		&\frac{1}{2} \V_{i-\half} \left[  (1 + \theta_{i-\half}) \U_{i-1}^n + (1 - \theta_{i-\half})  \U_{i}^n \right] +\nonumber\\
-		&\frac{1}{2}| \V_{i-\half} | \left( 1 - \left| \frac{\V_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1}\\
+		&\frac{1}{2}| \V_{i-\half} | \left( 1 - \left| \frac{\V_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1-limiters}\\
 	\F_{i+\half}^{n+\half} = 
 		&\frac{1}{2} \V_{i+\half} \left[  (1 + \theta_{i+\half}) \U_{i}^n + (1 - \theta_{i+\half})  \U_{i+1}^n \right] +\nonumber\\
-		&\frac{1}{2}| \V_{i+\half} | \left( 1 - \left| \frac{\V_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2}
+		&\frac{1}{2}| \V_{i+\half} | \left( 1 - \left| \frac{\V_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2-limiters}
 \end{align}
 
 
@@ -245,7 +245,7 @@ Their behaviour is shown in fig. \ref{fig:limiters-r-phi}.
 %===========================================================
 
 
-The choice of the slope can be expressed via a function $\phi(r)$ (see eqns. \ref{eq:advection_phi1}, \ref{eq:advection_phi2}) with 
+The choice of the slope can be expressed via a function $\phi(r)$ (see eqns. \ref{eq:advection_phi1-limiters}, \ref{eq:advection_phi2-limiters}) with 
 
 \begin{align*}
 	r^n_{i-\half} &= \begin{cases}
