@@ -20,14 +20,14 @@
 
 /* Physical constants */
 
-static const float GAMMA = 5./3.;
+#define GAMMA  5./3.
 static const float GM1 = GAMMA - 1.;
 static const float GP1 = GAMMA + 1.;
-static const float GP1OGM1 = GP1/GM1;
-static const float GM1OGP1 = GM1/GP1;
-static const float ONEOVERGAMMA = 1./GAMMA;
-static const float GM1HALF = 0.5*GM1;
-static const float BETA = GM1HALF / GAMMA;
+static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
+static const float GM1OGP1 = (GAMMA - 1.) / (GAMMA + 1.);
+static const float ONEOVERGAMMA = 1. / GAMMA;
+static const float GM1HALF = 0.5 * (GAMMA - 1.);
+static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 
 
 /* boundary cells */
