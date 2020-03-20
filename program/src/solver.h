@@ -16,6 +16,8 @@
 #include "solver/advection_pwconst.h"
 #elif SOLVER == ADVECTION_PWLIN
 #include "solver/advection_pwlin.h"
+#elif SOLVER == ADVECTION_WAF
+#include "solver/advection_waf.h"
 #endif
 
 

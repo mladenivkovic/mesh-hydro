@@ -1,7 +1,13 @@
 \newpage
+%====================================================
 \section{Advection}
+%====================================================
 
+
+
+%====================================================
 \subsection{Analytical Equation}
+%====================================================
 
 Advection is a bit of an exception as a hydrodynamics method because we're not actually solving the (ideal) gas equations, but these instead:
 
@@ -29,9 +35,19 @@ Note that in the formalism used, we only solve the 1D advection, but for every c
 The analytical solution is given by any function $q(x)$ with $\U(x,t) = q(x - v t)$, which is just $q(x)$ translated by $v t$.
 
 
+Why do we even bother with linear advection?
+It's the simplest imaginable hyperbolic conservation law, and we can learn many things from considering this simple case.
+Furthermore, a lot of mathematical background can't be (or at least isn't yet) proven for more complex conservation laws, so often the approach is to adapt the results of the linear advection to more complex situations, like for the Euler equations.
 
 
+
+
+
+
+
+%====================================================
 \subsection{Piecewise Constant Method}
+%====================================================
 
 \begin{figure}[htbp]
 	\includegraphics[width=\textwidth]{./figures/piecewise_const.pdf}%
@@ -79,7 +95,17 @@ So if we have negative velocity, all we need to do is change the expression \ref
 
 
 
+
+
+
+
+
+
+
+
+%====================================================
 \subsection{Piecewise Linear Method}
+%====================================================
 
 \begin{figure}[htbp]
 	\includegraphics[width=\textwidth]{./figures/piecewise_linear.pdf}%
@@ -256,7 +282,87 @@ Depending on our choice of $\phi$, we can get different slopes. Here for positiv
 
 
 
+%====================================================
+\subsection{Weighted Average Flux (WAF) Method}
+%====================================================
+
+
+
+For the WAF method, we again assume piece-wise constant data (see fig. \ref{fig:pwconst}), i.e.
+
+\begin{equation}
+	\U_i ^ n = \frac{1}{\Delta \x} \int_{\x_{i-\half}}^{\x_{i+\half}} \U(\x, t^n) \de \x
+\end{equation}
+The scheme is based on the explicit conservative formula
+
+\begin{equation}
+	\U_{i}^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left[ \F_{i - \half} - \F_{i + \half} \right]
+\end{equation}
+
+
+
+The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux funcion:
+
+\begin{equation}
+	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x
+\end{equation}
+
+The integration range goes from the middle of the cell to the middle of the neighbouring cell.
+
+The solution for $\U_{i+\half} ( x, \frac{1}{2}\Delta t)$ for linear advection is simple; it is
+
+\begin{align}
+	\U_{i+\half} ( x, t) = 
+		\begin{cases}
+			\U_i 		& \frac{x}{t} < v \\
+			\U_{i+1} 	& \frac{x}{t} > v \\
+		\end{cases}
+\end{align}
+
+and the evaluation of the flux integral is trivial since the solution consists of constant states:
+
+\begin{equation}
+	\F_{i+\half} =  
+		\frac{1}{2} (1 + c) v \U_i^n + \frac{1}{2} (1 - c) v \U_{i+1}
+\end{equation}
+
+where
+
+\begin{equation}
+	c = \frac{v \Delta t}{\Delta x}
+\end{equation}
+
+and is allowed to be negative.
+
+
+This gives us a second order accurate method despite having piecewise constant data.
+
+Second order methods will have spurious oscillations near discontinuities and steep gradients, which we try to handle with flux limiters.
+To this end, a  flux limited WAF flux can be written as
+
+\begin{equation}
+	\F_{i+\half} =  
+		\frac{1}{2} (1 + \psi_{i+\half}) v \U_i^n + \frac{1}{2} (1 - \psi_{i+\half}) v \U_{i+1}
+\end{equation}
+
+possible choices for flux limiters $\psi$ are discussed in section \ref{chap:limiters}. 
+The choice
+\begin{align*}
+	\psi = sign(v) c
+\end{align*}
+recovers the original 
+
+
+
+
+
+
+
+
+
+%====================================================
 \subsection{CFL Condition}
+%====================================================
 
 To keep things stable and physical, we must not allow any flux in the simulation to go further than one single cell size.
 Otherwise, you're skipping interactions between fluxes on cells.
@@ -292,8 +398,19 @@ For $N$ dimensions, the condition translates to
 
 
 
-\subsection{Implementation Details}
 
+
+
+
+
+
+
+
+
+
+%====================================================
+\subsection{Implementation Details}
+%====================================================
 
 What is implemented is the equation
 

@@ -10,7 +10,7 @@ You can pick between:
 
 - Hydro solvers:
 	- Godunov
-	- Advection: piecewise constant, piecewise linear
+	- Advection: piecewise constant, piecewise linear, weighted average flux
 - Riemann solvers:
 	- Exact	(exact iterative solver)
 	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
@@ -88,7 +88,7 @@ Things to keep in mind
 - boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
 - there is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
 - No advection solver uses a Riemann solver.
-- Piecewise constant advection can't apply slope limiters.
+- Piecewise constant advection can't apply limiters.
 - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
 - You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)
 - ...

@@ -84,6 +84,7 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 #define ADVECTION_PWCONST 1
 #define ADVECTION_PWLIN 2
 #define GODUNOV 3
+#define ADVECTION_WAF 4
 
 /* define riemann solvers as integers */
 #define NONE 0

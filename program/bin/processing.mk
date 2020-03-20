@@ -37,6 +37,10 @@ ADVECTION = true
 RIEMANN = NONE
 LIMITER = NONE
 endif
+ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
+ADVECTION = true
+RIEMANN = NONE
+endif
 
 
 # transform defines into integers where needed
@@ -48,6 +52,9 @@ SOLVERINT = 2
 endif
 ifeq ($(strip $(SOLVER)), GODUNOV)
 SOLVERINT = 3
+endif
+ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
+SOLVERINT = 4
 endif
 
 
@@ -123,6 +130,9 @@ ifeq ($(strip $(SOLVER)), ADVECTION_PWLIN)
 endif
 ifeq ($(strip $(SOLVER)), GODUNOV)
 	HYDROOBJ=godunov.o
+endif
+ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
+	HYDROOBJ=advection_waf.o
 endif
 
 
