@@ -6,11 +6,10 @@
 /* -------------------------------------*/
 
 
-#ifndef ADVECTION_H
-#define ADVECTION_H
+#ifndef SPECIFIC_SOLVER_H
+#define SPECIFIC_SOLVER_H
 
 void solver_init_step();
-void solver_get_dt(float* dt);
 void solver_compute_fluxes();
 void solver_advance_step(float* dt);
 

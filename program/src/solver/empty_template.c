@@ -56,18 +56,6 @@ void solver_init_step(){
 
 
 
-void solver_get_dt(float* dt){
-  /* ---------------------------------------------- 
-   * Computes the maximal allowable time step size
-   * ---------------------------------------------- */
-
-  debugmessage("Called solver_get_dt with dt=%f", *dt);
-  *dt = 0.12345;
-
-}
-
-
-
 void solver_compute_fluxes(){
   /* ---------------------------------------------
    * Computes the actual fluxes between cells

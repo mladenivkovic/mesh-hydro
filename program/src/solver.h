@@ -23,4 +23,10 @@
 
 void solver_step(float* t, float* dt, int step,  int* write_output);
 
+
+void solver_get_advection_dt(float* dt);
+#ifdef ADVECTION_KEEP_VELOCITY_CONSTANT
+void solver_advection_check_global_velocity();
+#endif
+
 #endif
