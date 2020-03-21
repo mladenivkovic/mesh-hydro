@@ -16,4 +16,5 @@ void solver_advance_step(float* dt);
 
 void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int dim);
 void solver_compute_slope(cell* uw, cell* dw,  pstate* slope);
+void solver_update_state(cell *c, float dtdx);
 #endif

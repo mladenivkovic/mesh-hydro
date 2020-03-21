@@ -16,10 +16,10 @@
 #include "cell.h"
 #include "defines.h"
 #include "gas.h"
-#include "solver.h"
 #include "io.h"
 #include "params.h"
 #include "riemann.h"
+#include "solver.h"
 #include "utils.h"
 
 

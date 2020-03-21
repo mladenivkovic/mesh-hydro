@@ -5,8 +5,6 @@ include ../bin/processing.mk
 EXEC = hydro  
 
 
-OBJECTS = main.o gas.o params.o io.o utils.o cell.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
-
 
 
 
