@@ -27,20 +27,19 @@ extern params pars;
 
 
 
-void limiter_get_psi(cell* c, pstate* psi, float cfl, int dimension){
+void limiter_get_psi(cell* c, pstate* psi, int dimension){
   /* ------------------------------------------------------------------------
    * Compute the flux limiter function psi_{i+1/2}
    *
    * cell* c:     for which cell i to work for
    * pstate* psi: where the flux limiter will be stored
-   * cfl:         a * dt / dx
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 
 #if LIMITER == NONE
   /* WAF calls limiter_get_psi directly, so you need to check here
    * whether that is the case. */
-  limiter_get_psi_no_limiter(c, psi, cfl, dimension);
+  limiter_get_psi_no_limiter(c, psi, dimension);
   return;
 #endif
 
@@ -92,7 +91,7 @@ void limiter_get_psi(cell* c, pstate* psi, float cfl, int dimension){
 
 
 
-void limiter_get_slope_left(cell* c, pstate* slope, float cfl, int dimension){
+void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
   /* ------------------------------------------------------------------------
    * Compute the left slope of given cell c, i.e. the slope for the flux
    * F_{i-1/2}.
@@ -116,7 +115,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, float cfl, int dimension){
   }
 #endif
 
-  limiter_get_slope_right(left_cell, slope, cfl, dimension);
+  limiter_get_slope_right(left_cell, slope, dimension);
 }
 
 
@@ -125,7 +124,7 @@ void limiter_get_slope_left(cell* c, pstate* slope, float cfl, int dimension){
 
 
 
-void limiter_get_slope_right(cell* c, pstate* slope, float cfl, int dimension){
+void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
   /* ------------------------------------------------------------------------
    * Compute the left slope of given cell c, i.e. the slope for the flux
    * F_{i+1/2}.
@@ -162,7 +161,7 @@ void limiter_get_slope_right(cell* c, pstate* slope, float cfl, int dimension){
   /* Get the function psi */
   pstate psi;
   gas_init_pstate(&psi);
-  limiter_get_psi(c, &psi, cfl, dimension);
+  limiter_get_psi(c, &psi, dimension);
 
   /* Now finally compute the actual slope */
   slope->rho  = psi.rho  * (Uip1.rho  - Ui.rho)  / pars.dx;

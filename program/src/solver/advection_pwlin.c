@@ -155,17 +155,10 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-
-  float vel = c->prim.u[dim];
-  float cfl = (*dt) * vel / pars.dx;
-
   pstate sl, sr;            /* slopes left and right of the cell */
 
   gas_init_pstate(&sl);
   gas_init_pstate(&sr);
-
-  limiter_get_slope_left(c, &sl, cfl, dim);
-  limiter_get_slope_right(c, &sr, cfl, dim);
 
   /* assign the slopes to the upwind/downwind cells */
   pstate su;                /* slope of upwind cell */

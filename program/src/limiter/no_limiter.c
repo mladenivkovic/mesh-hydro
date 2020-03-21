@@ -23,13 +23,12 @@ extern params pars;
 
 
 
-void limiter_get_psi_no_limiter(cell* c, pstate* psi, float cfl, int dimension){
+void limiter_get_psi_no_limiter(cell* c, pstate* psi, int dimension){
   /* ------------------------------------------------------------------------
    * Compute the flux limiter psi_{i+1/2}
    *
    * cell* c:     for which cell i to work for
    * pstate* psi: where the flux limiter will be stored
-   * clf:         a * dt / dx
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 

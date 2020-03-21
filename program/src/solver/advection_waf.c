@@ -144,26 +144,26 @@ void solver_compute_cell_pair_flux(cell* c, cell* n, float* dt, int dim){
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
  
-  float cfl = (*dt) / pars.dx * c->prim.u[dim];
-  float flux = 0.;
-
   pstate psi;
   gas_init_pstate(&psi);
-  limiter_get_psi(c, &psi, cfl, dim);
-
-  pstate phi;
-  gas_init_pstate(&phi);
-  phi.rho = 1. - (1. - fabs(cfl)) * psi.rho;
-  phi.u[0] = 1. - (1. - fabs(cfl)) * psi.u[0];
-  phi.u[1] = 1. - (1. - fabs(cfl)) * psi.u[1];
-  phi.p = 1. - (1. - fabs(cfl)) * psi.p;
-
-
+  limiter_get_psi(c, &psi, dim);
 
   float vel = c->prim.u[dim];
+  float abscfl = fabs((*dt) / pars.dx * c->prim.u[dim]);
+  pstate phi;
+  gas_init_pstate(&phi);
+  phi.rho  = 1. - (1. - abscfl) * psi.rho;
+  phi.u[0] = 1. - (1. - abscfl) * psi.u[0];
+  phi.u[1] = 1. - (1. - abscfl) * psi.u[1];
+  phi.p    = 1. - (1. - abscfl) * psi.p;
+
+
+
   float s = 1.; /* sign(velocity) */
   if (vel <= 0) s = -1.;
 
+
+  float flux = 0.;
 
   flux = 0.5 * (1. + s*phi.rho) * vel * c->prim.rho +
          0.5 * (1. - s*phi.rho) * vel * n->prim.rho;
