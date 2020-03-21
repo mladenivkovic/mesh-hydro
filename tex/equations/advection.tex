@@ -304,7 +304,7 @@ The scheme is based on the explicit conservative formula
 The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux funcion:
 
 \begin{equation}
-	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x
+	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x \label{eq:waf-flux}
 \end{equation}
 
 The integration range goes from the middle of the cell to the middle of the neighbouring cell.
@@ -319,7 +319,42 @@ The solution for $\U_{i+\half} ( x, \frac{1}{2}\Delta t)$ for linear advection i
 		\end{cases}
 \end{align}
 
+
+
+\begin{figure}[htbp]
+	\includegraphics[width=\textwidth]{./figures/WAF.pdf}%
+	\caption{Figure to show the derivation of the WAF intercell flux (eq. \ref{eq:waf-flux}) for linear advection.
+		We have two piecewise constant states, $\U_i$ and $\U_{i+1}$, separated at the position $x_{i+\half}$.
+		For $v > 0$, the state, and hence the flux, is constant over the intervals $\overline{AB^+}$ and $\overline{B^+C}$.
+		For $v < 0$, it is constant over the intervals $\overline{AB^-}$ and $\overline{B^-C}$.
+		\label{fig:waf}
+	}
+\end{figure}
+
+
+
 and the evaluation of the flux integral is trivial since the solution consists of constant states:
+See figure \ref{fig:waf}.
+For $v > 0$, the state, and hence the flux, is constant over the intervals $\overline{AB^+}$ and $\overline{B^+C}$;
+For $v < 0$, the state, and hence the flux, is constant over the intervals $\overline{AB^-}$ and $\overline{B^-C}$.
+
+It's easy to show that
+\begin{align*}
+	\overline{AB^+} &= \frac{1}{2} \Delta x + v \cdot \frac{1}{2} \Delta t\\
+	\overline{B^+C} &= \frac{1}{2} \Delta x - v \cdot \frac{1}{2} \Delta t\\
+	\overline{AB^-} &= \frac{1}{2} \Delta x - |v| \cdot \frac{1}{2} \Delta t\\
+	\overline{B^-C} &= \frac{1}{2} \Delta x + |v| \cdot \frac{1}{2} \Delta t\\
+\end{align*}
+
+
+
+
+
+
+
+
+
+So in either case for $v > 0$ and $v < 0$ we obtain the final expression for the flux
 
 \begin{equation}
 	\F_{i+\half} =  
@@ -342,15 +377,15 @@ To this end, a  flux limited WAF flux can be written as
 
 \begin{equation}
 	\F_{i+\half} =  
-		\frac{1}{2} (1 + \psi_{i+\half}) v \U_i^n + \frac{1}{2} (1 - \psi_{i+\half}) v \U_{i+1}
+		\frac{1}{2} (1 + sign(v) \psi_{i+\half}) v \U_i^n + \frac{1}{2} (1 - sign(v) \psi_{i+\half}) v \U_{i+1}
 \end{equation}
 
 possible choices for flux limiters $\psi$ are discussed in section \ref{chap:limiters}. 
 The choice
 \begin{align*}
-	\psi = sign(v) c
+	\psi = |c|
 \end{align*}
-recovers the original 
+recovers the original expression.
 
 
 
