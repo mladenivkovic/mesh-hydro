@@ -9,7 +9,6 @@
 #ifndef NO_LIMITER_H
 #define NO_LIMITER_H
 
-
-void limiter_get_slope(cell* c, pstate* slope, int dimension);
+void limiter_get_psi_no_limiter(cell* c, pstate* psi, float cfl, int dimension);
 
 #endif
