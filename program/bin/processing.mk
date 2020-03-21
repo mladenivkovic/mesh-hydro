@@ -13,17 +13,23 @@
 # set default values if not defined otherwise
 #----------------------------------------------------
 
+ifndef SOLVER
+SOLVER = GODUNOV
+ifeq ($(strip $(RIEMANN)), NONE)
+RIEMANN = EXACT
+endif
+endif
+
 ifndef RIEMANN
 RIEMANN = EXACT
 endif
-ifndef SOLVER
-SOLVER = GODUNOV
-endif
+
 ifndef LIMITER
 LIMITER = NONE
 endif
+
 ifndef NDIM
-NDIM = 2
+NDIM = 1
 endif
 
 
