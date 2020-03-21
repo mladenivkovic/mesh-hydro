@@ -180,5 +180,5 @@ endif
 
 
 
-OBJECTS = main.o gas.o params.o io.o utils.o cell.o solver.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
-RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(LIMITEROBJ) $(RIEMANNOBJ)
+OBJECTS = main.o gas.o params.o io.o utils.o cell.o solver.o limiter.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
+RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o limiter.o $(LIMITEROBJ) $(RIEMANNOBJ)

@@ -147,18 +147,42 @@ void solver_compute_cell_pair_flux(cell* c, cell* n, float* dt, int dim){
   float cfl = (*dt) / pars.dx * c->prim.u[dim];
   float flux = 0.;
 
-  flux = 0.5 * (1. + cfl) * c->prim.u[dim] * c->prim.rho +
-         0.5 * (1. - cfl) * n->prim.u[dim] * n->prim.rho;
+  pstate psi;
+  gas_init_pstate(&psi);
+  limiter_get_psi(c, &psi, cfl, dim);
+
+  pstate phi;
+  gas_init_pstate(&phi);
+  phi.rho = 1. - (1. - fabs(cfl)) * psi.rho;
+  phi.u[0] = 1. - (1. - fabs(cfl)) * psi.u[0];
+  phi.u[1] = 1. - (1. - fabs(cfl)) * psi.u[1];
+  phi.p = 1. - (1. - fabs(cfl)) * psi.p;
+
+
+
+  float vel = c->prim.u[dim];
+  float s = 1.; /* sign(velocity) */
+  if (vel <= 0) s = -1.;
+
+
+  flux = 0.5 * (1. + s*phi.rho) * vel * c->prim.rho +
+         0.5 * (1. - s*phi.rho) * vel * n->prim.rho;
   c->pflux.rho -= flux;
   n->pflux.rho += flux;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->pflux.u[0] = 0.5 * (1. + cfl) * c->prim.u[dim] * c->prim.u[0] +
-                  0.5 * (1. - cfl) * n->prim.u[dim] * n->prim.u[0];
-  c->pflux.u[1] = 0.5 * (1. + cfl) * c->prim.u[dim] * c->prim.u[1] +
-                  0.5 * (1. - cfl) * n->prim.u[dim] * n->prim.u[1];
+  flux = 0.5 * (1. + s*phi.u[0]) * vel * c->prim.u[0] +
+         0.5 * (1. - s*phi.u[0]) * vel * * n->prim.u[0];
+  c->pflux.u[0] -= flux;
+  n->pflux.u[0] += flux;
+  flux = 0.5 * (1. + s*phi.u[1]) * vel * c->prim.u[1] +
+         0.5 * (1. - s*phi.u[1]) * vel * n->prim.u[1];
+  c->pflux.u[1] -= flux;
+  n->pflux.u[1] += flux;
 #endif
-  c->pflux.p = 0.5 * (1. + cfl) * c->prim.u[dim] * c->prim.p +
-               0.5 * (1. - cfl) * n->prim.u[dim] * n->prim.p;
+  flux = 0.5 * (1. + s*phi.p) * vel * c->prim.p +
+         0.5 * (1. - s*phi.p) * vel * n->prim.p;
+  c->pflux.p -= flux;
+  n->pflux.p += flux;
 }
 
 
