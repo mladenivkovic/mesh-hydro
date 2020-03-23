@@ -419,9 +419,24 @@ The functions $\phi(r)$ are shown in fig. \ref{fig:limiters-r-phi}.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 %===========================================================
 \subsection{Implementation Details}
 %===========================================================
 
 
+All the main functions for limiters are written in \texttt{/program/src/limiter.c} and \texttt{/program/src/limiter.h}.
+
+If we are using slope limiters, it first finds the relevant states $\U_i$ that enter the equation, and then call a function to compute $\phi(r)$. 
+The specific way how $\phi(r)$ is computed is then defined in the specific files in \texttt{/program/src/limiter/}, depending on what limiter you want.
 

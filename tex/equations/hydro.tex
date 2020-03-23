@@ -1,7 +1,7 @@
 \newpage
 
 %==============================================
-\section{Hydrodynamics Methods}
+\section{Hydrodynamics Methods}\label{chap:hydro}
 %==============================================
 
 
@@ -53,7 +53,7 @@ Then the state at $x_{i+\half}$, which is where the dividing line between the tw
 Using that fact, it can be derived that (see \cite{toro}) 
 
 \begin{align}
-	\U^{n+1}_i = \U^n_i + \frac{\Delta t}{\Delta x} \left[\F(\U_{i-\half}) - \F(\U_{i+\half}) \right]
+	\U^{n+1}_i = \U^n_i + \frac{\Delta t}{\Delta x} \left[\F(\U_{i-\half}) - \F(\U_{i+\half}) \right] \label{eq:godunov-discretized}
 \end{align}
 
 where $\U_{i-\half}$ and $\U_{i+\half}$ are the solutions to the Riemann problems at $x_{i-\half}$ and $x_{i+\half}$, respectively.
@@ -72,7 +72,7 @@ This is only satisfied if the wave doesn't reach the boundary of the neighbourin
 This time step restriction is imposed by the CFL condition:
 
 \begin{align}
-	\Delta t_{max} \leq \frac{C_{cfl} \Delta x}{|S_{max}^n|}
+	\Delta t_{max} \leq \frac{C_{cfl} \Delta x}{|S_{max}^n|} \label{eq:godunov-cfl}
 \end{align}
 
 
@@ -91,7 +91,7 @@ Instead, we use the estimate
 
 This is not always accurate, and the wave speed can be underestimated, leading to instabilities.
 To combat this, we just need to choose a lower $C_{cfl}$.
-Toro recommends to use $C_{cfl} < 0.9$.
+Toro recommends to use $C_{cfl} < 0.8 - 0.9$.
 
 
 
@@ -111,7 +111,7 @@ Toro recommends to use $C_{cfl} < 0.9$.
 
 
 The cells are stored as an array of \verb|struct cell| that stores both primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
-Furthermore they have \verb|struct pstate pflux| and \verb|struct cstate cflux| to store fluxes of primitive and conserved variables.
+Furthermore they have \texttt{struct pstate pflux} and \texttt{struct cstate cflux} to store fluxes of primitive and conserved variables.
 
 
 The grid is set up as follows:
@@ -121,7 +121,7 @@ Indices (0, 0) represent the lower left corner of the simulation domain.
 First index is in x direction, i.e. (nx - 1, 0) is at the coordinates (x = xmax, y = 0).
 
 
-The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \verb|cflux| or \verb|pflux| of cell \verb|grid[i, j]|, depending whether you're storing primitive or conserved variables.
+The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \texttt{cflux} or \texttt{pflux} of cell \verb|grid[i, j]|, depending whether you're storing primitive or conserved variables.
 For the Godunov scheme, we need conserved variables.
 For advection, we only deal with primitive variables.
 Because we're doing dimensional splitting, it suffices to have only one storage place, as they will be used in successive order.
@@ -134,6 +134,23 @@ If the grid is only in 1D, then all the above definitions still apply as if y di
 
 
 
+The related functions are written in \texttt{/program/src/solver/godunov.c} and \texttt{/program/src/solver/godunov.h}.
+The hydro related functions are called in the main loop in \texttt{/program/src/main.c} when \verb|solver_step(...)| is called.
+
+The \verb|solver_step(...)| function does the following for the 1D case:
+\begin{itemize}
+	\item 	Reset the stored fluxes from the previous timestep to zero
+	\item 	Compute the primitive states for all cells from the updated conserved states
+	\item 	Impose boundary conditions (section \ref{chap:boundary-conditions})
+	\item 	Find the maximal timestep that you can do by applying the CFL condition \ref{eq:godunov-cfl}.
+	\item 	Compute fluxes:
+	\begin{itemize}
+		\item 	For every cell pair $(i, i+1)$, solve the Riemann problem (see section \ref{chap:riemann}) to find the flux $\F_{i+\half}$.
+		\item 	Store the flux $\F_{i+\half}$ in the \texttt{struct pstate pflux} struct of the cell $i$.
+				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
+	\end{itemize}
+	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$, the flux $\F_{i+\half}$ stored in every cell $i$, and the flux $\F_{i-\half}$ stored in every cell $i-1$ following eq. \ref{eq:godunov-discretized}.
+\end{itemize}
 
 
 

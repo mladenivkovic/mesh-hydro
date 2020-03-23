@@ -765,7 +765,7 @@ The vacuum solution of the Riemann problem gives non-zero velocities in regions 
 So if we have for example a left vacuum, until the initial state boundary we will typically have $\U = 0$, while the Riemann problem will give $u \neq 0$ for the flux;
 So jump discontinuities will form.
 
-A way to deal with this is to not set the density and pressure to zero, but to a very small number, I employ \texttt{SMALLRHO} and \texttt{SMALLP} in the code.
+A way to deal with this is to not set the density and pressure to zero, but to a very small number, I employ \texttt{SMALLRHO} and \texttt{SMALLP} in the code, which are defined as macros in \verb|/program/src/defines.h|.
 Also, instead of returning a nonzero-velocity in the vacuum, return also something very small, \texttt{SMALLU}.
 This makes the code a bit more stable, but it will deviate from the solution of the exact Riemann solver.
 

@@ -1,6 +1,6 @@
 \newpage
 %====================================================
-\section{Advection}
+\section{Advection}\label{chap:advection}
 %====================================================
 
 
@@ -76,10 +76,10 @@ The method is first order accurate in time and space.
 We assumed that the velocity is positive and constant.
 What if it's negative?
 
-The important point is that we always do \textbf{downwind differencing}.
+The important point is that we always do \textbf{upwind differencing}.
 To obtain a finite difference, as we do here, you must never use the value that is downstream, i.e. that is in the direction of the flux.
 Doing this means taking a value for your computation that won't be valid as soon as an infinitesimal time interval passes, because the ingoing flux will change the downwind state.
-This is unphysical and leads to violent instabilites.
+This is unphysical and leads to violent instabilities.
 
 So if we have negative velocity, all we need to do is change the expression \ref{eq:advection_flux} to
 
@@ -125,12 +125,12 @@ This time, we assume that the state is not constant within a cell, but follows a
 \end{align*}
 
 Other choices for the slope are possible and stable.
-
+\textbf{TODO: WHAT KIND OF SLOPE IS IMPLEMENTED FOR NO LIMITER????}
 
 
 
 Assuming a positive constant velocity $v$, we derive the flux $\F$ at the time $t^n < t < t^{n+1}$ at the interface position $i-\half$.
-At time $t$, the cell will have been advected by a distance $v (t - t^n)$, and the the current state at the interface will be
+At time $t$, the cell will have been advected by a distance $v (t - t^n)$, and the current state at the interface will be
 
 \begin{align*}
 	\U(x=x_{i-\half}, t) 
@@ -218,42 +218,83 @@ To summarize the formulae:
 
 
 
-We can now insert a more general expression for the slopes.
-Let 
+%We can now insert a more general expression for the slopes.
+%Let 
+%\begin{align}
+%	\theta_{i-\half} = \begin{cases} +1 \quad \text{ for } v \geq 0 \\ -1 \quad  \text{ for } v \leq{0} \end{cases}
+%\end{align}
+%
+%Then
+%
+%\begin{align}
+%	\Delta x_{i-\{0, 1\}} \mathbf{s}_{i-\{0,1\}} 
+%		&= \frac{1}{2} \Delta x \left[ (1 + \theta_{i-\half}) \mathbf{s}_{i-1}^n + (1 - \theta_{i-\half})  \mathbf{s}_{i}^n \right]  \\
+%	&\equiv \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \\
+%	r^n_{i-\half} &= \begin{cases}
+%		\frac{\U_{i-1}^n - \U_{i-2}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \geq 0 \\
+%		\frac{\U_{i+1}^n - \U_{i}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \leq 0 \\
+%	\end{cases} 
+%\end{align}
+%
+%$\phi$ is discussed later. Finally:
+%
+%\begin{align}
+%	\F_{i-\half}^{n+\half} = 
+%		&\frac{1}{2} v_{i-\half} \left[  (1 + \theta_{i-\half}) \U_{i-1}^n + (1 - \theta_{i-\half})  \U_{i}^n \right] +\nonumber\\
+%		&\frac{1}{2}| v_{i-\half} | \left( 1 - \left| \frac{v_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1}\\
+%	\F_{i+\half}^{n+\half} = 
+%		&\frac{1}{2} v_{i+\half} \left[  (1 + \theta_{i+\half}) \U_{i}^n + (1 - \theta_{i+\half})  \U_{i+1}^n \right] +\nonumber\\
+%		&\frac{1}{2}| v_{i+\half} | \left( 1 - \left| \frac{v_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2}
+%\end{align}
+%
+
+
+
+
+
+Let us introduce the unitless function $\phi(r)$ as
+
 \begin{align}
-	\theta_{i-\half} = \begin{cases} +1 \quad \text{ for } v \geq 0 \\ -1 \quad  \text{ for } v \leq{0} \end{cases}
+	\phi(r_{i+\half}) &= \phi_{i+\half} = 
+		\begin{cases}
+			\frac{\Delta x}{\U_{i+1} - \U_{i}} \cdot \mathbf{s}_{i} 	& 	\text{ for } v \geq 0 \\
+			\frac{\Delta x}{\U_{i+1} - \U_{i}} \cdot \mathbf{s}_{i+1}	&	\text{ for } v \leq 0 \\
+		\end{cases}
+		\\
+	\phi(r_{i-\half}) &= \phi_{i-\half} = 
+		\begin{cases}
+			\frac{\Delta x}{\U_i - \U_{i-1}} \cdot \mathbf{s}_{i-1} 	& 	\text{ for } v \geq 0 \\
+			\frac{\Delta x}{\U_i - \U_{i-1}} \cdot \mathbf{s}_{i}	&	\text{ for } v \leq 0 \\
+		\end{cases}
 \end{align}
 
-Then
 
-\begin{align}
-	\Delta x_{i-\{0, 1\}} \mathbf{s}_{i-\{0,1\}} 
-		&= \frac{1}{2} \Delta x \left[ (1 + \theta_{i-\half}) \mathbf{s}_{i-1}^n + (1 - \theta_{i-\half})  \mathbf{s}_{i}^n \right]  \\
-	&\equiv \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \\
-	r^n_{i-\half} &= \begin{cases}
-		\frac{\U_{i-1}^n - \U_{i-2}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \geq 0 \\
-		\frac{\U_{i+1}^n - \U_{i}^n}{\U_{i}^n - \U_{i-1}^n} 	\quad \text{ for } v  \leq 0 \\
-	\end{cases} 
-\end{align}
+Such that
 
-$\phi$ is discussed later. Finally:
-
-\begin{align}
-	\F_{i-\half}^{n+\half} = 
-		&\frac{1}{2} v_{i-\half} \left[  (1 + \theta_{i-\half}) \U_{i-1}^n + (1 - \theta_{i-\half})  \U_{i}^n \right] +\nonumber\\
-		&\frac{1}{2}| v_{i-\half} | \left( 1 - \left| \frac{v_{i-\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i-\half}^n) (\U_i^n - \U_{i-1}^n ) \label{eq:advection_phi1}\\
-	\F_{i+\half}^{n+\half} = 
-		&\frac{1}{2} v_{i+\half} \left[  (1 + \theta_{i+\half}) \U_{i}^n + (1 - \theta_{i+\half})  \U_{i+1}^n \right] +\nonumber\\
-		&\frac{1}{2}| v_{i+\half} | \left( 1 - \left| \frac{v_{i+\half} \Delta t}{\Delta x} \right| \right) \phi(r_{i+\half}^n) (\U_{i+1}^n - \U_{i}^n ) \label{eq:advection_phi2}
-\end{align}
+\begin{align*}
+	\F_{i-\half}^{n+\half} &= 
+		\begin{cases}
+			v_{i-\half} \cdot \U_{i-1}^n + \frac{1}{2} |v_{i-\half}|  \left(1 -  \frac{|v_{i-\half}| \Delta t}{\Delta x} \right) \phi_{i-\half} ( \U_i - \U_{i-1} )
+			 	& \quad \text{for } v \geq 0 \\
+			v_{i-\half} \cdot \U_{i}^n + \frac{1}{2} |v_{i-\half}|  \left(1 -  \frac{|v_{i-\half}| \Delta t}{\Delta x} \right) \phi_{i-\half} ( \U_i - \U_{i-1} )
+				& \quad \text{for } v \leq 0 \\
+		\end{cases} \\		
+	\F_{i+\half}^{n+\half} &= 
+		\begin{cases}
+			v_{i+\half} \cdot \U_{i}^n + \frac{1}{2} |v_{i+\half}|  \left(1 -  \frac{|v_{i+\half}| \Delta t}{\Delta x} \right) \phi_{i+\half} ( \U_{i+1} - \U_{i} )
+			 	& \quad \text{for } v \geq 0 \\
+			v_{i+\half} \cdot \U_{i+1}^n + \frac{1}{2} |v_{i+\half}|  \left(1 -  \frac{|v_{i+\half}| \Delta t}{\Delta x} \right) \phi_{i+\half} ( \U_{i+1} - \U_{i} )
+			 	& \quad \text{for } v \geq 0 \\
+		\end{cases} \\		
+\end{align*}
 
 
 
 
 
 
-
-Depending on our choice of $\phi$, we can get different slopes. Here for positive velocity only, and for $r = r_{i-\half}$:
+Depending on our choice of $\phi$, we can get different slopes. 
+Here for positive velocity only, and for $r = r_{i-\half}$:
 
 \begin{align*}
 	\phi(r) & = 0 \rightarrow \mathbf{s}_i = 0 
@@ -265,6 +306,9 @@ Depending on our choice of $\phi$, we can get different slopes. Here for positiv
 	\phi(r) & = \frac{1}{2} (1 + r) \rightarrow \mathbf{s}_i = \frac{\U_{i} - \U_{i-2}}{2 \Delta x} 
 		&\text{ Centered slope (Fromm)} \\
 \end{align*}
+
+
+More elaborate expressions for $\phi(r)$ are going to be used to construct monotone high order schemes using a slope limiter, see section \ref{chap:limiters}.
 
 
 
@@ -443,9 +487,23 @@ For $N$ dimensions, the condition translates to
 
 
 
+
+
+
+
 %====================================================
 \subsection{Implementation Details}
 %====================================================
+
+
+
+
+
+
+%====================================================
+\subsubsection{General}
+%====================================================
+
 
 What is implemented is the equation
 
@@ -454,10 +512,138 @@ What is implemented is the equation
 \end{equation}
 
 
-where we assume that the velocity $v$ is constant. 
-Therefore, the fluid velocity is never updated, but kept identical to the initial conditions.
-The fluxes $\F = v \U$ are computed and sored in \verb|pstate pflux| of each cell.
-Only the \textbf{net flux} is stored, i.e. $\F_{i-\half} - \F_{i+\half}$.
+where we assume that the velocity $v$ is constant.
 
+In every case, this equation is solved through the discretization
+
+\begin{equation}
+	\U_i^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left( \F_{i - \half}^{n+\half} - \F_{i + \half}^{n+\half} \right) \label{eq:advection-discretized}
+\end{equation}
+
+and the expressions for the fluxes $\F_{i\pm\half}$ vary between the methods.
+ 
+Therefore, the fluid velocity is never updated, but kept identical to the initial conditions.
 You can change that behaviour by removing the \verb|ADVECTION_KEEP_VELOCITY_CONSTANT| macro definition in \verb|defines.h|
+
+Even though usually $\U$ is taken to be a conserved state, advection only updates the primitive states, as those are the one that are read in and written out.
+
+
+
+The advection related functions are called in the main loop in \texttt{/program/src/main.c} when \verb|solver_step(...)| is called.
+The specifics for each solver are described in the following subsection.
+
+
+
+
+
+
+
+%====================================================
+\subsubsection{Piecewise Constant Advection}
+%====================================================
+
+
+The related functions are written in \verb|/program/src/solver/advection_pwconst.c| and \verb|/program/src/solver/advection_pwconst.h|.
+
+The \verb|solver_step(...)| function does the following for the 1D case:
+\begin{itemize}
+	\item 	Reset the stored fluxes from the previous timestep to zero
+	\item 	Impose boundary conditions (section \ref{chap:boundary-conditions})
+	\item 	Find the maximal timestep that you can do by applying the CFL condition \ref{eq:CFL1D}.
+	\item 	Compute fluxes:
+	\begin{itemize}
+		\item 	For every cell, find the upwind and the downwind cell for the interaction.
+		\item 	Compute the net flux, i.e.
+				\begin{equation}
+				\F_{i, net}^{n+\half} = \F_{i-\half}^{n+\half} - \F_{i+\half}^{n+\half}
+				\end{equation}
+				and store it in the \texttt{struct pstate pflux} struct of the cell $i$.
+				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
+	\end{itemize}
+	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$ and the computed net flux $\F_{i, net}^{n+\half}$ according to eqn. \ref{eq:advection-discretized}.
+\end{itemize}
+
+
+
+For 2D, we just do the 1D step twice, once in each direction while using the intermediate result coming from the first sweep as the IC for the second step in the other dimension.
+See section \ref{chap:dimensional-splitting} for details.
+
+
+
+
+
+
+
+
+
+%====================================================
+\subsubsection{Piecewise Linear Advection}
+%====================================================
+
+The related functions are written in \verb|/program/src/solver/advection_pwlin.c| and \verb|/program/src/solver/advection_pwlin.h|.
+
+
+The \verb|solver_step(...)| function does the following for the 1D case:
+\begin{itemize}
+	\item 	Reset the stored fluxes from the previous timestep to zero
+	\item 	Impose boundary conditions (section \ref{chap:boundary-conditions})
+	\item 	Find the maximal timestep that you can do by applying the CFL condition \ref{eq:CFL1D}.
+	\item 	Compute fluxes:
+	\begin{itemize}
+		\item 	For every cell, find the upwind and the downwind cell for the interaction.
+		\item 	Compute the net flux, i.e.
+				\begin{equation}
+				\F_{i, net}^{n+\half} = \F_{i-\half}^{n+\half} - \F_{i+\half}^{n+\half}
+				\end{equation}
+				and store it in the \texttt{struct pstate pflux} struct of the cell $i$.
+				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
+		\item 	When computing the fluxes $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$, first just compute the left and right slope by calling the \verb|limiter_get_slope_left(...)| and \verb|limiter_get_slope_right(...)| functions, and only determine later which one is the upwind one and which one is the downwind one.
+		The \verb|limiter_get_slope| functions will figure out which limiter to use, even if you chose the ``no limiter'' option.
+		If the ``no limiter'' option is chosen, you get a \textbf{TODO: WHAT KIND OF SLOPE IS IMPLEMENTED FOR NO LIMITER????????}
+	\end{itemize}
+	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$ and the computed net flux $\F_{i, net}^{n+\half}$ according to eqn. \ref{eq:advection-discretized}.
+\end{itemize}
+
+
+
+For 2D, we just do the 1D step twice, once in each direction while using the intermediate result coming from the first sweep as the IC for the second step in the other dimension.
+See section \ref{chap:dimensional-splitting} for details.
+
+
+
+
+
+
+
+
+
+
+%====================================================
+\subsubsection{WAF Advection}
+%====================================================
+
+
+The \verb|solver_step(...)| function does the following for the 1D case:
+\begin{itemize}
+	\item 	Reset the stored fluxes from the previous timestep to zero
+	\item 	Impose boundary conditions (section \ref{chap:boundary-conditions})
+	\item 	Find the maximal timestep that you can do by applying the CFL condition \ref{eq:CFL1D}.
+	\item 	Compute fluxes:
+	\begin{itemize}
+		\item 	For every cell, find the pass it and it's neighbour with index $i+1$ to compute the flux.
+		\item 	Compute the flux, i.e.
+				\begin{equation}
+					\F_{i+\half}^{n+\half}
+				\end{equation}
+				and subtract it from the \texttt{struct pstate pflux} struct of the cell $i$.
+				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
+				But also add it to the cell with index $i+1$, since $\F_{i+\half}$ will the the flux $\F_{i-\half}$ for the cell with $i = i+1$.
+				This way, once the iteration is over, the net flux $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$ will be stored in \texttt{struct pstate pflux} of the cell $i$.
+	\end{itemize}
+	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$ and the computed net flux $\F_{i, net}^{n+\half}$ according to eqn. \ref{eq:advection-discretized}.
+\end{itemize}
+
+
+For 2D, we just do the 1D step twice, once in each direction while using the intermediate result coming from the first sweep as the IC for the second step in the other dimension.
+See section \ref{chap:dimensional-splitting} for details.
 
