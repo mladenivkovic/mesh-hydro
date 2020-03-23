@@ -23,32 +23,15 @@ extern params pars;
 
 
 
-void limiter_get_phi_no_limiter(cell* c, pstate* phi, int dimension){
-  /* ------------------------------------------------------------------------
-   * Compute the flux limiter phi_{i+1/2}
-   *
-   * cell* c:     for which cell i to work for
-   * pstate* phi: where the flux limiter will be stored
-   * dimension:   for which dimension we're working
-   * ------------------------------------------------------------------------ */
-
-  phi->rho = 1.;
-  phi->u[0] = 1.;
-  phi->u[1] = 1.;
-  phi->p = 1.;
-}
-
-
-
-
-
 float limiter_phi_of_r(float r){
   /*-------------------------------------------
    * compute the actual phi(r) 
-   *
-   * NOTE: This should actually
-   * never be called for LIMITER == NONE
    * ------------------------------------------*/
-  throw_error("You shouldn't be calling limiter_phi_of_r for LIMITER = NONE");
-  return(1.);
+
+  float phi_no_limiter = 0.5 * (1. + r);     /* centered slope     */
+  /* float phi_no_limiter = r;               [> upwind slope    <] */
+  /* float phi_no_limiter = 1.;              [> downwind slope  <] */
+  /* float phi_no_limiter = 0.;              [> no slope        <] */
+
+  return(phi_no_limiter);
 }

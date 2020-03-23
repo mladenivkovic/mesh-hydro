@@ -30,7 +30,7 @@ with the flux tensor
 
 We assume the advection velocity $v = $ const.
 
-Note that in the formalism used, we only solve the 1D advection, but for every component of the state vector $\U$ and flux tensor $\F$
+Note that in the formalism used, we only solve the 1D advection, but for every component of the state vector $\U$ and flux tensor $\F$.
 
 The analytical solution is given by any function $q(x)$ with $\U(x,t) = q(x - v t)$, which is just $q(x)$ translated by $v t$.
 
@@ -115,17 +115,25 @@ So if we have negative velocity, all we need to do is change the expression \ref
 \end{figure}
 
 
+The equation is still solved using the discretisation
+\begin{align}
+	\U_i ^{n+1} &= 
+		\U_i^{n} +  \frac{\Delta t}{\Delta x} \left( \F_{i-\half}^{n+\half} - \F_{i+\half}^{n+\half} \right) \label{eq:advection_basic_pwlin}
+\end{align}
 
-This time, we assume that the state is not constant within a cell, but follows a piecewise linear profile with some slope $\mathbf{s}$ (fig. \ref{fig:pwlin}):
+but his time, we assume that the state is not constant within a cell, but follows a piecewise linear profile with some slope $\mathbf{s}$ (fig. \ref{fig:pwlin}):
 
 \begin{align*}
-	\text{For } x_{i-\half} < x_i < x_{i+\half}: &&
-	\quad \U(x, t=t_n) &= \U_i^n + \mathbf{s}_i^n(x - x_i) \\
-	\text{Centered method:} && \mathbf{s_i}^n &= \frac{\U_{i+1}^n - \U_{i-1}^n}{ 2 \Delta x}
+	\text{For } x_{i-\half} < x < x_{i+\half}: &&
+	& \U(x, t=t_n) = \U_i^n + \mathbf{s}_i^n(x - x_i) \\
+	\text{Centered slope: (Fromm) } && &\mathbf{s_i}^n = \frac{\U_{i+1}^n - \U_{i-1}^n}{ 2 \Delta x}\\
+	\text{Upwind slope: (Beam-Warming) } && &\mathbf{s_i}^n = \U_{i}^n - \U_{i-1}^n \\
+	\text{Downwind slope: (Lax Wendroff) } && &\mathbf{s_i}^n = \U_{i+1}^n - \U_{i}^n \\
 \end{align*}
 
-Other choices for the slope are possible and stable.
-\textbf{TODO: WHAT KIND OF SLOPE IS IMPLEMENTED FOR NO LIMITER????}
+The ``upwind'' and ``downwind'' slope namings are assuming that the velocity $v > 0$.
+The implemented slope in the code is a centered slope.
+The decision to go with a centered slope has no particular reason, I just felt like it.
 
 
 
@@ -337,15 +345,16 @@ For the WAF method, we again assume piece-wise constant data (see fig. \ref{fig:
 \begin{equation}
 	\U_i ^ n = \frac{1}{\Delta \x} \int_{\x_{i-\half}}^{\x_{i+\half}} \U(\x, t^n) \de \x
 \end{equation}
-The scheme is based on the explicit conservative formula
+
+The scheme is again based on the explicit conservative formula
 
 \begin{equation}
-	\U_{i}^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left[ \F_{i - \half} - \F_{i + \half} \right]
+	\U_{i}^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left[ \F_{i - \half} - \F_{i + \half} \right] \label{eq:advection_basics_waf}
 \end{equation}
 
 
 
-The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux funcion:
+The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux function:
 
 \begin{equation}
 	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x \label{eq:waf-flux}
@@ -598,8 +607,8 @@ The \verb|solver_step(...)| function does the following for the 1D case:
 				and store it in the \texttt{struct pstate pflux} struct of the cell $i$.
 				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
 		\item 	When computing the fluxes $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$, first just compute the left and right slope by calling the \verb|limiter_get_slope_left(...)| and \verb|limiter_get_slope_right(...)| functions, and only determine later which one is the upwind one and which one is the downwind one.
-		The \verb|limiter_get_slope| functions will figure out which limiter to use, even if you chose the ``no limiter'' option.
-		If the ``no limiter'' option is chosen, you get a \textbf{TODO: WHAT KIND OF SLOPE IS IMPLEMENTED FOR NO LIMITER????????}
+				The \verb|limiter_get_slope| functions will figure out which limiter to use, even if you chose the ``no limiter'' option.
+				If the ``no limiter'' option is chosen, you get a centered slope.
 	\end{itemize}
 	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$ and the computed net flux $\F_{i, net}^{n+\half}$ according to eqn. \ref{eq:advection-discretized}.
 \end{itemize}
@@ -631,11 +640,7 @@ The \verb|solver_step(...)| function does the following for the 1D case:
 	\item 	Compute fluxes:
 	\begin{itemize}
 		\item 	For every cell, find the pass it and it's neighbour with index $i+1$ to compute the flux.
-		\item 	Compute the flux, i.e.
-				\begin{equation}
-					\F_{i+\half}^{n+\half}
-				\end{equation}
-				and subtract it from the \texttt{struct pstate pflux} struct of the cell $i$.
+		\item 	Compute the flux, i.e. $ \F_{i+\half}^{n+\half} $, and subtract it from the \texttt{struct pstate pflux} struct of the cell $i$.
 				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
 				But also add it to the cell with index $i+1$, since $\F_{i+\half}$ will the the flux $\F_{i-\half}$ for the cell with $i = i+1$.
 				This way, once the iteration is over, the net flux $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$ will be stored in \texttt{struct pstate pflux} of the cell $i$.

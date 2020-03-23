@@ -36,13 +36,6 @@ void limiter_get_phi(cell* c, pstate* phi, int dimension){
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 
-#if LIMITER == NONE
-  /* WAF calls limiter_get_phi directly, so you need to check here
-   * whether that is the case. */
-  limiter_get_phi_no_limiter(c, phi, dimension);
-  return;
-#endif
-
   pstate Uim1, Ui, Uip1, Uip2;  /*U_i-1, U_i, U_i+1, U_i+2 */ 
   gas_init_pstate(&Uim1);
   gas_init_pstate(&Ui);
