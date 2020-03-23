@@ -24,8 +24,10 @@ extern cell **grid;
 extern params pars;
 
 
-float limiter_psi_of_r(float r){
-  /* compute the actual psi(r) */
+float limiter_phi_of_r(float r){
+  /*-------------------------------------
+   * compute the actual phi(r)
+   * ------------------------------------*/
   return(limiter_minmod(1., r));
 }
 

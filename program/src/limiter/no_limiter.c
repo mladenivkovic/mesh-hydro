@@ -23,32 +23,32 @@ extern params pars;
 
 
 
-void limiter_get_psi_no_limiter(cell* c, pstate* psi, int dimension){
+void limiter_get_phi_no_limiter(cell* c, pstate* phi, int dimension){
   /* ------------------------------------------------------------------------
-   * Compute the flux limiter psi_{i+1/2}
+   * Compute the flux limiter phi_{i+1/2}
    *
    * cell* c:     for which cell i to work for
-   * pstate* psi: where the flux limiter will be stored
+   * pstate* phi: where the flux limiter will be stored
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 
-  psi->rho = 1.;
-  psi->u[0] = 1.;
-  psi->u[1] = 1.;
-  psi->p = 1.;
+  phi->rho = 1.;
+  phi->u[0] = 1.;
+  phi->u[1] = 1.;
+  phi->p = 1.;
 }
 
 
 
 
 
-float limiter_psi_of_r(float r){
+float limiter_phi_of_r(float r){
   /*-------------------------------------------
-   * compute the actual psi(r) 
+   * compute the actual phi(r) 
    *
    * NOTE: This should actually
    * never be called for LIMITER == NONE
    * ------------------------------------------*/
-  throw_error("You shouldn't be calling limiter_psi_of_r for LIMITER = NONE");
+  throw_error("You shouldn't be calling limiter_phi_of_r for LIMITER = NONE");
   return(1.);
 }

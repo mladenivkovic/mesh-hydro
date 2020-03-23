@@ -144,18 +144,18 @@ void solver_compute_cell_pair_flux(cell* c, cell* n, float* dt, int dim){
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
  
-  pstate psi;
-  gas_init_pstate(&psi);
-  limiter_get_psi(c, &psi, dim);
+  pstate phi;
+  gas_init_pstate(&phi);
+  limiter_get_phi(c, &pji, dim);
 
   float vel = c->prim.u[dim];
   float abscfl = fabs((*dt) / pars.dx * c->prim.u[dim]);
-  pstate phi;
+  pstate psi;
   gas_init_pstate(&phi);
-  phi.rho  = 1. - (1. - abscfl) * psi.rho;
-  phi.u[0] = 1. - (1. - abscfl) * psi.u[0];
-  phi.u[1] = 1. - (1. - abscfl) * psi.u[1];
-  phi.p    = 1. - (1. - abscfl) * psi.p;
+  psi.rho  = 1. - (1. - abscfl) * phi.rho;
+  psi.u[0] = 1. - (1. - abscfl) * phi.u[0];
+  psi.u[1] = 1. - (1. - abscfl) * phi.u[1];
+  psi.p    = 1. - (1. - abscfl) * phi.p;
 
 
 
@@ -165,22 +165,22 @@ void solver_compute_cell_pair_flux(cell* c, cell* n, float* dt, int dim){
 
   float flux = 0.;
 
-  flux = 0.5 * (1. + s*phi.rho) * vel * c->prim.rho +
-         0.5 * (1. - s*phi.rho) * vel * n->prim.rho;
+  flux = 0.5 * (1. + s*psi.rho) * vel * c->prim.rho +
+         0.5 * (1. - s*psi.rho) * vel * n->prim.rho;
   c->pflux.rho -= flux;
   n->pflux.rho += flux;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  flux = 0.5 * (1. + s*phi.u[0]) * vel * c->prim.u[0] +
-         0.5 * (1. - s*phi.u[0]) * vel * * n->prim.u[0];
+  flux = 0.5 * (1. + s*psi.u[0]) * vel * c->prim.u[0] +
+         0.5 * (1. - s*psi.u[0]) * vel * * n->prim.u[0];
   c->pflux.u[0] -= flux;
   n->pflux.u[0] += flux;
-  flux = 0.5 * (1. + s*phi.u[1]) * vel * c->prim.u[1] +
-         0.5 * (1. - s*phi.u[1]) * vel * n->prim.u[1];
+  flux = 0.5 * (1. + s*psi.u[1]) * vel * c->prim.u[1] +
+         0.5 * (1. - s*psi.u[1]) * vel * n->prim.u[1];
   c->pflux.u[1] -= flux;
   n->pflux.u[1] += flux;
 #endif
-  flux = 0.5 * (1. + s*phi.p) * vel * c->prim.p +
-         0.5 * (1. - s*phi.p) * vel * n->prim.p;
+  flux = 0.5 * (1. + s*psi.p) * vel * c->prim.p +
+         0.5 * (1. - s*psi.p) * vel * n->prim.p;
   c->pflux.p -= flux;
   n->pflux.p += flux;
 }

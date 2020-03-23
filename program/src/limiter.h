@@ -24,9 +24,9 @@
 
 void limiter_get_slope_left(cell* c, pstate* slope, int dimension);
 void limiter_get_slope_right(cell* c, pstate* slope, int dimension);
-void limiter_get_psi(cell* c, pstate* psi, int dimension);
+void limiter_get_phi(cell* c, pstate* phi, int dimension);
 void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel);
-float limiter_psi_of_r(float r);
+float limiter_phi_of_r(float r);
 float limiter_r(float topleft, float topright, float bottomleft);
 
 #endif
