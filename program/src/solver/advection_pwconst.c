@@ -155,12 +155,12 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim){
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-  c->pflux.rho += uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
+  c->pflux.rho = uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->pflux.u[0] += uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
-  c->pflux.u[1] += uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
+  c->pflux.u[0] = uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
+  c->pflux.u[1] = uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
 #endif
-  c->pflux.p += uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
+  c->pflux.p = uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
 }
 
 

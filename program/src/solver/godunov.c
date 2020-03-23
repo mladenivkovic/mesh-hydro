@@ -270,8 +270,8 @@ void solver_update_state(cell* left, cell* right, float dtdx){
    * at i-1/2
    * ------------------------------------------------------ */
 
-  right->cons.rho      = right->cons.rho     + dtdx * ( left->cflux.rho      - right->cflux.rho );
-  right->cons.rhou[0]  = right->cons.rhou[0] + dtdx * ( left->cflux.rhou[0]  - right->cflux.rhou[0] );
-  right->cons.rhou[1]  = right->cons.rhou[1] + dtdx * ( left->cflux.rhou[1]  - right->cflux.rhou[1] );
-  right->cons.E        = right->cons.E       + dtdx * ( left->cflux.E        - right->cflux.E );
+  right->cons.rho     = right->cons.rho     + dtdx * (left->cflux.rho     - right->cflux.rho );
+  right->cons.rhou[0] = right->cons.rhou[0] + dtdx * (left->cflux.rhou[0] - right->cflux.rhou[0] );
+  right->cons.rhou[1] = right->cons.rhou[1] + dtdx * (left->cflux.rhou[1] - right->cflux.rhou[1] );
+  right->cons.E       = right->cons.E       + dtdx * (left->cflux.E       - right->cflux.E );
 }

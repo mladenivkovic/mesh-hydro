@@ -91,7 +91,10 @@ void limiter_get_slope_left(cell* c, pstate* slope, int dimension){
    * Just figure out which cell is one to the left and call 
    * limiter_get_slope_right for it instead of given cell c.
    *
-   * TODO: param documentation
+   * cell* c:       cell for which we are working
+   * pstate* slope: where the computed slope will be stored for all primitive
+   *                states individually
+   * int dimension: for which dimension we are working. 0: x, 1: y.
    * ------------------------------------------------------------------------ */
 
   int i, j;
@@ -122,7 +125,11 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
    * Compute the left slope of given cell c, i.e. the slope for the flux
    * F_{i+1/2}.
    * Remember: slope_i = 1/dx * phi(r_{i+1/2}) * (U_{i+1} - U_{i})
-   * TODO: param documentation
+   *
+   * cell* c:       cell for which we are working
+   * pstate* slope: where the computed slope will be stored for all primitive
+   *                states individually
+   * int dimension: for which dimension we are working. 0: x, 1: y.
    * ------------------------------------------------------------------------ */
 
   pstate Uip1, Ui;
@@ -171,10 +178,17 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
 
 void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel){
   /*----------------------------------------------------------------------------------------------
-   * TODO: DOCUMENTATION
-   * Compute the flow parameter r = ( u_i - u_i-1  ) / (u_i+1 - u_i) 
-   * Also check whether you might compute junk by dividing by zero.
-   * If you have, return something ridiculously high with the correct sign. 
+   * if v > 0: 
+   *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i}) 
+   * else:
+   *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
+   *
+   * pstate* Uip2:  U_{i+2}
+   * pstate* Uip1:  U_{i+1}
+   * pstate* Ui:    U_{i}
+   * pstate* Uim1:  U_{i-1}
+   * pstate* r:     r for every primitive state
+   * float vel:     advection velocity
    * ---------------------------------------------------------------------------------------------*/
 
   if (vel >= 0){
@@ -196,9 +210,26 @@ void limiter_get_r(pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate*
 
 
 float limiter_r(float topleft, float topright, float bottomleft){
-  /* -------------------------------------------------
-   * TODO: document!!!
-   * ------------------------------------------------ */
+  /* --------------------------------------------------------------
+   * if v > 0: 
+   *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i}) 
+   * else:
+   *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
+   *
+   * In the tex documents, r for v < 0 is given as
+   *    r = (u_{i+2} - u_{i+1}) / (u_{i+1} - u_{i})
+   * which can be transformed into the above expression by multiplying
+   * the numerator and the denominator by -1.
+   * So then we can write
+   *
+   *          top_left - top_right
+   * r = ---------------------------------
+   *          bottom_left - top_left
+   *
+   * regardless of what sign the velocity v has. We only need to
+   * switch what topleft, topright, and bottomleft are, which is
+   * done in the function that is calling this one.
+   * -------------------------------------------------------------- */
 
 
   if (bottomleft == topleft){
