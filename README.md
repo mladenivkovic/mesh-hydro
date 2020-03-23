@@ -5,31 +5,40 @@ Mesh-based Hydro Solvers
 Description
 -----------------------
 
-A program to run 1D and 2D mesh based hydro solvers.
+A program to learn about and play with finite volume mesh based hydrodynamics and advection solvers.
 You can pick between:
 
+- Advection solvers:
+    - piecewise constant advection
+    - piecewise linear advection
+    - weighted average flux (WAF) advection
 - Hydro solvers:
-	- Godunov
-	- Advection: piecewise constant, piecewise linear, weighted average flux
+	- Godunov (upwind)
 - Riemann solvers:
 	- Exact	(exact iterative solver)
 	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
 	- TRRS	(Two Rarefaction approximate Riemann Solver)
 	- TSRS	(Two Shock approximate Riemann Solver)
 - Limiters:
-    - Slope limiters:
-        - No limiter
-        - minmod
-        - superbee
-        - monotonized centered difference (MC)
-        - van Leer
-- number of dimensions:
+    - no limiter
+    - minmod
+    - superbee
+    - monotonized centered difference (MC)
+    - van Leer
+- Number of dimensions:
 	- 1 or 2
 
 at compile time by setting the corresponding values in the Makefile.
 
 To see what the code is able to do, you can for example run the test script in `./program/test` and have a look at the resulting `./program/test/test_results.pdf`
 (You'll need to add add `/py/module/` to your `PYTHONPATH` to be able to run the python plotting scripts.)
+
+
+The purpose of this project is to learn about, play with, and eventually teach the basics of (finite volume) fluid dynamics.
+With that in mind, the project is deliberately written to be easy to read, and well documented (check out `/tex/equations/equations_and_implementation_details.pdf` !)
+So things are kept simple and non-optimized.
+
+
 
 
 
@@ -44,13 +53,17 @@ Contents
 
 
 
+
+
 Requirements
 ----------------------
 
 - A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though. 
 - GNU make to compile without much hassle. The Makefile is set up for GCC.
 - python 3 with numpy and matplotlib for plotting. 
-- LaTeX to create the TeX files. I hardcod the `pdflatex` command in the scripts.
+- LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts.
+
+
 
 
 
@@ -79,19 +92,32 @@ in the parameter file, you need to specify `nx` and `tmax` only, pretty much all
 
 
 
+
+
+
+
+
 Things to keep in mind
 ----------------------------
 
-- If you want to use the included python modules and scripts, you need to add `/py/module/` to your `PYTHONPATH`.
-- this code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
-- All macros are in `defines.h`
-- boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
-- there is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
-- No advection solver uses a Riemann solver.
-- Piecewise constant advection can't apply limiters.
-- You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
-- You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)
-- ...
+- General:
+    - If you want to use the included python modules and scripts, you need to add `/py/module/` to your `PYTHONPATH`.
+    - You can only solve for one hyperbolic conservatio law at a time: You need to decide whether you're doing hydro or advection, and which solver you want to use.
+    - All macros are in `defines.h`
+    - Boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
+    - There is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
+- Advection:
+    - No advection solver uses a Riemann solver.
+    - Piecewise constant advection can't apply limiters.
+    - Reflective boundary conditions make no sense for any advection scheme. Transmissive ones aren't really useful either, so you probably should always go with periodic ones when dealing with advection.
+- Hydrodynamics related:
+    - This code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
+- Riemann related:
+    - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
+    - You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)
+
+
+
 
 
 
@@ -374,3 +400,13 @@ I tried keeping the code as modular as possible, so adding/removing stuff should
 
 - `cell_print_grid()`: prints out chosen grid quantity for the entire grid to stdout. Works independently of dimension of the code, so you can always call it.
 - `cell_print_grid_part()`: prints out chosen grid quantity for chosen cell intervals, i.e. give it xmin and xmax etc. 
+
+
+
+
+
+
+Contributing
+-----------------------------------
+
+Yes please!
