@@ -160,6 +160,9 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
   gas_init_pstate(&sl);
   gas_init_pstate(&sr);
 
+  limiter_get_slope_left(c, &sl, dim);
+  limiter_get_slope_right(c, &sr, dim);
+
   /* assign the slopes to the upwind/downwind cells */
   pstate su;                /* slope of upwind cell */
   pstate sd;                /* slope of downwind cell */
