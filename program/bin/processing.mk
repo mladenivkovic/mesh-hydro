@@ -48,6 +48,14 @@ ADVECTION = true
 RIEMANN = NONE
 endif
 
+# set WAF flag if solver is WAF
+ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
+WAF = true
+endif
+ifeq ($(strip $(SOLVER)), WAF)
+WAF = true
+endif
+
 
 # transform defines into integers where needed
 ifeq ($(strip $(SOLVER)), ADVECTION_PWCONST)
@@ -109,6 +117,10 @@ DEFINES= -DNDIM=$(NDIM) -DSOLVER=$(SOLVERINT) -DRIEMANN=$(RIEMANNINT) -DLIMITER=
 
 ifdef ADVECTION
 DEFINES += -DADVECTION
+endif
+
+ifdef WAF
+DEFINES += -DWAF
 endif
 
 
@@ -181,4 +193,4 @@ endif
 
 
 OBJECTS = main.o gas.o params.o io.o utils.o cell.o solver.o limiter.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
-RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o limiter.o $(LIMITEROBJ) $(RIEMANNOBJ)
+RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(RIEMANNOBJ)
