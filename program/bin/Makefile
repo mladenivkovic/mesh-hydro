@@ -14,10 +14,10 @@ NDIM = 2
 # set which Riemann solver to use.
 # Choices: EXACT, TRRS, TSRS, HLLC
 # RIEMANN = NONE
-RIEMANN = EXACT
+# RIEMANN = EXACT
 # RIEMANN = TRRS
 # RIEMANN = TSRS
-# RIEMANN = HLLC
+RIEMANN = HLLC
 
 
 # set which hydro solver to use.
@@ -62,10 +62,10 @@ CC=gcc -I$(IDIR) #-static
 
 
 # flags for gcc compiler
-CFLAGS= -g -O0 -pedantic -std=c11 \
-		-fsignaling-nans -ffinite-math-only -fno-signed-zeros \
-		-Wextra -Werror -Warray-bounds -Wno-unused-parameter
-# CFLAGS= -O3
+# CFLAGS= -g -O0 -pedantic -std=c11 \
+#         -fsignaling-nans -ffinite-math-only -fno-signed-zeros \
+#         -Wextra -Werror -Warray-bounds -Wno-unused-parameter
+CFLAGS= -O3
 
 CFLAGS += $(DEFINES)
 

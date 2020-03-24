@@ -32,6 +32,7 @@ at compile time by setting the corresponding values in the Makefile.
 
 To see what the code is able to do, you can for example run the test script in `./program/test` and have a look at the resulting `./program/test/test_results.pdf`
 (You'll need to add add `/py/module/` to your `PYTHONPATH` to be able to run the python plotting scripts.)
+Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz instability simulation.
 
 
 The purpose of this project is to learn about, play with, and eventually teach the basics of (finite volume) fluid dynamics.
