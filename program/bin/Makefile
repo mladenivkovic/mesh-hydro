@@ -7,14 +7,14 @@ EXEC = hydro
 
 # how many dimensions to compile for
 # Choices: 1, 2
-NDIM = 1
-# NDIM = 2
+# NDIM = 1
+NDIM = 2
 
 
 # set which Riemann solver to use.
 # Choices: EXACT, TRRS, TSRS, HLLC
-RIEMANN = NONE
-# RIEMANN = EXACT
+# RIEMANN = NONE
+RIEMANN = EXACT
 # RIEMANN = TRRS
 # RIEMANN = TSRS
 # RIEMANN = HLLC
@@ -22,10 +22,10 @@ RIEMANN = NONE
 
 # set which hydro solver to use.
 # Choices: GODUNOV, ADVECTION_PWCONST, ADVECTION_PWLIN, ADVECTION_WAF
-# SOLVER = GODUNOV
+SOLVER = GODUNOV
 # SOLVER = ADVECTION_PWCONST
 # SOLVER = ADVECTION_PWLIN
-SOLVER = ADVECTION_WAF
+# SOLVER = ADVECTION_WAF
 
 # set which flux limiter to use.
 # Choices: NONE, MINMOD, SUPERBEE, VANLEER, MC
