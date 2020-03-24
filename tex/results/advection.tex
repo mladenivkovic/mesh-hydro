@@ -279,9 +279,9 @@
 
 
 
-
+%=======================================
 \subsection{Order of Convergence}
-
+%=======================================
 
 
 
@@ -294,6 +294,7 @@
 		For an accurate comparison, the simulations are stopped after the same number of steps.
 		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
 		Initial conditions was a Gaussian profile.
+		Here for piecewise linear advection.
 	}
 
 \quickfigcap
@@ -305,6 +306,7 @@
 		For an accurate comparison, the simulations are stopped after the same number of steps.
 		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
 		Initial conditions was a step function.
+		Here for piecewise linear advection.
 	}
 	
 
@@ -319,6 +321,7 @@
 		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
 		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
 		Initial conditions was a Gaussian profile.
+		Here for piecewise linear advection.
 	}
 
 
@@ -331,6 +334,7 @@
 		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
 		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
 		Initial conditions was a step function.
+		Here for piecewise linear advection.
 	}
 	
 
@@ -344,6 +348,7 @@
 		Points are measurements, the straight lines just connect the dots.
 		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
 		Initial conditions was a Gaussian profile.
+		Here for piecewise linear advection.
 	}
 
 
@@ -355,6 +360,96 @@
 		Points are measurements, the straight lines just connect the dots.
 		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
 		Initial conditions was a step function.
+		Here for piecewise linear advection.
+	}
+	
+
+
+
+
+
+
+
+
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dx-gaussian-WAF.png}
+	{fig:advection-WAF-convergence-dx-gaussian}
+	{
+		Convergence Study with respect to cell size $\Delta x$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps.
+		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
+		Initial conditions was a Gaussian profile.
+		Here for WAF advection.
+	}
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dx-step-WAF.png}
+	{fig:advection-WAF-convergence-dx-step}
+	{
+		Convergence Study with respect to cell size $\Delta x$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps.
+		This way, the $C_{cfl}$ can also be kept constant throughout the different $\Delta x$.
+		Initial conditions was a step function.
+		Here for WAF advection.
+	}
+	
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dt-gaussian-500-WAF.png}
+	{fig:advection-WAF-convergence-dt-gaussian}
+	{
+		Convergence Study with respect to time step size $\Delta t$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
+		Initial conditions was a Gaussian profile.
+		Here for WAF advection.
+	}
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_dt-step-500-WAF.png}
+	{fig:advection-WAF-convergence-dt-step}
+	{
+		Convergence Study with respect to time step size $\Delta t$ using the $L1$ norm.
+		Points are measurements, the straight lines are fitted curves, with their slope given in the legend.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Highest $\Delta t$ corresponds to $C_{cfl} = 0.001$.
+		Initial conditions was a step function.
+		Here for WAF advection.
+	}
+	
+
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_CFL-gaussian-500-WAF.png}
+	{fig:advection-WAF-convergence-CFL-gaussian}
+	{
+		Convergence Study with respect to the Courant number $C_{cfl}$ using the $L1$ norm.
+		Points are measurements, the straight lines just connect the dots.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Initial conditions was a Gaussian profile.
+		Here for WAF advection.
+	}
+
+
+\quickfigcap
+	{./figures/limiters/limiter_accuracy_CFL-step-500-WAF.png}
+	{fig:advection-WAF-convergence-CFL-step}
+	{
+		Convergence Study with respect to the Courant number $C_{cfl}$ using the $L1$ norm.
+		Points are measurements, the straight lines just connect the dots.
+		For an accurate comparison, the simulations are stopped after the same number of steps, and $\Delta x$ is kept constant.
+		Initial conditions was a step function.
+		Here for WAF advection.
 	}
 	
 
@@ -373,10 +468,11 @@
 
 
 
-
-
-
+%==================================================================
 \subsection{Conclusions} \label{chap:advection-conclusions}
+%==================================================================
+
+
 
 \begin{itemize}
 
