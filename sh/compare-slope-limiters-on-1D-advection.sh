@@ -15,7 +15,7 @@ EVALDIR=
 
 
 for limiter in MC MINMOD SUPERBEE VANLEER; do
-    $EXECDIR/hydro-advection-$limiter-1D paramfile.txt $ICDIR/advection-1D-four-shapes.dat | tee -a output.log
+    $EXECDIR/hydro-ADVECTION_PWLIN-$limiter-1D paramfile.txt $ICDIR/advection-1D-four-shapes.dat | tee -a output.log
 done
 
 $EXECDIR/hydro-ADVECTION_PWLIN-1D paramfile.txt $ICDIR/advection-1D-four-shapes.dat | tee -a output.log

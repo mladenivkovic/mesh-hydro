@@ -49,7 +49,7 @@ for shape in step gaussian; do
 
             for limiter in MC MINMOD SUPERBEE VANLEER; do
                 genparamfile $dt ADVECTION_PWLIN-"$limiter"-"$dtform"-$shape-$nx
-                $EXECDIR/hydro-advection-$limiter-1D paramfile.txt $icfile | tee -a output.log
+                $EXECDIR/hydro-ADVECTION_PWLIN-$limiter-1D paramfile.txt $icfile | tee -a output.log
             done
 
             genparamfile $dt ADVECTION_PWLIN-"NO_LIMITER"-"$dtform"-$shape-$nx

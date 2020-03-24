@@ -38,7 +38,7 @@ function advection(){
     # Vanilla advection
     #---------------------------
     for ndim in 1 2; do
-        for solver in ADVECTION_PWLIN ADVECTION_PWCONST; do
+        for solver in ADVECTION_PWLIN ADVECTION_PWCONST ADVECTION_WAF; do
             make clean
             genmakefile $ndim $solver NONE NONE hydro-$solver-"$ndim"D
             make
@@ -51,10 +51,12 @@ function advection(){
     # slope limiters
     #---------------------------
     for ndim in 1 2; do
-        for LIMITER in MINMOD SUPERBEE MC VANLEER; do
-            make clean
-            genmakefile $ndim ADVECTION_PWLIN NONE $LIMITER hydro-advection-"$LIMITER"-"$ndim"D
-            make
+        for solver in ADVECTION_PWLIN ADVECTION_WAF; do
+            for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+                make clean
+                genmakefile $ndim $solver NONE $LIMITER hydro-"$solver"-"$LIMITER"-"$ndim"D
+                make
+            done
         done
     done
     rm -f defines.mk
