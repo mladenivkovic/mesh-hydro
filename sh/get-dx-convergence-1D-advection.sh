@@ -51,7 +51,7 @@ for shape in step gaussian; do
         $EXECDIR/hydro-ADVECTION_PWLIN-1D paramfile.txt $icfile | tee -a output.log
 
         genparamfile ADVECTION_PWCONST-"$shape"-"$nx"
-        $EXECDIR/execs/hydro-ADVECTION_PWCONST-1D paramfile.txt $icfile | tee -a output.log
+        $EXECDIR/hydro-ADVECTION_PWCONST-1D paramfile.txt $icfile | tee -a output.log
 
     done
     $EVALDIR/advection-1D-convergence-dx.py $shape

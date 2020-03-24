@@ -50,7 +50,7 @@ for shape in step gaussian; do
             done
 
             genparamfile $ccfl ADVECTION_PWLIN-"NO_LIMITER"-$shape-"$cflform"
-            $EXECDIR/execs/hydro-ADVECTION_PWLIN-1D paramfile.txt $icfile | tee -a output.log
+            $EXECDIR/hydro-ADVECTION_PWLIN-1D paramfile.txt $icfile | tee -a output.log
 
             genparamfile $ccfl ADVECTION_PWCONST-$shape-"$cflform"
             $EXECDIR/hydro-ADVECTION_PWCONST-1D paramfile.txt $icfile | tee -a output.log
