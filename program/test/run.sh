@@ -341,6 +341,150 @@ advection_pwlin_limiters_2D(){
 
 
 
+advection_waf_1D(){
+
+    #-------------------
+    # 1D PWLIN
+    #-------------------
+
+    # genmakefile ndim solver riemann limiter
+    genmakefile 1 ADVECTION_WAF NONE NONE
+    make clean && make
+    errexit $?
+
+    # positive velocity
+    # genparamfile nsteps tmax foutput dt_out basename ccfl
+    genparamfile 0 10 0 1.0 advection-1D-waf 0.8
+
+    ./hydro paramfile.txt ./IC/advection-1D.dat
+    errexit $?
+    $plotdir/plot_all_density.py advection-1D-waf-0000.out
+    errexit $?
+
+    # negative velocity
+    genparamfile 0 10 0 1.0 advection-1D-waf-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
+    errexit $?
+    $plotdir/plot_all_density.py advection-1D-waf-negvel-0000.out
+    errexit $?
+
+}
+
+
+
+advection_waf_2D(){
+    #-------------------
+    # 2D WAF advection
+    #-------------------
+
+    # genmakefile ndim solver riemann limiter
+    genmakefile 2 ADVECTION_WAF NONE NONE
+    make clean && make
+    errexit $?
+
+    # positive velocity
+    # genparamfile nsteps tmax foutput dt_out basename
+    genparamfile 0 1 0 0 advection-2D-waf 0.8
+
+    ./hydro paramfile.txt ./IC/advection-2D.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-waf-0001.out
+    errexit $?
+
+    # negative velocity
+    genparamfile 0 1 0 0 advection-2D-waf-negvel 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-negvel.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-waf-negvel-0001.out
+    errexit $?
+
+    # x only
+    genparamfile 0 1 0 0 advection-2D-waf-x 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-x.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-waf-x-0001.out
+    errexit $?
+
+    # y only
+    genparamfile 0 1 0 0 advection-2D-waf-y 0.8
+    ./hydro paramfile.txt ./IC/advection-2D-y.dat
+    errexit $?
+    $plotdir/plot_density.py advection-2D-waf-y-0001.out
+    errexit $?
+}
+
+
+
+
+
+advection_waf_limiters_1D(){
+    #----------------------------------
+    # 1D WAF advection with limiters
+    #----------------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 ADVECTION_WAF NONE $LIMITER
+        make clean && make
+        errexit $?
+
+        # positive velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 10 0 1.0 advection-waf-1D-$LIMITER 0.8
+
+        ./hydro paramfile.txt ./IC/advection-1D.dat
+        errexit $?
+        $plotdir/plot_all_density.py advection-waf-1D-$LIMITER-0000.out
+        errexit $?
+
+
+        # negative velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        # genparamfile 0 10 0 1.0 advection-waf-1D-$LIMITER-negvel 0.8
+        #
+        # ./hydro paramfile.txt ./IC/advection-1D-negvel.dat
+        # errexit $?
+        # $plotdir/plot_all_density.py advection-waf-1D-$LIMITER-negvel-0000.out
+        # errexit $?
+    done
+}
+
+
+advection_waf_limiters_2D(){
+    #-----------------------------------
+    # 2D WAF advection with limiters
+    #-----------------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        # genmakefile ndim solver riemann limiter
+        genmakefile 2 ADVECTION_WAF NONE $LIMITER
+        make clean && make
+        errexit $?
+
+        # positive velocity
+        # genparamfile nsteps tmax foutput dt_out basename ccfl
+        genparamfile 0 1 0 0 advection-2D-waf-$LIMITER 0.8
+
+        ./hydro paramfile.txt ./IC/advection-2D.dat
+        errexit $?
+        $plotdir/plot_density.py advection-2D-waf-$LIMITER-0001.out
+        errexit $?
+
+    done
+
+}
+
+
+
+
+
+
+
+
+
+
 riemann_vacuum(){
     #----------------------------
     # Test the vacuum solver
@@ -513,13 +657,20 @@ function godunov_2D() {
 
 advection_pwconst_1D
 advection_pwconst_2D
+
 advection_pwlin_1D
 advection_pwlin_2D
 advection_pwlin_limiters_1D
 advection_pwlin_limiters_2D
 
+advection_waf_1D
+advection_waf_2D
+advection_waf_limiters_1D
+advection_waf_limiters_2D
+
 riemann_vacuum
 riemann_solver
+
 godunov_1D
 godunov_2D
 

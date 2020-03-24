@@ -146,22 +146,21 @@ void solver_compute_cell_pair_flux(cell* c, cell* n, float* dt, int dim){
  
   pstate phi;
   gas_init_pstate(&phi);
-  limiter_get_phi(c, &pji, dim);
+  limiter_get_phi(c, &phi, dim);
 
   float vel = c->prim.u[dim];
-  float abscfl = fabs((*dt) / pars.dx * c->prim.u[dim]);
+  float abscfl = (*dt) / pars.dx * fabs(vel);
+
   pstate psi;
-  gas_init_pstate(&phi);
+  gas_init_pstate(&psi);
   psi.rho  = 1. - (1. - abscfl) * phi.rho;
   psi.u[0] = 1. - (1. - abscfl) * phi.u[0];
   psi.u[1] = 1. - (1. - abscfl) * phi.u[1];
   psi.p    = 1. - (1. - abscfl) * phi.p;
 
 
-
   float s = 1.; /* sign(velocity) */
   if (vel <= 0) s = -1.;
-
 
   float flux = 0.;
 

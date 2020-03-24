@@ -36,6 +36,20 @@ void limiter_get_phi(cell* c, pstate* phi, int dimension){
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 
+#ifdef WAF 
+#if LIMITER == NONE
+  /* if we utilize a WAF method and no limiter, the implemented centered 
+   * slope will give wrong results. Instead, catch it here and just return 
+   * phi = 1. Then psi = 1 - (1 - |c|)phi(r) = |c| and we indeed get the
+   * original method back. */
+  phi->rho  = 1.;
+  phi->u[0] = 1.;
+  phi->u[1] = 1.;
+  phi->p    = 1.;
+  return;
+#endif
+#endif
+
   pstate Uim1, Ui, Uip1, Uip2;  /*U_i-1, U_i, U_i+1, U_i+2 */ 
   gas_init_pstate(&Uim1);
   gas_init_pstate(&Ui);
