@@ -158,3 +158,195 @@ The \verb|solver_step(...)| function does the following for the 1D case:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================
+\subsection{Weighted Average Flux (WAF) Method}
+%==============================================
+
+
+
+
+
+
+
+%============================================
+\subsubsection{Method}
+%============================================
+
+
+For the WAF method, we again assume piece-wise constant data (see fig. \ref{fig:piecewise-constant}), i.e.
+
+\begin{equation}
+	\U_i ^ n = \frac{1}{\Delta \x} \int_{\x_{i-\half}}^{\x_{i+\half}} \U(\x, t^n) \de \x
+\end{equation}
+
+The scheme is again based on the explicit conservative formula
+
+\begin{equation}
+	\U_{i}^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left[ \F_{i - \half} - \F_{i + \half} \right] \label{eq:hydro_basics_waf}
+\end{equation}
+
+
+
+The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux function:
+
+\begin{equation}
+	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x \label{eq:hydro-waf-flux}
+\end{equation}
+
+The integration range goes from the middle of the cell to the middle of the neighbouring cell.
+
+
+
+
+
+\begin{figure}[htbp]
+	\includegraphics[width=\textwidth]{./figures/WAF-hydro.pdf}%
+	\caption{Figure to show the derivation of the WAF intercell flux (eq. \ref{eq:hydro-waf-flux}) for the 1D Euler equations.
+		We have initially two piecewise constant states, $\U_i$ and $\U_{i+1}$, separated at the position $x_{i+\half}$.
+		As time evolves, three waves will emerge, with respective speeds $S_1$, $S_2$, and $S_3$.
+		The states between the points $A_k$, $A_{k+1}$ are assumed constant.
+		\label{fig:hydro-waf}
+	}
+\end{figure}
+
+
+
+The solution of the Riemann problem separates the two initial states $\U_L = \U_i$, $U_R = \U_{i+1}$ into four states
+
+\begin{align*}
+	\U^{(1)} = \U_L, \quad	\U^{(2)} = \U_L^*, \quad	\U^{(3)} = \U_R^*, \quad	\U^{(4)} = \U_R
+\end{align*}
+
+that are separated by three waves with the speeds $S_1$, $S_2$, and $S_3$.
+At $t = \frac{1}{2} \Delta t$, we can separate the interval $[-\Delta x /2, \Delta x /2]$ by introducing 5 points along the $x$ axis:
+
+\begin{align*}
+	A_0 &= - \Delta x / 2\\
+	A_1 &= S_1 \Delta t / 2\\
+	A_2 &= S_2 \Delta t / 2\\
+	A_3 &= S_3 \Delta t / 2\\
+	A_4 &= \Delta x / 2
+\end{align*}
+
+and separate the integral \ref{eq:hydro-waf-flux} into the sum
+\begin{align}
+\F_{i + \half} = \frac{1}{\Delta x} \sum\limits_{k = 1}^{N+1} \int\limits_{A_{k-1}}^{A_k} \F (\U(x, \Delta t / 2)) \de x
+\end{align}
+
+where $N$ is the number of occuring waves in the solution.
+
+
+
+
+
+Note that with $|C_{cfl}| \leq 1$ we should always have all the waves within $[-\Delta x /2, \Delta x / 2]$ at $t = \Delta t / 2$ if the $C_{cfl}$ is chosen properly using actual wave speeds.
+However, we use approximate wave speed estimates, so we need to check whether the actual waves are still inside $[-\Delta x /2, \Delta x / 2]$ at $t = \Delta t / 2$.
+
+
+
+Since we assume constant states between these points (which they will be unless we have a rarefaction present), the fluxes $\F$ between the points $A_k$ will be constant too, and the integral is trivial.
+We only need expressions for the distances $\overline{A_{k}A_{k+1}}$.
+It's easy to show that regardless of the sign of the wave speeds $S_k$, we obtain
+
+\begin{align*}
+	\overline{A_0 A_1} &= 
+		\frac{\Delta x}{2} ( 1 + c_1 ) \\
+	\overline{A_1 A_2} &= 
+		\frac{\Delta x}{2} ( c_2 - c_1 ) \\
+	\overline{A_2 A_3} &= 
+		\frac{\Delta x}{2} ( c_3 - c_2 ) \\
+	\overline{A_3 A_4} &= 
+		\frac{\Delta x}{2} ( 1 - c_3 ) \\ 
+	\text{ with } c_k &= \frac{S_k \Delta t}{\Delta x}
+\end{align*}
+
+
+
+If we define
+
+\begin{align*}
+	\beta_k &= \frac{\overline{A_{k-1} A_k}}{\Delta x}\\
+	c_0 &= -1, \quad c_5 = c_{N+1} = 1
+\end{align*}
+
+we obtain
+
+\begin{align*}
+	\beta_k &= \frac{1}{2} (c_k - c_{k-1})
+\end{align*}
+
+and we can write the WAF flux as
+
+\begin{align}
+	\F_{i + \half} 
+		&= \sum\limits_{k = 1}^{N+1} \beta_k \F^{(k)} \\
+		&= \frac{1}{2} (\F_i + \F_{i+1}) + \frac{1}{2} \sum\limits_{k = 1}^{N} c_k \left (\F^{(k+1)} - \F^{(k)} \right) 
+\end{align}
+
+
+
+
+The TVD modification of the WAF flux is
+
+
+\begin{align}
+	\F_{i + \half} 
+		&= \frac{1}{2} (\F_i + \F_{i+1}) - \frac{1}{2} \sum\limits_{k = 1}^{N} sign(c_k) \psi_{i+\half}^{(k)} \left (\F^{(k+1)} - \F^{(k)} \right) \\
+	\psi_{i+\half}^{(k)}
+		&= \psi_{i+\half}(r^{(k)}) \\
+	r^{(k)} &=
+		\begin{cases}
+			\frac{\Delta q_{i-\half}^{(k)}}{\Delta q_{i+\half}^{(k)}}	& \text{ if } c_k > 0 \\[2em]
+			\frac{\Delta q_{i+3/2}^{(k)}}{\Delta q_{i+\half}^{(k)}}	& \text{ if } c_k < 0 \\		
+		\end{cases}
+\end{align}
+
+Where $q$ is one single quantity which is known to change across every wave.
+Options are density $\rho$ and internal energy $\epsilon$.
+I implemented the choice $\rho$.
+
+The limiters $\psi$ are related to conventional flux limiters $\phi$ via
+
+\begin{equation}
+	\psi_{i+\half} = 1 - ( 1 - |c|) \phi_{i+\half}(r)
+\end{equation}
+
+Some implemented options are given in section \ref{chap:implemented_limiters}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%===================================================================
+\subsubsection{Implementation Details}\label{chap:hydro-WAF-details}
+%===================================================================
+
+
