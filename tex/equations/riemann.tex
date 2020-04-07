@@ -617,7 +617,7 @@ The one I implemented is:
 	q_{L,R} &= 
 		\begin{cases}
 			1	~~~~ & \text{ if } p^* \leq p_{L,R} ~~~~ \text{(rarefaction)}\\
-			\sqrt{1 + \frac{\gamma - 1}{2 \gamma} \left(\frac{p^*}{p_{L,R}} - 1 \right)}	~~~~ & \text{ if } p^* > p_{L,R} ~~~~ \text{(shock)}\\
+			\sqrt{1 + \frac{\gamma + 1}{2 \gamma} \left(\frac{p^*}{p_{L,R}} - 1 \right)}	~~~~ & \text{ if } p^* > p_{L,R} ~~~~ \text{(shock)}\\
 		\end{cases} \\
 	p^* &= \max(0, p_{PV})\\
 	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R)

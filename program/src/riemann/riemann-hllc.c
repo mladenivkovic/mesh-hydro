@@ -35,7 +35,8 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
 
     float SL = 0;
     float SR = 0;
-    riemann_compute_wave_speed_estimates(left, right, &SL, &SR, dimension);
+    float Sstar = 0;
+    riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dimension);
     riemann_sample_solution(left, right, SL, SR, sol, xovert, dimension);
   }
 }
@@ -45,26 +46,78 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
 
 
 
-void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL, float* SR, int dimension){
+void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL, float* SR, float* Sstar, int dim){
   /*--------------------------------------------------------------------------------------------------------
    * Get estimates for the left and right HLLC wave speed.
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
-   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
+   * float SL:        left wave speed estimate
+   * float SR:        right wave speed estimate
+   * int dim:         which fluid velocity dimension to use. 0: x, 1: y
+   *
+   * TODO: remove SStar again, move better estimate to separate function
    * ------------------------------------------------------------------------------------------------------- */
 
   float aL = gas_soundspeed(left);
   float aR = gas_soundspeed(right);
 
-  float delta_u = right->u[dimension] - left->u[dimension];
-  float pstar = 0.5*(left->p + right->p) - 0.125 * delta_u *
-        (left->rho + right->rho) * (aL + aR);
-  if (pstar < 0) pstar = SMALLP;
+  /* float delta_u = right->u[dimension] - left->u[dimension]; */
+  /* float pstar = 0.5*(left->p + right->p) - 0.125 * delta_u * */
+  /*       (left->rho + right->rho) * (aL + aR); */
+  /* if (pstar < 0) pstar = SMALLP; */
+  /*  */
+  /* *SL = left->u[dimension] - aL * qLR(pstar, left->p); */
+  /* *SR = right->u[dimension] + aR * qLR(pstar, right->p); */
+
+  /* TODO: temporary for WAF checks */
+
+  float pstar, ustar;
+
+  float CUP = 0.25 * (left->rho + right->rho)*(aL + aR);
+  float PPV = 0.5*(left->p + right->p) + 0.5*(left->u[dim] - right->u[dim])*CUP;
+  if (PPV < 0.0) PPV = 0.0;
+  float pmin = left->p;
+  if (pmin > right->p) pmin = right->p;
+  float pmax = left->p;
+  if (pmax < right->p) pmax = right->p;
+  float qmax = pmax / pmin;
+
+  if (qmax <= 2 && (pmin <= PPV && PPV <= pmax)){
+    pstar = PPV;
+    ustar = 0.5*(left->u[dim] + right->u[dim]) + 0.5*(left->p - right->p)/CUP;
+  } else{
+    if (PPV <= pmin) {
+      /* TRRS solver */
+      
+      float aLinv = 1./aL;
+      float aRinv = 1./aR;
+      float pLRbeta = pow(left->p/right->p, BETA);
+
+      ustar = ( (pLRbeta  - 1.) / GM1HALF + left->u[dim] * aLinv * pLRbeta + right->u[dim]*aRinv ) /
+                  ( aRinv + aLinv * pLRbeta  );
+
+      pstar = 0.5 * (right->p * pow((1. + aRinv * GM1HALF * (ustar - right->u[dim])), 1./BETA) +
+                      left->p  * pow((1. + aLinv * GM1HALF * (left->u[dim]  - ustar)), 1./BETA));
+    } else {
+
+      float AL = 2. / GP1 / left->rho;
+      float AR = 2. / GP1 / right->rho;
+      float BL = GM1OGP1 * left->p;
+      float BR = GM1OGP1 * right->p;
+
+      float gL = sqrtf(AL / (PPV + BL));
+      float gR = sqrtf(AR / (PPV + BR));
+      pstar = (gL * left->p + gR * right->p - (right->u[dim] - left->u[dim])) / ( gL + gR );
+
+      ustar = 0.5*(right->u[dim] + left->u[dim] + (pstar - right->p)*gR - (pstar - left->p)*gL);
+    
+    }
+  }
 
 
-  *SL = left->u[dimension] - aL * qLR(pstar, left->p);
-  *SR = right->u[dimension] + aR * qLR(pstar, right->p);
-
+  *SL = left->u[dim] - aL * qLR(pstar, left->p);
+  *SR = right->u[dim] + aR * qLR(pstar, right->p);
+  *Sstar = ustar;
 }
 
 
@@ -82,7 +135,7 @@ float qLR(float pstar, float pLR){
 
   if (pstar > pLR){
     /* shock relation */
-    return (sqrtf(1. + BETA * (pstar/pLR - 1)));
+    return (sqrtf(1. + 0.5* (GAMMA + 1.)/GAMMA * (pstar/pLR - 1.)));
   } else{
     /* rarefaction relation */
     return(1.); 
@@ -100,8 +153,8 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
    * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
-   * float pstar:     pressure of star region
-   * float ustar:     velocity of star region
+   * float SL:        left wave speed estimate
+   * float SR:        right wave speed estimate
    * cstate* sol:     cstate where solution (conserved FLUX) will be written
    * float xovert:    x / t, point where solution shall be sampled
    * int dim:         which fluid velocity direction to use. 0: x, 1: y
@@ -234,4 +287,156 @@ void riemann_sample_solution(pstate* left, pstate* right, float SL,
 
 
   return;
+}
+
+
+
+
+
+
+
+
+void riemann_get_hllc_full_solution(pstate* left, pstate* right, float* S, cstate* fluxes, float* delta_q, int dim){
+  /*--------------------------------------------------------------------------------------------------
+   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float[4] S:
+   * cstate[4] fluxes:
+   * int dim:         which fluid velocity direction to use. 0: x, 1: y
+   * TODO: dox
+   *--------------------------------------------------------------------------------------------------*/
+
+
+  /* first compute wave speeds */
+
+  float SL = 0;
+  float SR = 0;
+  float Sstar = 0;
+  riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dim);
+
+  float SLMUL = SL - left->u[dim];
+  float SRMUR = SR - right->u[dim];
+  /* float Sstar = ( right->p - left->p + left->rho * left->u[dim] * SLMUL - right->rho * right->u[dim] * SRMUR) / */
+  /*     ( left->rho * SLMUL - right->rho * SRMUR ); */
+
+
+  S[0] = SL;
+  S[1] = Sstar;
+  S[2] = SR;
+
+
+  /* --------------------------------------- */ 
+  /* compute left and right conserved states */
+  /* --------------------------------------- */ 
+  cstate UL;
+  gas_init_cstate(&UL);
+  gas_prim_to_cons(left, &UL);
+
+  cstate UR;
+  gas_init_cstate(&UR);
+  gas_prim_to_cons(right, &UR);
+
+
+
+
+  /* -------------------------------------------- */ 
+  /* compute left and right conserved star states */
+  /* -------------------------------------------- */ 
+
+  cstate UstarL;
+  gas_init_cstate(&UstarL);
+
+  float lcomp = left->rho * SLMUL / (SL - Sstar);
+  UstarL.rho = lcomp;
+  UstarL.rhou[dim] = lcomp * Sstar;
+  UstarL.rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
+
+  float EL= 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
+  UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
+      (Sstar + left->p / (left->rho * SLMUL)));
+
+
+  cstate UstarR;
+  gas_init_cstate(&UstarR);
+
+  float rcomp = right->rho * SRMUR / (SR - Sstar);
+  UstarR.rho = rcomp;
+  UstarR.rhou[dim] = rcomp * Sstar;
+  UstarR.rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
+
+  float ER= 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
+  UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
+      (Sstar + right->p / (right->rho * SRMUR)));
+
+
+  /* store jumps over density in delta_q */
+  delta_q[0] = UstarL.rho - UL.rho;
+  delta_q[1] = UstarR.rho - UstarL.rho;
+  delta_q[2] = UR.rho - UstarR.rho;
+
+  /* printf("Delta q after computation %f %f %f\n", delta_q[0], delta_q[1], delta_q[2]); */
+
+
+
+  /* ----------------------------------- */
+  /* Compute left and right fluxes       */
+  /* ----------------------------------- */
+  cstate FL;
+  gas_init_cstate(&FL);
+  gas_get_cflux_from_cstate(&UL, &FL, dim);
+
+  cstate FR;
+  gas_init_cstate(&FR);
+  gas_get_cflux_from_cstate(&UR, &FR, dim);
+
+
+
+
+
+
+
+  /* ----------------------------------- */
+  /* Compute left and right star fluxes  */
+  /* ----------------------------------- */
+
+  cstate FstarL;
+  gas_init_cstate(&FstarL);
+
+  FstarL.rho = FL.rho + SL * (UstarL.rho - UL.rho);
+  FstarL.rhou[0] = FL.rhou[0] + SL * (UstarL.rhou[0] - UL.rhou[0]);
+  FstarL.rhou[1] = FL.rhou[1] + SL * (UstarL.rhou[1] - UL.rhou[1]);
+  FstarL.E = FL.E + SL * (UstarL.E - UL.E);
+
+
+  cstate FstarR;
+  gas_init_cstate(&FstarR);
+
+  FstarR.rho = FR.rho + SR * (UstarR.rho - UR.rho);
+  FstarR.rhou[0] = FR.rhou[0] + SR * (UstarR.rhou[0] - UR.rhou[0]);
+  FstarR.rhou[1] = FR.rhou[1] + SR * (UstarR.rhou[1] - UR.rhou[1]);
+  FstarR.E = FR.E + SR * (UstarR.E - UR.E);
+
+
+  /* store the fluxes */
+  fluxes[0] = FL;
+  fluxes[1] = FstarL;
+  fluxes[2] = FstarR;
+  fluxes[3] = FR;
+
+  return;
+}
+
+
+
+
+
+
+void riemann_compute_star_states(pstate *left, pstate *right, 
+    float *pstar, float *ustar, int dimension){
+  /* The WAF scheme requires this function when calling
+   * riemann_get_full_solution, but it's done differently
+   * for the HLLC solver (riemann_get_hllc_full_solution)
+   * so this function is just empty here so that the code
+   * will compile correctly. */
 }

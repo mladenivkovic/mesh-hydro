@@ -18,7 +18,6 @@ void gas_init_pstate(pstate* s){
   /*-------------------------------------------------*/
 
   s->rho  = 0;
-  /* s->u = malloc(2 * sizeof(float)); */
   s->u[0] = 0;
   s->u[1] = 0;
   s->p    = 0;
@@ -33,7 +32,6 @@ void gas_init_cstate(cstate *s){
   /*-------------------------------------------------*/
 
   s->rho   = 0;
-  /* s->rhou = malloc(2 * sizeof(float)); */
   s->rhou[0] = 0;
   s->rhou[1] = 0;
   s->E     = 0;

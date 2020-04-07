@@ -21,6 +21,8 @@
 /* Physical constants */
 
 #define GAMMA  (5./3.)
+// #define GAMMA 1.4
+
 static const float GM1 = GAMMA - 1.;
 static const float GP1 = GAMMA + 1.;
 static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
@@ -85,6 +87,8 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 #define ADVECTION_PWLIN 2
 #define GODUNOV 3
 #define ADVECTION_WAF 4
+#define WAF 5
+#define MUSCL 6
 
 /* define riemann solvers as integers */
 #define NONE 0

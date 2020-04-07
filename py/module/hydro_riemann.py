@@ -6,7 +6,8 @@
 import numpy as np
 
 
-gamma = 1.666666666
+gamma = 5./3.
+
 GP1 = gamma + 1
 GM1 = gamma - 1
 GP1OGM1 = GP1/GM1
@@ -53,6 +54,7 @@ def riemann_solver(rho, u, p, t):
     print("  uL = {0:12.6f},   uR = {1:12.6f}".format(uL, uR))
     print("  pL = {0:12.6f},   pR = {1:12.6f}".format(pL, pR))
     print("  nx = ", nx)
+    print("   t = ", t)
 
     # check if we have vacuum
     is_vacuum = False

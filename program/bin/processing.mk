@@ -48,13 +48,6 @@ ADVECTION = true
 RIEMANN = NONE
 endif
 
-# set WAF flag if solver is WAF
-ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
-WAF = true
-endif
-ifeq ($(strip $(SOLVER)), WAF)
-WAF = true
-endif
 
 
 # transform defines into integers where needed
@@ -69,6 +62,12 @@ SOLVERINT = 3
 endif
 ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
 SOLVERINT = 4
+endif
+ifeq ($(strip $(SOLVER)), WAF)
+SOLVERINT = 5
+endif
+ifeq ($(strip $(SOLVER)), MUSCL)
+SOLVERINT = 6
 endif
 
 
@@ -119,10 +118,6 @@ ifdef ADVECTION
 DEFINES += -DADVECTION
 endif
 
-ifdef WAF
-DEFINES += -DWAF
-endif
-
 
 
 
@@ -136,7 +131,6 @@ SRCDIR=../src
 VPATH=$(SRCDIR):$(SRCDIR)/limiter:$(SRCDIR)/solver:$(SRCDIR)/riemann
 
 #include directories for headers
-# IDIR=$(VPATH)
 IDIR=$(SRCDIR)
 
 
@@ -151,6 +145,12 @@ ifeq ($(strip $(SOLVER)), GODUNOV)
 endif
 ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
 	HYDROOBJ=advection_waf.o
+endif
+ifeq ($(strip $(SOLVER)), WAF)
+	HYDROOBJ=waf.o
+endif
+ifeq ($(strip $(SOLVER)), MUSCL)
+	HYDROOBJ=muscl.o
 endif
 
 

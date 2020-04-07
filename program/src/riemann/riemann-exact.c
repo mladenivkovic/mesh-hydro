@@ -208,7 +208,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ust
       }
       else{
         /* we're in the star region */
-        sol->rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1) * left->rho;
+        sol->rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.) * left->rho;
         sol->u[dim] = ustar;
         sol->p = pstar;
       }
@@ -237,7 +237,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ust
         float STR = ustar + astarR;  /* speed of tail of right rarefaction fan */
         if (xovert > STR){
           /* we're inside the fan */
-          float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert) ), (2/GM1));
+          float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert) ), (2./GM1));
           sol->rho = right->rho * precomp;
           sol->u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + xovert);
           sol->p = right->p * pow(precomp, GAMMA);
@@ -254,7 +254,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ust
       /*------------------*/
       /* right shock      */
       /*------------------*/
-      float SR  = right->u[dim] + aR*sqrtf(0.5*GP1/GAMMA * pstaroverpR + BETA); /* right shock speed */
+      float SR  = right->u[dim] + aR * sqrtf(0.5 * GP1/GAMMA * pstaroverpR + BETA); /* right shock speed */
       if (xovert > SR){
         /* we're outside the shock */
         sol->rho = right->rho;
@@ -263,7 +263,7 @@ void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ust
       }
       else{
         /* we're in the star region */
-        sol->rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1) * right->rho;
+        sol->rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.) * right->rho;
         sol->u[dim] = ustar;
         sol->p = pstar;
       }

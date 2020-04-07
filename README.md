@@ -14,6 +14,7 @@ You can pick between:
     - weighted average flux (WAF) advection
 - Hydro solvers:
 	- Godunov (upwind)
+    - Weighted Average Flux (WAF)
 - Riemann solvers:
 	- Exact	(exact iterative solver)
 	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
@@ -34,6 +35,7 @@ To see what the code is able to do, you can for example run the test script in `
 (You'll need to add add `/py/module/` to your `PYTHONPATH` to be able to run the python plotting scripts.)
 Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz instability simulation.
 
+You can read up how the code does that with the tex and pdf files in `tex/`.
 
 The purpose of this project is to learn about, play with, and eventually teach the basics of (finite volume) fluid dynamics.
 With that in mind, the project is deliberately written to be easy to read, and well documented (check out `/tex/equations/equations_and_implementation_details.pdf` !)
@@ -50,7 +52,7 @@ Contents
 - `./program`: contains the actual software. The source code is in `./program/src`, the Makefile in `./program/bin` 
 - `./py`: python scripts for visualisation, generating ICs, etc.
 - `./sh`: some bash scripts to run multiple jobs in a coordinated fashion, produce comparisons etc.
-- `./tex`: Some TeX documents on the equations that are used, some implementation details, etc., some results and conclusions.
+- `./tex`: TeX documents containing every equations that is used, some implementation details, etc., some results and conclusions.
 
 
 
@@ -62,7 +64,7 @@ Requirements
 - A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though. 
 - GNU make to compile without much hassle. The Makefile is set up for GCC.
 - python 3 with numpy and matplotlib for plotting. 
-- LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts.
+- LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts. It doesn't require any fancy LaTeX packages.
 
 
 
@@ -113,6 +115,7 @@ Things to keep in mind
     - Reflective boundary conditions make no sense for any advection scheme. Transmissive ones aren't really useful either, so you probably should always go with periodic ones when dealing with advection.
 - Hydrodynamics related:
     - This code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
+    - If you change the adiabatic index in the definitions, and want to overplot exact Riemann solutions using the python scripts, don't forget to change gamma in `py/module/hydro_riemann.py` as well!
 - Riemann related:
     - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
     - You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)

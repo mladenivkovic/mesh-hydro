@@ -12,6 +12,10 @@
 
 #if SOLVER == GODUNOV
 #include "solver/godunov.h"
+#elif SOLVER == WAF
+#include "solver/waf.h"
+#elif SOLVER == MUSCL
+#include "solver/muscl.h"
 #elif SOLVER == ADVECTION_PWCONST
 #include "solver/advection_pwconst.h"
 #elif SOLVER == ADVECTION_PWLIN

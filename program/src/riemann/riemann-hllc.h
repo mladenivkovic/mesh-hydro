@@ -13,11 +13,14 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol,
     float xovert, int dimension);
 
 void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, 
-    float* SL, float* SR, int dimension);
+    float* SL, float* SR, float* Sstar, int dim);
 
 float qLR(float pstar, float pLR);
 
 void riemann_sample_solution(pstate* left, pstate* right, float SL, 
     float SR, cstate* sol, float xovert, int dim);
+
+void riemann_get_hllc_full_solution(pstate* left, pstate* right, 
+    float* S, cstate* fluxes, float* delta_q, int dim);
 
 #endif

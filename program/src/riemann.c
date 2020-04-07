@@ -5,9 +5,12 @@
 
 
 #include <math.h>
+#include <stddef.h>
 
+#include "defines.h"
 #include "gas.h"
 #include "params.h"
+#include "riemann.h"
 #include "utils.h"
 
 extern params pars;
@@ -180,4 +183,154 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
   }
 
   return;
+}
+
+
+
+
+
+
+void riemann_get_full_solution(pstate* left, pstate* right, float* S, cstate* fluxes, float* delta_q, int dim){
+  /*-----------------------------------------------------------------------------------------------------------------
+   *
+   * TODO: DOX
+   * ---------------------------------------------------------------------------------------------------------------- */
+
+  /* First, get the star velocity and pressure */
+  float pstar, ustar;
+  riemann_compute_star_states(left, right, &pstar, &ustar, dim);
+
+  /* Now fill them into left and right star state variables */
+  pstate star_left;
+  gas_init_pstate(&star_left);
+  star_left.u[dim] = ustar;
+  star_left.u[(dim+1) % 2] = left->u[(dim+1) % 2];
+  star_left.p = pstar;
+  float pstaroverpL = pstar / left->p;
+  if (pstar <= left->p){
+    /* rarefaction star state */
+    star_left.rho = left->rho * pow(pstaroverpL, ONEOVERGAMMA);
+  } else {
+    /* shock star state */
+    star_left.rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.) * left->rho;
+  }
+
+  pstate star_right;
+  gas_init_pstate(&star_right);
+  star_right.u[dim] = ustar;
+  star_right.u[(dim+1) % 2] = right->u[(dim+1) % 2];
+  star_right.p = pstar;
+  float pstaroverpR = pstar / right->p;
+  if (pstar <= right->p){
+    /* rarefaction star state */
+    star_right.rho = right->rho * pow(pstaroverpR, ONEOVERGAMMA);
+  } else{
+    /* shock star state */
+    star_right.rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.) * right->rho;
+  }
+
+
+
+
+
+  /* get wave speeds. We always expect 3 waves. */
+
+  float aL =  gas_soundspeed(left);
+  if (pstar <= left->p){
+    /* left rarefaction head velocity */
+    S[0] = (left->u[dim] - aL);
+  } else {
+    /* left shock velocity */
+    S[0] = (left->u[dim] - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + BETA));
+  }
+
+  S[1] = ustar;
+
+  float aR =  gas_soundspeed(right);
+  if (pstar <= right->p){
+    /* right rarefaction head velocity */
+    S[2] = (right->u[dim] + aR);
+  } else {
+    /* right shock velocity */
+    S[2] = (right->u[dim] + aR * sqrtf(0.5 * GP1/GAMMA * pstaroverpR + BETA));
+  }
+
+
+
+  /* find solution at x = 0 in case we need it */
+  pstate state_at_x_zero;
+  gas_init_pstate(&state_at_x_zero);
+  riemann_sample_solution(left, right, pstar, ustar, &state_at_x_zero, /*xovert =*/0., dim);
+
+  /* [> find which of the four states is at x = 0. We need it in case we have sonic rarefactions. <] */
+  /* pstate* state_at_x_zero = NULL; */
+  /*  */
+  /* [> printf("Velocities are %f %f %f ; state at x=0 is ", Sk[0], Sk[1], Sk[2]); <] */
+  /* if (S[0] > 0.){ */
+  /*   state_at_x_zero = left; */
+  /*   [> printf("left\n"); <] */
+  /* } else { */
+  /*   [> left wave is negative, so find first positive velocity <] */
+  /*   if (S[1] >= 0){ */
+  /*     state_at_x_zero = &star_left; */
+  /*     [> printf("star left\n"); <] */
+  /*   } else if (S[2] >= 0){ */
+  /*     state_at_x_zero = &star_right; */
+  /*     [> printf("star right\n"); <] */
+  /*   } else { */
+  /*     state_at_x_zero = right; */
+  /*     [> printf("right\n"); <] */
+  /*   } */
+  /* } */
+
+
+
+  /* get fluxes from the states. For 1D Euler equations, there will always be 4 fluxes to consider. */
+
+  /* state 1 */
+  gas_get_cflux_from_pstate(left,  &fluxes[0], dim);
+
+  /* TODO: document that we're putting rarefactions together with neighbour states */
+
+  /* state 2 */
+  if (pstar <= left->p){
+    /* rarefaction. But is it sonic? */
+    float astarL = gas_soundspeed(&star_left);
+    float tailL = ustar - astarL;
+    if (tailL*S[0] < 0.){
+      /* if head and tail speeds have different sign, we have asonic rarefaction. */
+      gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[1], dim);
+    } else {
+      /* Non-sonic rarefaction */
+      gas_get_cflux_from_pstate(&star_left, &fluxes[1], dim);
+    }
+  } else {
+    /* Shock */
+    gas_get_cflux_from_pstate(&star_left, &fluxes[1], dim);
+  }
+  
+  /* state 3 */
+  if (pstar <= right->p){
+    /* rarefaction. But is it sonic? */
+    float astarR = gas_soundspeed(&star_right);
+    float tailR = ustar + astarR;
+    if (tailR*S[2] < 0.){
+      /* if head and tail speeds have different sign, we have asonic rarefaction. */
+      gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[2], dim);
+    } else {
+      /* Non-sonic rarefaction */
+      gas_get_cflux_from_pstate(&star_right, &fluxes[2], dim);
+    }
+  } else {
+    /* shock */
+    gas_get_cflux_from_pstate(&star_right, &fluxes[2], dim);
+  }
+
+  /* state 4 */
+  gas_get_cflux_from_pstate(right, &fluxes[3], dim);
+
+
+  delta_q[0] = star_left.rho - left->rho;
+  delta_q[1] = star_right.rho - star_left.rho;
+  delta_q[2] = right->rho - star_right.rho;
 }

@@ -74,6 +74,10 @@ void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
   strcpy(solver, "GODUNOV");
 #elif SOLVER == ADVECTION_WAF
   strcpy(solver, "ADVECTION_WAF");
+#elif SOLVER == WAF
+  strcpy(solver, "WAF");
+#elif SOLVER == MUSCL
+  strcpy(solver, "MUSCL");
 #elif SOLVER == NONE
   strcpy(solver, "");
 #endif
