@@ -196,6 +196,10 @@ void riemann_get_full_solution(pstate* left, pstate* right, float* S, cstate* fl
    * TODO: DOX
    * ---------------------------------------------------------------------------------------------------------------- */
 
+#if RIEMANN == HLLC
+  throw_error("In riemann_get_full_solution: You shouldn't be calling this function with the HLLC Riemann solver.");
+#endif
+
   /* First, get the star velocity and pressure */
   float pstar, ustar;
   riemann_compute_star_states(left, right, &pstar, &ustar, dim);

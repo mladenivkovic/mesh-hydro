@@ -27,10 +27,13 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension);
 void riemann_compute_vacuum_solution(pstate* left, pstate* right, 
     pstate* sol, float xovert, int dim);
 
-void riemann_get_full_solution(pstate* left, pstate* right, 
-    float* S, cstate* fluxes, float* delta_q, int dim);
-
 void riemann_compute_star_states(pstate *left, pstate *right, 
     float *pstar, float *ustar, int dimension);
+
+void riemann_sample_solution(pstate* left, pstate* right, 
+    float pstar, float ustar, pstate* sol, float xovert, int dim);
+
+void riemann_get_full_solution(pstate* left, pstate* right, 
+    float* S, cstate* fluxes, float* delta_q, int dim);
 
 #endif

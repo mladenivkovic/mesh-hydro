@@ -37,7 +37,7 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
     float SR = 0;
     float Sstar = 0;
     riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dimension);
-    riemann_sample_solution(left, right, SL, SR, sol, xovert, dimension);
+    riemann_sample_hllc_solution(left, right, SL, SR, sol, xovert, dimension);
   }
 }
 
@@ -147,7 +147,7 @@ float qLR(float pstar, float pLR){
 
 
 
-void riemann_sample_solution(pstate* left, pstate* right, float SL, 
+void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
   float SR, cstate* sol, float xovert, int dim){
   /*--------------------------------------------------------------------------------------------------
    * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
@@ -437,6 +437,17 @@ void riemann_compute_star_states(pstate *left, pstate *right,
   /* The WAF scheme requires this function when calling
    * riemann_get_full_solution, but it's done differently
    * for the HLLC solver (riemann_get_hllc_full_solution)
+   * so this function is just empty here so that the code
+   * will compile correctly. */
+}
+
+
+
+void riemann_sample_solution(pstate* left, pstate* right, 
+    float pstar, float ustar, pstate* sol, float xovert, int dim){
+  /* The WAF scheme requires this function when calling
+   * riemann_get_full_solution, but it's done differently
+   * for the HLLC solver (riemann_sample_hllc_solution)
    * so this function is just empty here so that the code
    * will compile correctly. */
 }
