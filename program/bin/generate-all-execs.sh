@@ -24,8 +24,22 @@ genmakefile(){
     echo "RIEMANN = $3" >> $f
     echo "LIMITER = $4" >> $f
     echo "EXEC = $5"    >> $f
-
 }
+
+
+function errexit() {
+    # usage: errexit $? "optional message string"
+    if [[ "$1" -ne 0 ]]; then
+        myecho "ERROR OCCURED. ERROR CODE $1"
+        if [[ $# > 1 ]]; then
+            myecho "$2"
+        fi
+        exit $1
+    else
+        return 0
+    fi
+}
+
 
 
 make clean
@@ -42,6 +56,7 @@ function advection(){
             make clean
             genmakefile $ndim $solver NONE NONE hydro-$solver-"$ndim"D
             make
+            errexit $?
         done
     done
 
@@ -56,6 +71,7 @@ function advection(){
                 make clean
                 genmakefile $ndim $solver NONE $LIMITER hydro-"$solver"-"$LIMITER"-"$ndim"D
                 make
+                errexit $?
             done
         done
     done
@@ -74,10 +90,34 @@ function godunov(){
             make clean
             genmakefile $ndim GODUNOV $RIEMANN NONE hydro-godunov-"$RIEMANN"-"$ndim"D
             make
+            errexit $?
         done
     done
     rm -f defines.mk
 }
+
+
+
+function waf(){
+
+    #---------------------------
+    # Godunov
+    #---------------------------
+    for ndim in 1 2; do
+        for RIEMANN in EXACT TRRS TSRS HLLC; do
+            for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+                make clean
+                genmakefile $ndim WAF $RIEMANN NONE hydro-WAF-"$RIEMANN"-"$LIMITER"-"$ndim"D
+                make
+                errexit $?
+            done
+        done
+    done
+    rm -f defines.mk
+}
+
+
+
 
 
 
@@ -91,6 +131,7 @@ function riemann(){
         make -f Makefile-Riemann clean
         genmakefile 1 NONE $RIEMANN NONE riemann-"$RIEMANN"
         make -f Makefile-Riemann
+        errexit $?
     done
     rm -f defines.mk
 }
@@ -100,3 +141,4 @@ function riemann(){
 advection
 godunov
 riemann
+waf
