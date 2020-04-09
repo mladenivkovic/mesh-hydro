@@ -41,8 +41,16 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #if NDIM == 1
 
   solver_compute_fluxes(dt, /*dimension =*/0);
+  /* cell_print_grid("rho"); */
+  /* cell_print_grid("v_x"); */
+  /* cell_print_grid("pre"); */
+  /* printf("\n"); */
   solver_advance_step(dt, /*dimension=*/0);
 
+  /* cell_print_grid("rho"); */
+  /* cell_print_grid("v_x"); */
+  /* cell_print_grid("pre"); */
+  /* printf("-------------------------------------------------------------------\n"); */
 #elif NDIM == 2
 
   int dimension = step % 2; /* gives 0 or 1, switching each step */
@@ -223,16 +231,15 @@ void solver_prepare_flux_computation(cell* left, cell* right, int dim){
   }
 
   if (riemann_has_vacuum(&left->prim, &right->prim, dim)){
-    printf("GOT VACUUUM!!!!!!!!!!!!!!!!\n");
-  }
-  
-
+    riemann_get_full_vacuum_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+  } 
+  else {
 #if RIEMANN == HLLC
-  riemann_get_hllc_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+    riemann_get_hllc_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
 #else
-  riemann_get_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+    riemann_get_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
 #endif
-
+  }
 }
 
 
@@ -333,7 +340,9 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
     fluxsum.rhou[0] += s * psi * (left->riemann_fluxes[k+1].rhou[0] - left->riemann_fluxes[k].rhou[0]);
     fluxsum.rhou[1] += s * psi * (left->riemann_fluxes[k+1].rhou[1] - left->riemann_fluxes[k].rhou[1]);
     fluxsum.E       += s * psi * (left->riemann_fluxes[k+1].E       - left->riemann_fluxes[k].E);
-    /* printf("Adding k=%d %f\n", k, ck[k] * (left->riemann_fluxes[k+1].rho     - left->riemann_fluxes[k].rho)); */
+    /* int i, j; */
+    /* cell_get_ij(left, &i, &j); */
+    /* printf("Adding cell %d k=%d %f\n", i, k, ck[k] * (left->riemann_fluxes[k+1].rho     - left->riemann_fluxes[k].rho)); */
   }
 
   /* printf("\n"); */

@@ -12,6 +12,8 @@
 #include <stdlib.h>
 
 
+
+
 void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, int dimension){
   /* -------------------------------------------------------------------------
    * Solve the Riemann problem posed by a left and right state
@@ -294,16 +296,18 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
 
 
 
-
-
-void riemann_get_hllc_full_solution(pstate* left, pstate* right, float* S, cstate* fluxes, float* delta_q, int dim){
+void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cstate fluxes[4], float delta_q[3], int dim){
   /*--------------------------------------------------------------------------------------------------
-   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float[4] S:
-   * cstate[4] fluxes:
-   * int dim:         which fluid velocity direction to use. 0: x, 1: y
+   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, the fluxes of all four
+   * states U_L, U*_L, U*_R, U_R, and the difference in densities between each wave.
+   * This function is needed for the WAF method, where we sum up all the occuring fluxes with different weights.
+   *
+   * pstate* left:      left primitive state of Riemann problem
+   * pstate* right:     right primitive state of Riemann problem
+   * float S[3]:        where wave speeds will be written to
+   * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L, F*_R, F_R
+   * float delta_q[3]:  differences in densities over all four waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
+   * int dim:           which fluid velocity direction to use. 0: x, 1: y
    * TODO: dox
    *--------------------------------------------------------------------------------------------------*/
 

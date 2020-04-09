@@ -34,6 +34,8 @@ void riemann_sample_solution(pstate* left, pstate* right,
     float pstar, float ustar, pstate* sol, float xovert, int dim);
 
 void riemann_get_full_solution(pstate* left, pstate* right, 
-    float* S, cstate* fluxes, float* delta_q, int dim);
+    float S[3], cstate fluxes[4], float delta_q[3], int dim);
 
+void riemann_get_full_vacuum_solution(pstate* left, pstate* right, 
+    float S[3], cstate fluxes[4], float delta_q[3], int dim);
 #endif
