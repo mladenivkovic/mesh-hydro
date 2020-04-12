@@ -28,69 +28,6 @@ extern params pars;
 
 
 
-void limiter_get_phi_waf(cell* c, pstate* phi, float ck, int dimension){
-  /* ------------------------------------------------------------------------
-   * Compute the flux limiter function phi_{i+1/2}
-   *
-   * cell* c:     for which cell i to work for
-   * pstate* phi: where the limiter will be stored
-   * dimension:   for which dimension we're working
-   * TODO: docs
-   * ------------------------------------------------------------------------ */
-
-#if SOLVER == ADVECTION_WAF || SOLVER == WAF
-#if LIMITER == NONE
-  /* if we utilize a WAF method and no limiter, the implemented centered 
-   * slope will give wrong results. Instead, catch it here and just return 
-   * phi = 1. Then psi = 1 - (1 - |c|)phi(r) = |c| and we indeed get the
-   * original method back. */
-  phi->rho  = 1.;
-  phi->u[0] = 1.;
-  phi->u[1] = 1.;
-  phi->p    = 1.;
-  return;
-#endif
-#endif
-
-  pstate Uim1, Ui, Uip1, Uip2;  /*U_i-1, U_i, U_i+1, U_i+2 */ 
-  gas_init_pstate(&Uim1);
-  gas_init_pstate(&Ui);
-  gas_init_pstate(&Uip1);
-  gas_init_pstate(&Uip2);
-
-
-  /* Find which cells will come into play; */
-  int i, j;
-  cell_get_ij(c, &i, &j);
-
-#if NDIM == 1
-  Uip2 = grid[i+2].prim;
-  Uip1 = grid[i+1].prim;
-  Ui = grid[i].prim;
-  Uim1 = grid[i-1].prim;
-#elif NDIM == 2
-  if (dimension == 0){
-    Uip2 = grid[i+2][j].prim;
-    Uip1 = grid[i+1][j].prim;
-    Ui = grid[i][j].prim;
-    Uim1 = grid[i-1][j].prim;
-  } else if (dimension == 1){
-    Uip2 = grid[i][j+2].prim;
-    Uip1 = grid[i][j+1].prim;
-    Ui = grid[i][j].prim;
-    Uim1 = grid[i][j-1].prim;
-  }
-#endif
-
-  pstate r;
-  gas_init_pstate(&r);
-  limiter_get_r(&Uip2, &Uip1, &Ui, &Uim1, &r, ck);
-
-  phi->rho  = limiter_phi_of_r(r.rho);
-  phi->u[0] = limiter_phi_of_r(r.u[0]);
-  phi->u[1] = limiter_phi_of_r(r.u[1]);
-  phi->p    = limiter_phi_of_r(r.p);
-}
 
 
 
