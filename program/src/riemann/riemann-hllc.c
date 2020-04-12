@@ -39,7 +39,7 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
     float SR = 0;
     float Sstar = 0;
     riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dimension);
-    riemann_sample_hllc_solution(left, right, SL, SR, sol, xovert, dimension);
+    riemann_sample_hllc_solution(left, right, SL, SR, Sstar, sol, xovert, dimension);
   }
 }
 
@@ -60,36 +60,46 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
    * TODO: remove SStar again, move better estimate to separate function
    * ------------------------------------------------------------------------------------------------------- */
 
+  /* Start by computint the simple primitive variable speed estimate */
+  /* --------------------------------------------------------------- */
+
+  float pstar;
+  float ustar;
+
   float aL = gas_soundspeed(left);
   float aR = gas_soundspeed(right);
 
-  /* float delta_u = right->u[dimension] - left->u[dimension]; */
-  /* float pstar = 0.5*(left->p + right->p) - 0.125 * delta_u * */
-  /*       (left->rho + right->rho) * (aL + aR); */
-  /* if (pstar < 0) pstar = SMALLP; */
-  /*  */
-  /* *SL = left->u[dimension] - aL * qLR(pstar, left->p); */
-  /* *SR = right->u[dimension] + aR * qLR(pstar, right->p); */
+  float temp = 0.25 * (left->rho + right->rho)*(aL + aR);
+  float PPV = 0.5*(left->p + right->p) + 0.5*(left->u[dim] - right->u[dim])*temp;
 
-  /* TODO: temporary for WAF checks */
+  if (PPV < 0) PPV = SMALLP;
+  pstar = PPV;
+  ustar = 0.5*(left->u[dim] + right->u[dim]) + 0.5*(left->p - right->p)/temp;
 
-  float pstar, ustar;
 
-  float CUP = 0.25 * (left->rho + right->rho)*(aL + aR);
-  float PPV = 0.5*(left->p + right->p) + 0.5*(left->u[dim] - right->u[dim])*CUP;
-  if (PPV < 0.0) PPV = 0.0;
+#ifdef HLLC_USE_ADAPTIVE_SPEED_ESTIMATE
+
+  /* use the adaptive wave speed estimate             */
+  /* ------------------------------------------------ */
+
+  /* find ratio Q = pmax/pmin, where pmax, pmin are pL and pR */
   float pmin = left->p;
   if (pmin > right->p) pmin = right->p;
   float pmax = left->p;
   if (pmax < right->p) pmax = right->p;
   float qmax = pmax / pmin;
 
-  if (qmax <= 2 && (pmin <= PPV && PPV <= pmax)){
+  /* if the ratio pmax/pmin isn't too big, and the primitive variable pressure is
+   * between left and right pressure, then PPV approximation is fine */
+  if (qmax <= 2. && (pmin <= PPV && PPV <= pmax)){
     pstar = PPV;
-    ustar = 0.5*(left->u[dim] + right->u[dim]) + 0.5*(left->p - right->p)/CUP;
-  } else{
+    ustar = 0.5*(left->u[dim] + right->u[dim]) + 0.5*(left->p - right->p)/temp;
+  } 
+  else {
+
     if (PPV <= pmin) {
-      /* TRRS solver */
+      /* Primitive variable approximation isn't good enough. */
+      /* if we expect rarefaction, use the TRRS solver */
       
       float aLinv = 1./aL;
       float aRinv = 1./aR;
@@ -100,7 +110,10 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
 
       pstar = 0.5 * (right->p * pow((1. + aRinv * GM1HALF * (ustar - right->u[dim])), 1./BETA) +
                       left->p  * pow((1. + aLinv * GM1HALF * (left->u[dim]  - ustar)), 1./BETA));
-    } else {
+    } 
+
+    else {
+      /* If not rarefactions, you'll encounter shocks, so use TSRS solver */
 
       float AL = 2. / GP1 / left->rho;
       float AR = 2. / GP1 / right->rho;
@@ -109,18 +122,19 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
 
       float gL = sqrtf(AL / (PPV + BL));
       float gR = sqrtf(AR / (PPV + BR));
-      pstar = (gL * left->p + gR * right->p - (right->u[dim] - left->u[dim])) / ( gL + gR );
 
+      pstar = (gL * left->p + gR * right->p - (right->u[dim] - left->u[dim])) / ( gL + gR );
       ustar = 0.5*(right->u[dim] + left->u[dim] + (pstar - right->p)*gR - (pstar - left->p)*gL);
-    
     }
   }
-
+#endif /* adaptive solution */
 
   *SL = left->u[dim] - aL * qLR(pstar, left->p);
   *SR = right->u[dim] + aR * qLR(pstar, right->p);
   *Sstar = ustar;
 }
+
+
 
 
 
@@ -150,7 +164,7 @@ float qLR(float pstar, float pLR){
 
 
 void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
-  float SR, cstate* sol, float xovert, int dim){
+  float SR, float Sstar, cstate* sol, float xovert, int dim){
   /*--------------------------------------------------------------------------------------------------
    * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
    * pstate* left:    left state of Riemann problem
@@ -164,9 +178,6 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
 
   float SLMUL = SL - left->u[dim];
   float SRMUR = SR - right->u[dim];
-  float Sstar = ( right->p - left->p + left->rho * left->u[dim] * SLMUL - right->rho * right->u[dim] * SRMUR) /
-      ( left->rho * SLMUL - right->rho * SRMUR );
-
 
   /* --------------------------------------- */ 
   /* compute left and right conserved states */

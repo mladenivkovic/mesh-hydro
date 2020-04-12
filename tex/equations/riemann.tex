@@ -537,15 +537,15 @@ Unfortunately, this approximation does not lead to a closed form solution.
 So we can either use an iterative method again, or use further approximations.
 So the idea is to find $p_0$, an estimate for the pressure to use in eq. \ref{eq:riemann-pressure-tsrs}, and to use that to get a better approximation for $p^*$:
 
-\begin{align*}
-	p^* = \frac{g_L(p_0) p_L + g_R(p_0)p_R - (u_R - u_L)}{g_L(p_0) + g_R(p_0)}
-\end{align*}
+\begin{align}
+	p^* = \frac{g_L(p_0) p_L + g_R(p_0)p_R - (u_R - u_L)}{g_L(p_0) + g_R(p_0)} \label{eq:pstar-tsrs}
+\end{align}
 
 and
 
-\begin{align*}
+\begin{align}
 	u^*  = \frac{1}{2} (u_L + u_R) + \frac{1}{2} \left[ (p^* - p_R) g_R(p_0) - (p^* - p_L) g_L(p_0) \right]
-\end{align*}
+\end{align}
 
 
 A good choice for $p_0$ is coming from the linearised solution of the primitive variables approach:
@@ -584,10 +584,10 @@ Using integral relations and Rankine-Hugeniot relations, we directly find an exp
 
 where $x/t = 0$ at the boundary of a cell, $i+\half$, and with
 
-\begin{align*}
+\begin{align}
 	S^* &=
 		\frac{p_R - p_L  + \rho_L u_L (S_L - u_L) - \rho_R u_R (S_R - u_R)}
-			{\rho_L (S_L - u_L) - \rho_R (S_R - u_R) }\\
+			{\rho_L (S_L - u_L) - \rho_R (S_R - u_R) } \label{eq:hllc-sstar}\\
 	\U^*_{L,R} &=
 		\rho_{L,R} \frac{ S_{L,R} - u_{L,R}}{S_{L,R} - S^*} 
 		\begin{pmatrix}
@@ -599,7 +599,7 @@ where $x/t = 0$ at the boundary of a cell, $i+\half$, and with
 		\end{pmatrix} \\
 	\F^*_{L,R} &=
 		\F_{L, R} + S_{L,R} ( \U^*_{L,R} - \U_{L,R} )
-\end{align*}
+\end{align}
 
 for the flux in $x$ - direction;
 For $y$ and $z$ direction, you'll need to exchange the velocity components with $S^*$ appropriately.
@@ -609,7 +609,7 @@ $\U_{L,R}$ are the given initial states, and $\F_{L,R} = \F(\U_{L,R})$ the corre
 
 What we still lack is estimates for the left and right wave speeds, $S_L$ and $S_R$.
 There are multiple ways to get good and robust estimates.
-The one I implemented is:
+A very simple, implemented one is:
 
 \begin{align}
 	S_L  &= u_L - a_L q_L \\
@@ -620,8 +620,30 @@ The one I implemented is:
 			\sqrt{1 + \frac{\gamma + 1}{2 \gamma} \left(\frac{p^*}{p_{L,R}} - 1 \right)}	~~~~ & \text{ if } p^* > p_{L,R} ~~~~ \text{(shock)}\\
 		\end{cases} \\
 	p^* &= \max(0, p_{PV})\\
-	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R)
+	p_{PV} &= \frac{1}{2} (p_L + p_R) - \frac{1}{8} (u_R - u_L)(\rho_L + \rho_R)(a_L + a_R) \label{eq:pstar-pv}.
 \end{align}
+
+
+
+You can get a better estimate using an adaptive wave speed estimate method.
+We also start off by computing the primitive variable solution for the star state pressure $p^*$ following eq. \ref{eq:pstar-pv}.
+Then we assume that the primitive variable estimate is ok as long as
+
+\begin{itemize}
+	\item The ratio $\frac{p_{max}}{p_{min}}$ is small enough, where $p_{max} = \max \{ p_L, p_R \}$ and $p_{min} = \min \{ p_L, p_R \}$.
+			In the code, the threshold ratio is hardcoded as $2$.
+	\item $p_{min} \leq p_{PV} \leq p_{max}$
+\end{itemize}
+
+If that is not the case, then we switch to the star state solutions of other approximate Riemann solvers:
+If $p_{PV} \leq p_{min}$, then we will certainly expect two rarefactions to form, so we use the star state estimates of the Two Rarefaction Riemann Solver (TRRS, eq. \ref{eq:pstar-trrs}).
+Otherwise, we have at least one shock, so use the star state estimates of the Two Shock Riemann Solver (TSRS, eq. \ref{eq:pstar-tsrs}).
+
+
+The adaptive wave speed estimate is used by default in the code, but can be turned off by removing the line \verb|#define HLLC_USE_ADAPTIVE_SPEED_ESTIMATE| from \texttt{defines.h}.
+
+Note that we don't need to compute the contact wave speed $S^*$ according to eq. \ref{eq:hllc-sstar} in case we are using the TSRS or TRRS estimates, since this equation follows from the Rankine Hugeniot relations of three infinitely thin waves.
+Instead, you can directly compute it using the approximation that you are employing at that moment.
 
 
 

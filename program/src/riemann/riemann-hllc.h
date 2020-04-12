@@ -18,7 +18,7 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right,
 float qLR(float pstar, float pLR);
 
 void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
-    float SR, cstate* sol, float xovert, int dim);
+    float SR, float Sstar, cstate* sol, float xovert, int dim);
 
 void riemann_get_hllc_full_solution(pstate* left, pstate* right, 
     float* S, cstate* fluxes, float* delta_q, int dim);

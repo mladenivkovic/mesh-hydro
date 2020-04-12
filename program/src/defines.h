@@ -17,6 +17,10 @@
 #define ADVECTION_KEEP_VELOCITY_CONSTANT
 #endif
 
+/* whether to use an adaptive, or a simple wave speed estimate for the HLLC
+ * Riemann solver */
+#define HLLC_USE_ADAPTIVE_SPEED_ESTIMATE
+
 
 /* Physical constants */
 
@@ -43,7 +47,7 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 
 
 
-/* -------------------------------------- *
+/* ---------------------------------------------------------------------------------- *
  * you shouldn't be modifying stuff below
  * this line unless you know what you're
  * doing                                  */
