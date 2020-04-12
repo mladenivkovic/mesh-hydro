@@ -113,7 +113,7 @@ void solver_get_advection_dt(float* dt){
       *dt = pars.force_dt;
     } else{
       throw_error("I require a smaller timestep dt=%g than force_dt=%g is demanding.",
-        *dt, pars.force_dt);
+          *dt, pars.force_dt);
     }
   }
 

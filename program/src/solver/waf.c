@@ -41,28 +41,38 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #if NDIM == 1
 
   solver_compute_fluxes(dt, /*dimension =*/0);
-  /* cell_print_grid("rho"); */
-  /* cell_print_grid("v_x"); */
-  /* cell_print_grid("pre"); */
-  /* printf("\n"); */
   solver_advance_step(dt, /*dimension=*/0);
 
-  /* cell_print_grid("rho"); */
-  /* cell_print_grid("v_x"); */
-  /* cell_print_grid("pre"); */
-  /* printf("-------------------------------------------------------------------\n"); */
 #elif NDIM == 2
 
-  int dimension = step % 2; /* gives 0 or 1, switching each step */
-  solver_compute_fluxes(dt, dimension);
-  solver_advance_step(dt, dimension);
+  /* int dimension = step % 2; [> gives 0 or 1, switching each step <] */
+  /* solver_compute_fluxes(dt, dimension); */
+  /* solver_advance_step(dt, dimension); */
+  /*  */
+  /* dimension = (dimension + 1) % 2; [> 1 -> 0 or 0 -> 1 <] */
+  /* solver_init_step(); */
+  /* solver_compute_fluxes(dt, dimension); */
+  /* solver_advance_step(dt, dimension); */
+  /* [> cell_reset_fluxes(); will be done in solver_init_step <] */
 
-  dimension = (dimension + 1) % 2; /* 1 -> 0 or 0 -> 1 */
+  int dim;
+  float dthalf = *dt*0.5;
+  dim = 0;
+  debugmessage("Advancing dim=%d for half timestep", dim);
+  solver_compute_fluxes(&dthalf, dim);
+  solver_advance_step(&dthalf, dim);
+
+  dim = 1;
+  debugmessage("Advancing dim=%d for full timestep", dim);
   solver_init_step();
-  solver_compute_fluxes(dt, dimension);
-  solver_advance_step(dt, dimension);
-  /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
+  solver_compute_fluxes(dt, dim);
+  solver_advance_step(dt, dim);
 
+  dim = 0;
+  debugmessage("Advancing dim=%d for half timestep", dim);
+  solver_init_step();
+  solver_compute_fluxes(&dthalf, dim);
+  solver_advance_step(&dthalf, dim);
 #endif
 }
 
@@ -188,7 +198,13 @@ void solver_compute_fluxes(float* dt, int dimension){
       for (int j = BC-1; j < pars.nx + BC; j++){
         left = &(grid[i][j]);
         right = &(grid[i+1][j]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
+        solver_prepare_flux_computation(left, right, dimension);
+      }
+    }
+    for (int i = BC-1; i < pars.nx + BC; i++){
+      for (int j = BC-1; j < pars.nx + BC; j++){
+        left = &(grid[i][j]);
+        right = &(grid[i+1][j]);
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
@@ -197,7 +213,13 @@ void solver_compute_fluxes(float* dt, int dimension){
       for (int j = BC-1; j < pars.nx + BC; j++){
         left = &(grid[i][j]);
         right = &(grid[i][j+1]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
+        solver_prepare_flux_computation(left, right, dimension);
+      }
+    }
+    for (int i = BC-1; i < pars.nx + BC; i++){
+      for (int j = BC-1; j < pars.nx + BC; j++){
+        left = &(grid[i][j]);
+        right = &(grid[i][j+1]);
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
@@ -231,13 +253,16 @@ void solver_prepare_flux_computation(cell* left, cell* right, int dim){
   }
 
   if (riemann_has_vacuum(&left->prim, &right->prim, dim)){
-    riemann_get_full_vacuum_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+    riemann_get_full_vacuum_solution(&left->prim, &right->prim, left->Sk, 
+        left->riemann_fluxes, left->delta_q, dim);
   } 
   else {
 #if RIEMANN == HLLC
-    riemann_get_hllc_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+    riemann_get_hllc_full_solution(&left->prim, &right->prim, left->Sk, 
+        left->riemann_fluxes, left->delta_q, dim);
 #else
-    riemann_get_full_solution(&left->prim, &right->prim, left->Sk, left->riemann_fluxes, left->delta_q, dim);
+    riemann_get_full_solution(&left->prim, &right->prim, left->Sk, 
+        left->riemann_fluxes, left->delta_q, dim);
 #endif
   }
 }
@@ -271,7 +296,6 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
 
   /* Find the flux limiter function phi */
   float phi[3] = {1., 1., 1.}; /* set the default value for the no limiter situation */
-  float r;
 
 #if LIMITER != NONE
 
@@ -288,36 +312,37 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
       upwind = &grid[i+1];
     }
 #elif NDIM == 2
-    if (ck[k] > 0){
+    if (ck[k] >= 0){
       if (dim == 0){
         upwind = &grid[i-1][j];
-      } else {
+      } else if (dim == 1){
         upwind = &grid[i+1][j];
       }
     } else {
       if (dim == 0){
         upwind = &grid[i][j-1];
-      } else {
+      } else if (dim == 1){
         upwind = &grid[i][j+1];
       }
     }
 #endif
 
     /* now compute r. Check for stability when dividing first though! */
+    float oneoverdq;
+
     if (fabs(left->delta_q[k]) < SMALLRHO){
-      float temp = left->delta_q[k];
-      left->delta_q[k] = SMALLRHO;
-      if (temp < 0) left->delta_q[k] *= -1;
-      /* r = upwind->delta_q[k] * 1e18; */
+      oneoverdq = 1.e6;
+      if (left->delta_q[k] < 0.) oneoverdq = -oneoverdq;
     } else {
-      r = upwind->delta_q[k] / left->delta_q[k];
-    }
+      oneoverdq = 1./left->delta_q[k];
+    } 
+    
+    float r = upwind->delta_q[k] * oneoverdq;
 
     phi[k] = limiter_phi_of_r(r);
 
   }
-  /* printf("%f %f %f\n", left->delta_q[0], left->delta_q[1], left->delta_q[2]); */
-#endif /* if limiter != 1 */
+#endif /* if limiter != NONE */
 
 
   /* ------------------------------------ */
@@ -340,9 +365,6 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
     fluxsum.rhou[0] += s * psi * (left->riemann_fluxes[k+1].rhou[0] - left->riemann_fluxes[k].rhou[0]);
     fluxsum.rhou[1] += s * psi * (left->riemann_fluxes[k+1].rhou[1] - left->riemann_fluxes[k].rhou[1]);
     fluxsum.E       += s * psi * (left->riemann_fluxes[k+1].E       - left->riemann_fluxes[k].E);
-    /* int i, j; */
-    /* cell_get_ij(left, &i, &j); */
-    /* printf("Adding cell %d k=%d %f\n", i, k, ck[k] * (left->riemann_fluxes[k+1].rho     - left->riemann_fluxes[k].rho)); */
   }
 
   /* printf("\n"); */

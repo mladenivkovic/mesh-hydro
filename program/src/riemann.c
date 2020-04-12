@@ -275,27 +275,6 @@ void riemann_get_full_solution(pstate* left, pstate* right, float S[3], cstate f
   gas_init_pstate(&state_at_x_zero);
   riemann_sample_solution(left, right, pstar, ustar, &state_at_x_zero, /*xovert =*/0., dim);
 
-  /* [> find which of the four states is at x = 0. We need it in case we have sonic rarefactions. <] */
-  /* pstate* state_at_x_zero = NULL; */
-  /*  */
-  /* [> printf("Velocities are %f %f %f ; state at x=0 is ", Sk[0], Sk[1], Sk[2]); <] */
-  /* if (S[0] > 0.){ */
-  /*   state_at_x_zero = left; */
-  /*   [> printf("left\n"); <] */
-  /* } else { */
-  /*   [> left wave is negative, so find first positive velocity <] */
-  /*   if (S[1] >= 0){ */
-  /*     state_at_x_zero = &star_left; */
-  /*     [> printf("star left\n"); <] */
-  /*   } else if (S[2] >= 0){ */
-  /*     state_at_x_zero = &star_right; */
-  /*     [> printf("star right\n"); <] */
-  /*   } else { */
-  /*     state_at_x_zero = right; */
-  /*     [> printf("right\n"); <] */
-  /*   } */
-  /* } */
-
 
 
   /* get fluxes from the states. For 1D Euler equations, there will always be 4 fluxes to consider. */
@@ -370,7 +349,7 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
    * int dim:           which fluid velocity direction to use. 0: x, 1: y
    * ---------------------------------------------------------------------------------------------------------------- */
 
-  printf("right density %f\n", right->rho);
+  /* printf("right density %f\n", right->rho); */
 
   pstate vacuum;
   gas_init_pstate(&vacuum);
@@ -529,7 +508,6 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     speed_average = 0.5*(SHL + SL);
     precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - /*x/t=*/speed_average) ), (2./GM1));
     star_left.rho = left->rho * precomp;
-    /* star_left.u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + [> x/t=<]speed_average); */
     star_left.u[dim] = 0.5*(SL + SR);
     star_left.p = left->p * pow(precomp, GAMMA);
 
@@ -538,111 +516,40 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     speed_average = 0.5*(SHR + SR);
     precomp = pow( (2. / GP1 - GM1OGP1 / aR *(right->u[dim] - /*x/t=*/speed_average)), (2./GM1));
     star_right.rho = right->rho * precomp;
-    /* star_right.u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + [>x/t=<]speed_average); */
     star_right.u[dim] = 0.5*(SL + SR);
     star_right.p = right->p * pow(precomp, GAMMA);
 
     precomp = (SHL - SL)/(SHL - 0.5*(SL + SR));
     star_left.rho *= precomp;
     star_left.u[dim] *= precomp;
-    /* star_left.u[dim] *= sqrtf(precomp); */
-    /* star_left.u[dim] *= 0; */
     star_left.u[dim] = 0.5*(SL + SR);
     star_left.p *= precomp;
 
     precomp = (SHR - SR)/(SHR - 0.5*(SL + SR));
     star_right.rho *= precomp;
     star_right.u[dim] *= precomp;
-    /* star_right.u[dim] *= sqrtf(precomp); */
-    /* star_right.u[dim] *= 0; */
     star_right.u[dim] = 0.5*(SL + SR);
     star_right.p *= precomp;
 
 
 
-
-    /* if (0. <= SHL){ */
-    /*   [> left original pstate<] */
-    /*   state_at_x_zero.rho = left->rho; */
-    /*   state_at_x_zero.u[dim] = left->u[dim]; */
-    /*   state_at_x_zero.u[(dim +1) % 2] = left->u[(dim + 1) % 2]; */
-    /*   state_at_x_zero.p = left->p; */
-    /* } */
-    /* else if (0. < SL){ */
-    /*   [> inside rarefaction fan from right to left <] */
-    /*   float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - 0.) ), (2./GM1)); */
-    /*   state_at_x_zero.rho = left->rho * precomp; */
-    /*   state_at_x_zero.u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + 0.); */
-    /*   state_at_x_zero.u[(dim +1) % 2] = left->u[(dim + 1) % 2]; */
-    /*   state_at_x_zero.p = left->p * pow(precomp, GAMMA); */
-    /* } */
-    /* else if (0. < SR) { */
-    /*   [> vacuum region <] */
-    /*   state_at_x_zero.rho = SMALLRHO; */
-    /*   state_at_x_zero.u[dim] = SMALLU; */
-    /*   state_at_x_zero.p = SMALLP; */
-    /* } */
-    /* else if (0. < SHR){ */
-    /*   [> inside rarefaction fan from left to right <] */
-    /*   float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - 0.) ), (2/GM1)); */
-    /*   state_at_x_zero.rho = right->rho * precomp; */
-    /*   state_at_x_zero.u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + 0.); */
-    /*   state_at_x_zero.u[(dim +1) % 2] = right->u[(dim + 1) % 2]; */
-    /*   state_at_x_zero.p = right->p * pow(precomp, GAMMA); */
-    /* } */
-    /* else{ */
-    /*   [> right original pstate <] */
-    /*   state_at_x_zero.rho = right->rho; */
-    /*   state_at_x_zero.u[dim] = right->u[dim]; */
-    /*   state_at_x_zero.u[(dim +1) % 2] = right->u[(dim + 1) % 2]; */
-    /*   state_at_x_zero.p = right->p; */
-    /* } */
-
     /* compute the fluxes */
+
     gas_get_cflux_from_pstate(left, &fluxes[0], dim);
-    /* if (SL*SHL < 0) { */
-    /*   [> Sonic rarefaction <] */
-    /*   gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[1], dim); */
-    /* } else { */
-      /* Non-sonic rarefaction */
-      gas_get_cflux_from_pstate(&star_left, &fluxes[1], dim);
-    /* } */
-    /* if (SR*SHR < 0) { */
-      /* [> Sonic rarefaction <] */
-      /* gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[2], dim); */
-    /* } else { */
-      /* Non-sonic rarefaction */
-      gas_get_cflux_from_pstate(&star_right, &fluxes[2], dim);
-    /*   printf("check right sonic %f %f\n", right->rho, fluxes[2].rho); */
-    /* } */
+    gas_get_cflux_from_pstate(&star_left, &fluxes[1], dim);
+    gas_get_cflux_from_pstate(&star_right, &fluxes[2], dim);
     gas_get_cflux_from_pstate(right, &fluxes[3], dim);
-
-
-    /* precomp = (SHL - SL)/(SHL - 0.5*(SL + SR)); */
-    /* fluxes[1].rho *= precomp; */
-    /* fluxes[1].rhou[dim] *= precomp; */
-    /* fluxes[1].E *= precomp; */
-    /*  */
-    /* precomp = (SHR - SR)/(SHR - 0.5*(SL + SR)); */
-    /* fluxes[2].rho *= precomp; */
-    /* fluxes[2].rhou[dim] *= precomp; */
-    /* fluxes[2].E *= precomp; */
-    /*  */
 
     /* store the wave speeds */
     S[0] = SHL;
     S[1] = 0.5*(SL + SR);
-    /* S[1] = SMALLU; */
     S[2] = SHR;
 
     /* get density jumps */
-    delta_q[0] = star_left.rho-left->rho;
+    delta_q[0] = star_left.rho - left->rho;
     delta_q[1] = star_right.rho - star_left.rho;
     delta_q[2] = right->rho - star_right.rho;
 
-    printf("Got fluxes %f %f %f %f\n", fluxes[0].rho, fluxes[1].rho, fluxes[2].rho, fluxes[3].rho);
-    printf("Left star state: %f %f %f\n", star_left.rho, star_left.u[dim], star_left.p);
-    printf("right star state: %f %f %f\n", star_right.rho, star_right.u[dim], star_right.p);
   }
 
   return;
