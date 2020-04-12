@@ -5,10 +5,11 @@
 # Create a plot containing different Riemann solver
 # solutions with appropriate labels.
 #
-# expects 2 cmdline args: the prefix of the IC file,
+# expects 3 cmdline args: the prefix of the IC file,
 # from which the riemann program will generate a 
 # file name; and the used solver which appears in
-# the file name, e.g. GODUNOV
+# the file name, e.g. GODUNOV, and the limiter used,
+# e.g. NO_LIMITER, VAN_LEER, SUPERBEE, etc
 #----------------------------------------------------
 
 
@@ -23,7 +24,7 @@ import os
 
 
 
-def get_all_files_with_same_basename(fname, solver):
+def get_all_files_with_same_basename(fname, solver, limiter):
     """
     Get a list of all files with the same basename as given file <fname>.
     Basename in this case means everything before <SOLVER>-ABCD-XXXX.out, which is the
@@ -45,7 +46,13 @@ def get_all_files_with_same_basename(fname, solver):
 
     for f in allfiles:
         if f.startswith(fname+"-"+solver) and f.endswith("0001.out"):
-            filelist.append(f)
+            if not solver.startswith("GODUNOV"):
+                if limiter in f:
+                    filelist.append(f)
+            else:
+                filelist.append(f)
+
+
 
     filelist.sort()
 
@@ -72,9 +79,10 @@ if __name__ == "__main__":
     
     icprefix = argv[1]
     solver = argv[2]
+    limiter = argv[3]
     icfname = os.path.join("IC", icprefix+".dat")
 
-    filelist, namelist = get_all_files_with_same_basename(icprefix, solver)
+    filelist, namelist = get_all_files_with_same_basename(icprefix, solver, limiter)
 
     fig = None
 
@@ -82,13 +90,13 @@ if __name__ == "__main__":
 
     for i in range(len(filelist)):
         fname = filelist[i]
-        solver = namelist[i]
+        Rsolver = namelist[i]
         ls = linestyles[i % len(linestyles)]
 
         ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:
-            kwargs = label_to_kwargs(solver)
+            kwargs = label_to_kwargs(Rsolver)
             kwargs["linestyle"] = ls
             fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
         elif ndim == 2:
@@ -116,7 +124,10 @@ if __name__ == "__main__":
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs = kwargs)
 
-        save_plot(fig, fname_force = "GODUNOV-"+icprefix+"-{0:1d}D.png".format(ndim))
+        if solver.startswith("GODUNOV"):
+            save_plot(fig, fname_force = solver+"-"+icprefix+"-{0:1d}D.png".format(ndim))
+        else:
+            save_plot(fig, fname_force = solver+"-"+limiter+"-"+icprefix+"-{0:1d}D.png".format(ndim))
 
     else:
         print("Can't work with non-riemann ICs.")
