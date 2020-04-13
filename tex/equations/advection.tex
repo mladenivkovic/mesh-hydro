@@ -606,7 +606,7 @@ The \verb|solver_step(...)| function does the following for the 1D case:
 				\end{equation}
 				and store it in the \texttt{struct pstate pflux} struct of the cell $i$.
 				\texttt{struct pstate} is a struct that contains the primitive state, i.e. density $\rho$, velocity $u_x$, $u_y$, and pressure $p$.
-		\item 	When computing the fluxes $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$, first just compute the left and right slope by calling the \verb|limiter_get_slope_left(...)| and \verb|limiter_get_slope_right(...)| functions, and only determine later which one is the upwind one and which one is the downwind one.
+		\item 	When computing the fluxes $\F_{i-\half}^{n+\half}$ and $\F_{i+\half}^{n+\half}$, first just compute the left and right slope by calling the \texttt{limiter_get_slope_left(...)} and \texttt{limiter_get_slope_right(...)} functions, and only determine later which one is the upwind one and which one is the downwind one.
 				The \verb|limiter_get_slope| functions will figure out which limiter to use, even if you chose the ``no limiter'' option.
 				If the ``no limiter'' option is chosen, you get a centered slope.
 	\end{itemize}

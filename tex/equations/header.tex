@@ -47,6 +47,28 @@
 
 
 
+% Allow line breaks in text
+% NOTE: underscores need exception handling. You can't use subscripts in math mode in texttt{} with this.
+% NOTE 2: only *pure* underscores will allow breaks, escaped ones dont. Example:
+% \texttt{this_will_break} and \texttt{this\_wont\_break}
+
+\catcode`_=12 %
+\renewcommand{\texttt}[1]{%
+  \begingroup
+  \ttfamily
+  \begingroup\lccode`~=`_\lowercase{\endgroup\def~}{_\discretionary{}{}{}}%
+  \begingroup\lccode`~=`/\lowercase{\endgroup\def~}{/\discretionary{}{}{}}%
+  \begingroup\lccode`~=`[\lowercase{\endgroup\def~}{[\discretionary{}{}{}}%
+  \begingroup\lccode`~=`.\lowercase{\endgroup\def~}{.\discretionary{}{}{}}%
+  \catcode`/=\active\catcode`[=\active\catcode`.=\active\catcode`_=\active
+  \scantokens{#1\noexpand}%
+  \endgroup
+}
+\catcode`_=8 % 
+
+
+
+
 %--------------------------------------------
 % NEW COMMANDS
 %--------------------------------------------

@@ -8,32 +8,32 @@
 
 
 This section gives an overview on how this code works.
-To read about how to use the code, see the \verb|/README.md| file.
+To read about how to use the code, see the \texttt{/README.md} file.
 
 
 
 \subsection{How the program works}
 
 \begin{itemize}
-	\item 	All the source files are in the \verb|/program/src/| directory.
+	\item 	All the source files are in the \texttt{/program/src/} directory.
 	
-	\item 	The main program files are \verb|/program/src/main.c| if you want to use the code as a hydro/hyperbolic conservation law solver, or \verb|/program/src/main-riemann.c| if you want to use the code as a Riemann solver.
+	\item 	The main program files are \texttt{/program/src/main.c} if you want to use the code as a hydro/hyperbolic conservation law solver, or \texttt{/program/src/main-riemann.c} if you want to use the code as a Riemann solver.
 	
 	\item 	The program starts off by reading in the initial conditions (IC) file and the parameter file, which are both required command line arguments when executing the program.
-			All functions related to reading and writing files are in \verb|/program/src/io.c|
+			All functions related to reading and writing files are in \texttt{/program/src/io.c}
 	
 	\item 	Then a few checks are done to make sure no contradictory or missing parameters are given, and the grid on which the code will work on is initialized, as well as some global variables like the step number and current in-code time.
 	
 	\item 	There are two global variables used throughout the code:
 	
 		\begin{itemize}
-			\item 	\verb| struct params param|: A parameter struct (defined in \verb|/program/src/params.h|) that stores global parameters that are useful to have everywhere throughout the code (even if it isn't optimal coding practice...)
-					All parameter related functions are in \verb|/program/src/params.c|.
+			\item 	\texttt{ struct params param}: A parameter struct (defined in \texttt{/program/src/params.h}) that stores global parameters that are useful to have everywhere throughout the code (even if it isn't optimal coding practice...)
+					All parameter related functions are in \texttt{/program/src/params.c}.
 			
-			\item 	\verb| struct cell* grid| or \verb|struct cell** grid|, depending on whether you run the code in 1D or 2D, respectively.
-					It's an array of \verb|struct cell|, defined in \verb|/program/src/cell.h|, which is meant to store all cell related quantities: primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
+			\item 	\texttt{ struct cell* grid} or \texttt{struct cell** grid}, depending on whether you run the code in 1D or 2D, respectively.
+					It's an array of \texttt{struct cell}, defined in \texttt{/program/src/cell.h}, which is meant to store all cell related quantities: primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
 					Furthermore they have \texttt{struct pstate pflux} and \texttt{struct cstate cflux} to store fluxes of primitive and conserved variables.
-					All cell/grid related functions are written in \verb|/program/src/cell.c|.	
+					All cell/grid related functions are written in \texttt{/program/src/cell.c}.	
 		\end{itemize}
 	
 	\item 	If the code is used as a hydro/conservation law solver: 
@@ -42,7 +42,7 @@ To read about how to use the code, see the \verb|/README.md| file.
 			\item 	The main loop starts now:
 			\item 	Advance the solver for a time step.
 			\item 	Write output data if you need to (when to dump output is specified in the parameter file).
-					All functions related to reading and writing files are in \verb|/program/src/io.c|
+					All functions related to reading and writing files are in \texttt{/program/src/io.c}
 			\item 	Write a message to the screen after the time step is done. 
 					This includes the current step number, in-code time, the ratio of initial mass to the current mass on the entire grid, and the wall-clock time that the step needed to finish.
 		\end{itemize}
@@ -51,12 +51,12 @@ To read about how to use the code, see the \verb|/README.md| file.
 	
 		\begin{itemize}
 			\item 	Only do a loop over all cells and solve the Riemann problem given by the IC at the cell's position at given time $t$.
-					Some functions for the Riemann problem that are used by all implemented Riemann solvers are given in \verb|/program/src/riemann.h| and \verb|/program/src/riemann.c|.
-					When a specific Riemann solver is set, \verb|/program/src/riemann.h| includes that file from the directory \verb|/program/src/riemann/|. 
+					Some functions for the Riemann problem that are used by all implemented Riemann solvers are given in \texttt{/program/src/riemann.h} and \texttt{/program/src/riemann.c}.
+					When a specific Riemann solver is set, \texttt{/program/src/riemann.h} includes that file from the directory \texttt{/program/src/riemann/}. 
 					The file names in that directory should be obvious.
 			
 			\item 	Write output data. 
-					All functions related to reading and writing files are in \verb|/program/src/io.c|
+					All functions related to reading and writing files are in \texttt{/program/src/io.c}
 		\end{itemize}
 \end{itemize}
 
@@ -70,70 +70,70 @@ To read about how to use the code, see the \verb|/README.md| file.
 %===============================================================================
 
 \begin{itemize}
-	\item 	\verb|/program/src/cell.c|, \verb|/program/src/cell.h|: 
+	\item 	\texttt{/program/src/cell.c}, \texttt{/program/src/cell.h}: 
 	
 			All cell/grid related functions.
-			The grid is used as \verb| struct cell* grid| or \verb|struct cell** grid|, depending on whether you run the code in 1D or 2D, respectively.
+			The grid is used as \texttt{ struct cell* grid} or \texttt{struct cell** grid}, depending on whether you run the code in 1D or 2D, respectively.
 
-			It's an array of \verb|struct cell|, defined in \verb|/program/src/cell.h|, which is meant to store all cell related quantities: primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
+			It's an array of \texttt{struct cell}, defined in \texttt{/program/src/cell.h}, which is meant to store all cell related quantities: primitive states, \texttt{prim}, as  \texttt{struct pstate}, and conserved states, \texttt{cons}, as \texttt{struct cstate}.
 			Furthermore they have \texttt{struct pstate pflux} and \texttt{struct cstate cflux} to store fluxes of primitive and conserved variables.
-			All cell/grid related functions are written in \verb|/program/src/cell.c|.	
+			All cell/grid related functions are written in \texttt{/program/src/cell.c}.	
 			
 
-	\item 	\verb|/program/src/defines.h|:
+	\item 	\texttt{/program/src/defines.h}:
 	
 			Contains all macro definitions, like iteration tolerance, the box size, the adiabatic coefficient $\gamma$ etc, as well as some physical constants (mostly related to $\gamma$).
 			
-	\item 	\verb|/program/src/io.h|, \verb|/program/src/io.c|:
+	\item 	\texttt{/program/src/io.h}, \texttt{/program/src/io.c}:
 	
 			All input/output related functions, i.e. anything related to reading and writing files.
 			
-	\item 	\verb|/program/src/limiter.h|, \verb|/program/src/limiter.c|:
+	\item 	\texttt{/program/src/limiter.h}, \texttt{/program/src/limiter.c}:
 	
 			Slope and flux limiter related functions (section \ref{chap:limiters}) that are used regardless of the choice of the limiter.
-			For a specific choice of slope limiter, \verb|/program/src/limiter.h| includes a specific file from \verb|/program/src/limiter/|.
-			The file name in \verb|/program/src/limiter/| should be obvious.
+			For a specific choice of slope limiter, \texttt{/program/src/limiter.h} includes a specific file from \texttt{/program/src/limiter/}.
+			The file name in \texttt{/program/src/limiter/} should be obvious.
 			
-	\item 	\verb|/program/src/limiter/|:
+	\item 	\texttt{/program/src/limiter/}:
 	
 			Slope limiter functions (section \ref{chap:limiters}) for specific limiters.
-			They will be included by \verb|/program/src/limiter.h| during compile time by setting the corresponding variable name in the \verb|/program/bin/Makefile|.
+			They will be included by \texttt{/program/src/limiter.h} during compile time by setting the corresponding variable name in the \texttt{/program/bin/Makefile}.
 			
 			
-	\item 	\verb|/program/src/main.c|:
+	\item 	\texttt{/program/src/main.c}:
 			
 			The main function of the program when the program is utilized as a hydro/hyperbolic conservation law solver.
 			
-	\item 	\verb|/program/src/main-riemann.c|:
+	\item 	\texttt{/program/src/main-riemann.c}:
 			
 			The main function of the program when the program is utilized as a Riemann solver.
 			
 			
-	\item 	\verb|/program/src/riemann.h|, \verb|/program/src/riemann.c|:
+	\item 	\texttt{/program/src/riemann.h}, \texttt{/program/src/riemann.c}:
 	
 			Riemann solver related functions (section \ref{chap:riemann}) that are used regardless of the choice of the Riemann solver.
-			For a specific choice of Riemann solver, \verb|/program/src/riemann.h| includes a specific file from \verb|/program/src/riemann/|.
-			The file name in \verb|/program/src/riemann/| should be obvious.
+			For a specific choice of Riemann solver, \texttt{/program/src/riemann.h} includes a specific file from \texttt{/program/src/riemann/}.
+			The file name in \texttt{program/src/riemann/} should be obvious.
 			
-	\item 	\verb|/program/src/riemann/|:
+	\item 	\texttt{/program/src/riemann/}:
 	
 			Riemann solver functions (section \ref{chap:riemann}) for specific Riemann solvers.
-			They will be included by \verb|/program/src/riemann.h| during compile time by setting the corresponding variable name in the \verb|/program/bin/Makefile|.
+			They will be included by \texttt{/program/src/riemann.h} during compile time by setting the corresponding variable name in the \texttt{/program/bin/Makefile}.
 
-	\item 	\verb|/program/src/solver.h|, \verb|/program/src/solver.c|:
+	\item 	\texttt{/program/src/solver.h}, \texttt{/program/src/solver.c}:
 	
 			Hydro and advection solver related functions (section \ref{chap:advection}, \ref{chap:hydro}) that are used regardless of the choice of the hydro solver.
-			For a specific choice of solver, \verb|/program/src/solver.h| includes a specific file from \verb|/program/src/solver/|.
-			The file name in \verb|/program/src/solver/| should be obvious.
+			For a specific choice of solver, \texttt{/program/src/solver.h} includes a specific file from \texttt{/program/src/solver/}.
+			The file name in \texttt{/program/src/solver/} should be obvious.
 			For implementation details of each solver, look up the implementation details in their respective section \ref{chap:advection}, \ref{chap:hydro}.
 			
-	\item 	\verb|/program/src/solver/|:
+	\item 	\texttt{/program/src/solver/}:
 	
 			Hydro and advection solver functions (section \ref{chap:advection}, \ref{chap:hydro}) for specific  solvers.
-			They will be included by \verb|/program/src/solver.h| during compile time by setting the corresponding variable name in the \verb|/program/bin/Makefile|.
+			They will be included by \texttt{/program/src/solver.h} during compile time by setting the corresponding variable name in the \texttt{/program/bin/Makefile}.
 			For implementation details of each solver, look up the implementation details in their respective section \ref{chap:advection}, \ref{chap:hydro}.
 
-	\item 	\verb|/program/src/utils.h|, \verb|/program/src/utils.c|:
+	\item 	\texttt{/program/src/utils.h}, \texttt{/program/src/utils.c}:
 	
 			Miscellaneous small utilities that are irrelevant for the actual hydro or hyperbolic conservation law solving, like printing a banner every time the code starts, standardized functions to print outputs to screen or throw errors, etc.
 
