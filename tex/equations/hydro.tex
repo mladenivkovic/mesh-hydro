@@ -323,6 +323,29 @@ Where $q$ is one single quantity which is known to change across every wave.
 Options are density $\rho$ and internal energy $\epsilon$.
 I implemented the choice $\rho$.
 
+The notation here is a bit tricky: $k$ signifies which wave in the solution of Riemann problems (not only one Riemann problem!!) we look at:
+
+\begin{itemize}
+	\item $\Delta q_{i+\half}^{(k)}$ is the jump in e.g. density between wave $k$ and $k + 1$ of the solution of the Riemann problem with initial conditions $\U_L = \U_i$, $\U_R = \U_{i+1}$
+	\item $\Delta q_{i-\half}^{(k)}$ is the jump between wave $k$ and $k+1$ of the solution of the Riemann problem with initial conditions $\U_L = \U_{i-1}$, $\U_R = \U_{i}$
+	\item $\Delta q_{i+3/2}^{(k)}$ is the jump between wave $k$ and $k+1$ of the solution of the Riemann problem with initial conditions $\U_L = \U_{i+1}$, $\U_R = \U_{i+2}$
+\end{itemize}
+
+See figure \ref{fig:WAF-delta-q} for visual clarification.
+
+
+
+\begin{figure}[htpb]
+	\centering
+	\includegraphics[width=\textwidth]{figures/WAF-hydro-delta-q.pdf}%
+	\caption{
+		Clarification of the value differences $\Delta q _{i}^{(k)}$ needed to compute the flow parameter $r$ for the WAF method.
+		\label{fig:WAF-delta-q}
+	}
+\end{figure}
+
+
+
 The limiters $\psi$ are related to conventional flux limiters $\phi$ via
 
 \begin{equation}
