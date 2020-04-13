@@ -34,7 +34,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
    * ------------------------------------------------------- */
 
   solver_init_step();
-  solver_get_dt(dt, step);
+  solver_get_hydro_dt(dt, step);
   /* check this here in case you need to limit time step for output */
   *write_output = io_is_output_step(*t, dt, step); 
 
