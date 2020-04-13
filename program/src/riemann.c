@@ -18,6 +18,31 @@ extern params pars;
 
 
 
+void riemann_solve(pstate* left, pstate* right, pstate* sol, float xovert, int dimension){
+  /* -------------------------------------------------------------------------
+   * Solve the Riemann problem posed by a left and right state
+   *
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * pstate* sol:     pstate where solution will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
+   * ------------------------------------------------------------------------- */
+
+  if (riemann_has_vacuum(left, right, dimension)){
+    riemann_compute_vacuum_solution(left, right, sol, xovert, dimension);
+  } else {
+    float pstar = 0;
+    float ustar = 0;
+    riemann_compute_star_states(left, right, &pstar, &ustar, dimension);
+    riemann_sample_solution(left, right, pstar, ustar, sol, xovert, dimension);
+  }
+}
+
+
+
+
+
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension){
   /* ------------------------------------------------------------------------- 
    * Check whether we work with vacuum                    
@@ -191,6 +216,152 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
 
 
+
+void riemann_sample_solution(pstate* left, pstate* right, float pstar, float ustar, pstate* sol, float xovert, int dim){
+  /*--------------------------------------------------------------------------------------------------
+   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   * 
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float pstar:     pressure of star region
+   * float ustar:     velocity of star region
+   * pstate* sol:     pstate where solution will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * int dim:         which fluid velocity direction to use. 0: x, 1: y
+   *--------------------------------------------------------------------------------------------------*/
+
+  int otherdim = (dim + 1) % 2;
+
+  if (xovert <= ustar){
+    /*------------------------*/
+    /* We're on the left side */
+    /*------------------------*/
+    float aL =  gas_soundspeed(left);
+    float pstaroverpL = pstar/left->p;
+
+    if (pstar <= left->p){
+      /*------------------*/
+      /* left rarefaction */
+      /*------------------*/
+      float SHL = left->u[dim] - aL;    /* speed of head of left rarefaction fan */
+      if (xovert < SHL) {
+        /* we're outside the rarefaction fan */
+        sol->rho = left->rho;
+        sol->u[dim] = left->u[dim];
+        sol->u[otherdim] = left->u[otherdim];
+        sol->p = left->p;
+      }
+      else {
+        float astarL = aL * pow(pstaroverpL, BETA);
+        float STL = ustar - astarL;  /* speed of tail of left rarefaction fan */
+        if (xovert < STL){
+          /* we're inside the fan */
+          float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - xovert) ), (2./GM1));
+          sol->rho = left->rho * precomp;
+          sol->u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+          sol->u[otherdim] = left->u[otherdim];
+          sol->p = left->p * pow(precomp, GAMMA);
+        }
+        else{
+          /* we're in the star region */
+          sol->rho = left->rho*pow(pstaroverpL, ONEOVERGAMMA);
+          sol->u[dim] = ustar;
+          sol->u[otherdim] = left->u[otherdim];
+          sol->p = pstar;
+        }
+      }
+    }
+    else{
+      /*------------------*/
+      /* left shock       */
+      /*------------------*/
+      float SL  = left->u[dim]  - aL * sqrtf(0.5 * GP1/GAMMA * pstaroverpL + BETA); /* left shock speed */
+      if (xovert < SL){
+        /* we're outside the shock */
+        sol->rho = left->rho;
+        sol->u[dim] = left->u[dim];
+        sol->u[otherdim] = left->u[otherdim];
+        sol->p = left->p;
+      }
+      else{
+        /* we're in the star region */
+        sol->rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.) * left->rho;
+        sol->u[dim] = ustar;
+        sol->u[otherdim] = left->u[otherdim];
+        sol->p = pstar;
+      }
+    }
+  }
+  else{
+    /*-------------------------*/
+    /* We're on the right side */
+    /*-------------------------*/
+    float aR =  gas_soundspeed(right);
+    float pstaroverpR = pstar / right->p;
+    if (pstar <= right->p){
+
+      /*-------------------*/
+      /* right rarefaction */
+      /*-------------------*/
+      float SHR = right->u[dim] + aR;   /* speed of head of right rarefaction fan */
+      if (xovert > SHR) {
+        /* we're outside the rarefaction fan */
+        sol->rho = right->rho;
+        sol->u[dim] = right->u[dim];
+        sol->u[otherdim] = right->u[otherdim];
+        sol->p = right->p;
+      }
+      else {
+        float astarR = aR * pow(pstaroverpR, BETA);
+        float STR = ustar + astarR;  /* speed of tail of right rarefaction fan */
+        if (xovert > STR){
+          /* we're inside the fan */
+          float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert) ), (2./GM1));
+          sol->rho = right->rho * precomp;
+          sol->u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+          sol->u[otherdim] = right->u[otherdim];
+          sol->p = right->p * pow(precomp, GAMMA);
+        }
+        else{
+          /* we're in the star region */
+          sol->rho = right->rho * pow(pstaroverpR, ONEOVERGAMMA);
+          sol->u[dim] = ustar;
+          sol->u[otherdim] = right->u[otherdim];
+          sol->p = pstar;
+        }
+      }
+    }
+    else{
+      /*------------------*/
+      /* right shock      */
+      /*------------------*/
+      float SR  = right->u[dim] + aR * sqrtf(0.5 * GP1/GAMMA * pstaroverpR + BETA); /* right shock speed */
+      if (xovert > SR){
+        /* we're outside the shock */
+        sol->rho = right->rho;
+        sol->u[dim] = right->u[dim];
+        sol->u[otherdim] = right->u[otherdim];
+        sol->p = right->p;
+      }
+      else{
+        /* we're in the star region */
+        sol->rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.) * right->rho;
+        sol->u[dim] = ustar;
+        sol->u[otherdim] = right->u[otherdim];
+        sol->p = pstar;
+      }
+    }
+  }
+
+  return;
+}
+
+
+
+
+
+
+
 void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3], 
     cstate fluxes[4], float delta_q[3], int dim){
   /*-------------------------------------------------------------------------------------------
@@ -285,8 +456,6 @@ void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3],
 
   /* state 1 */
   gas_get_cflux_from_pstate(left,  &fluxes[0], dim);
-
-  /* TODO: document that we're putting rarefactions together with neighbour states */
 
   /* state 2 */
   if (pstar <= left->p){

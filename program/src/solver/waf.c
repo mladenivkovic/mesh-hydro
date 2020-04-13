@@ -237,7 +237,15 @@ void solver_compute_fluxes(float* dt, int dimension){
 
 void solver_prepare_flux_computation(cell* left, cell* right, int dim){
   /* ---------------------------------------------------------------------------
-   * TODO: Dox
+   * For the WAF method, we need to pre-compute the jumps of density over
+   * each wave emerging from the solution of the Riemann problem first in order
+   * to be able to do flux limiting properly. So before we can compute the WAF
+   * fluxes, we need to solve all Riemann problems, get all wave speeds, and
+   * all densities at each cell boundary.
+   *
+   * cell* left:  pointer to left cell
+   * cell* right: pointer to right cell
+   * int dim:     along which dimension we are working 
    * --------------------------------------------------------------------------- */
 
   /* first we need to solve the Riemann problem for every cell, and to store the
@@ -269,15 +277,15 @@ void solver_prepare_flux_computation(cell* left, cell* right, int dim){
 
 
 
+
+
+
 void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
   /* --------------------------------------------------------------------
-   * Compute the net flux for a given cell w.r.t. a specific cell pair
-   * left:  pointer to cell which stores the left state
+   * Compute the WAF flux F_{i+1/2} and store it in the left cell.
    * right: pointer to cell which stores the right state
    * dt:    current time step
    * dim:   integer along which dimension to advect. 0: x. 1: y.
-   *
-   * TODO: finish dox
    * -------------------------------------------------------------------- */
 
 
@@ -291,11 +299,9 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
   }
 
 
-  /* printf("Wave speeds: %12.6f %12.6f %12.6f\n\n", Sk[0], Sk[1], Sk[2]); */
-
-
   /* Find the flux limiter function phi */
   float phi[3] = {1., 1., 1.}; /* set the default value for the no limiter situation */
+
 
 #if LIMITER != NONE
 
@@ -306,21 +312,21 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
   for (int k = 0; k < 3; k++){
     /* first find the upwind cell to be able to compute r */
 #if NDIM == 1
-    if (ck[k] > 0){
+    if (ck[k] > 0.){
       upwind = &grid[i-1];
     } else {
       upwind = &grid[i+1];
     }
 #elif NDIM == 2
-    if (ck[k] >= 0){
+    if (ck[k] >= 0.){
       if (dim == 0){
         upwind = &grid[i-1][j];
       } else if (dim == 1){
-        upwind = &grid[i+1][j];
+        upwind = &grid[i][j-1];
       }
     } else {
       if (dim == 0){
-        upwind = &grid[i][j-1];
+        upwind = &grid[i+1][j];
       } else if (dim == 1){
         upwind = &grid[i][j+1];
       }
@@ -345,21 +351,18 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
 #endif /* if limiter != NONE */
 
 
-  /* ------------------------------------ */
   /* Now do the c_k (F^(k+1) - F^(k)) sum */
   /* ------------------------------------ */
 
   cstate fluxsum;
   gas_init_cstate(&fluxsum);
   
-  /* printf("Got psi "); */
   for (int k = 0; k < 3; k++){
 
     float abscfl = fabs(ck[k]);
     float psi  = 1. - (1. - abscfl) * phi[k];
     float s = 1.;
     if (ck[k] < 0.) s = -1.;
-    /* printf("%f ", s*psi); */
 
     fluxsum.rho     += s * psi * (left->riemann_fluxes[k+1].rho     - left->riemann_fluxes[k].rho);
     fluxsum.rhou[0] += s * psi * (left->riemann_fluxes[k+1].rhou[0] - left->riemann_fluxes[k].rhou[0]);
@@ -367,21 +370,19 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
     fluxsum.E       += s * psi * (left->riemann_fluxes[k+1].E       - left->riemann_fluxes[k].E);
   }
 
-  /* printf("\n"); */
 
   /* finally, compute F_i+1/2 and store it at cell i */
+  /* ----------------------------------------------- */
+
   left->cflux.rho     = 0.5 * (left->riemann_fluxes[0].rho     + left->riemann_fluxes[3].rho     - fluxsum.rho);
   left->cflux.rhou[0] = 0.5 * (left->riemann_fluxes[0].rhou[0] + left->riemann_fluxes[3].rhou[0] - fluxsum.rhou[0]);
   left->cflux.rhou[1] = 0.5 * (left->riemann_fluxes[0].rhou[1] + left->riemann_fluxes[3].rhou[1] - fluxsum.rhou[1]);
   left->cflux.E       = 0.5 * (left->riemann_fluxes[0].E       + left->riemann_fluxes[3].E       - fluxsum.E);
 
-
-  /* TODO: cleanup */
-  /* printf("hllc fluxes %.6f %.6f %.6f %.6f\n", fluxes[0].rho, fluxes[1].rho, fluxes[2].rho, fluxes[3].rho); */
-  /* printf("Final flux %.6f %.6f %.6f\n", left->cflux.rho, left->cflux.rhou[0], left->cflux.E); */
-  /* printf("\n"); */
-
 }
+
+
+
 
 
 
@@ -430,6 +431,4 @@ void solver_update_state(cell* left, cell* right, float dtdx){
   right->cons.rhou[0] = right->cons.rhou[0] + dtdx * (left->cflux.rhou[0] - right->cflux.rhou[0] );
   right->cons.rhou[1] = right->cons.rhou[1] + dtdx * (left->cflux.rhou[1] - right->cflux.rhou[1] );
   right->cons.E       = right->cons.E       + dtdx * (left->cflux.E       - right->cflux.E );
-
-  /* printf("%11.6f %12.6f %12.6f \n", right->cons.rho, left->cflux.rho, right->cflux.rho); */
 }

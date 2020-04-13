@@ -51,13 +51,12 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
 void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL, float* SR, float* Sstar, int dim){
   /*--------------------------------------------------------------------------------------------------------
    * Get estimates for the left and right HLLC wave speed.
+   *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
    * float SL:        left wave speed estimate
    * float SR:        right wave speed estimate
    * int dim:         which fluid velocity dimension to use. 0: x, 1: y
-   *
-   * TODO: remove SStar again, move better estimate to separate function
    * ------------------------------------------------------------------------------------------------------- */
 
   /* Start by computint the simple primitive variable speed estimate */
@@ -141,9 +140,9 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
 
 
 float qLR(float pstar, float pLR){
-  /*--------------------------------------------------
-   * Compute q_{L,R} needed for the wave speed
-   * estimate.
+  /*-----------------------------------------------------
+   * Compute q_{L,R} needed for the wave speed estimate.
+   *
    * pstar:   (estimated) pressure of the star state
    * pLR:     left or right pressure, depending whether
    *          you want q_L or q_R
@@ -167,6 +166,7 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
   float SR, float Sstar, cstate* sol, float xovert, int dim){
   /*--------------------------------------------------------------------------------------------------
    * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
    * float SL:        left wave speed estimate
@@ -449,17 +449,6 @@ void riemann_compute_star_states(pstate *left, pstate *right,
   /* The WAF scheme requires this function when calling
    * riemann_get_full_solution, but it's done differently
    * for the HLLC solver (riemann_get_hllc_full_solution)
-   * so this function is just empty here so that the code
-   * will compile correctly. */
-}
-
-
-
-void riemann_sample_solution(pstate* left, pstate* right, 
-    float pstar, float ustar, pstate* sol, float xovert, int dim){
-  /* The WAF scheme requires this function when calling
-   * riemann_get_full_solution, but it's done differently
-   * for the HLLC solver (riemann_sample_hllc_solution)
    * so this function is just empty here so that the code
    * will compile correctly. */
 }
