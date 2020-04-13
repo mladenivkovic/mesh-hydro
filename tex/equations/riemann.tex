@@ -220,14 +220,14 @@ The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wav
 
 Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \leq \frac{x}{t} \leq S_{TL}$, is 
 
-\begin{align*}
+\begin{align}
 	\rho_{\text{fan}, L} &= 
-		\rho_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 }\\
+		\rho_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 } \label{eq:rho-rarefaction-fan-left}\\
 	u_{\text{fan}, L} &= 
 		\frac{2}{\gamma + 1} \left[ \frac{\gamma - 1}{2} u_L + a_L + \frac{x}{t}  \right] \\
 	p_{\text{fan}, L} &= 
-		p_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1}
-\end{align*}
+		p_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1} \label{eq:pressure-rarefaction-fan-left}
+\end{align}
 
 
 
@@ -266,14 +266,14 @@ The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wav
 
 Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \leq \frac{x}{t} \leq S_{TL}$, is 
 
-\begin{align*}
+\begin{align}
 	\rho_{\text{fan}, R} &= 
-		\rho_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 }\\
+		\rho_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 } \label{eq:rho-rarefaction-fan-right}\\
 	u_{\text{fan}, R} &= 
 		\frac{2}{\gamma + 1} \left[ \frac{\gamma - 1}{2} u_R - a_R + \frac{x}{t}  \right] \\
 	p_{\text{fan}, R} &= 
-		p_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1}
-\end{align*}
+		p_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1} \label{eq:pressure-rarefaction-fan-right}
+\end{align}
 
 
 
@@ -723,7 +723,7 @@ There are three cases to consider:
 		When do we have a vacuum generating condition?
 		Well, $S_{vac, L} \leq S_{vac, R}$ must hold, hence
 		\begin{align}
-			\Delta u_{crit} \equiv \frac{2 a_L}{\gamma - 1 } + \frac{2 a_R}{\gamma - 1 } \leq u_R - u_L
+			\Delta u_{crit} \equiv \frac{2 a_L}{\gamma - 1 } + \frac{2 a_R}{\gamma - 1 } \leq u_R - u_L \label{eq:vacuum-generating-condition}
 		\end{align}
 
 \end{enumerate}

@@ -390,6 +390,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     float aR = gas_soundspeed(right);
     float SR = right->u[dim] - 2.*aR/GM1; /* vacuum front speed */
     float SHR = right->u[dim] + aR;       /* speed of head of right rarefaction fan */
+    float rho_star_right = 0;
 
 
     /* We always have a rarefaction, so find the state at x = 0 */
@@ -422,9 +423,11 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     if (SR*SHR < 0) {
       /* Sonic rarefaction */
       gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[2], dim);
+      rho_star_right = state_at_x_zero.rho;
     } else {
       /* Non-sonic rarefaction */
       gas_get_cflux_from_pstate(right, &fluxes[2], dim);
+      rho_star_right = right->rho;
     }
     gas_get_cflux_from_pstate(right, &fluxes[3], dim);
 
@@ -436,7 +439,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     /* get density jumps */
     delta_q[0] = 0.;
     delta_q[1] = 0.;
-    delta_q[2] = right->rho;
+    delta_q[2] = right->rho - rho_star_right;
 
   }
 
@@ -449,6 +452,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     float aL = gas_soundspeed(left);
     float SL = left->u[dim] + 2.*aL/GM1;  /* vacuum front speed */
     float SHL = left->u[dim] - aL;        /* speed of head of left rarefaction fan */
+    float rho_star_left = 0;
 
     if (0. >= SL){
       /* right vacuum */
@@ -479,9 +483,11 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     if (SL*SHL < 0) {
       /* Sonic rarefaction */
       gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[1], dim);
+      rho_star_left = state_at_x_zero.rho;
     } else {
       /* Non-sonic rarefaction */
       gas_get_cflux_from_pstate(left, &fluxes[1], dim);
+      rho_star_left = left->rho;
     }
     gas_get_cflux_from_pstate(&vacuum, &fluxes[2], dim);
     gas_get_cflux_from_pstate(right, &fluxes[3], dim);
@@ -492,7 +498,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     S[2] = SMALLU;
 
     /* get density jumps */
-    delta_q[0] = -left->rho;
+    delta_q[0] = rho_star_left-left->rho;
     delta_q[1] = 0.;
     delta_q[2] = 0.;
   }

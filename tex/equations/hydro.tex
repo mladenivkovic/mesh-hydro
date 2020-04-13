@@ -381,10 +381,12 @@ For vacuum, we have three cases to consider, where $\U_{vac}$ describes the vacu
 				S^{(1)} &= 0\\
 				S^{(2)} &= \text{ rarefaction tail speed}\\
 				S^{(3)} &= \text{ rarefaction head speed}\\[.5em]
-				q^{(1)} &= -\rho_L\\
+				q^{(1)} &= \rho^*_L - \rho_L\\
 				q^{(2)} &= 0\\
 				q^{(3)} &= 0\\							
 			\end{align*}
+			
+			Where $\rho^*_L$ is either the density of $\U_L$ or of $\U(x = 0, t = \Delta t/2)$, depending on whether we have a sonic or non-sonic rarefaction.
 
 	
 	\item 	\textbf{The left state is a vacuum}:
@@ -403,13 +405,15 @@ For vacuum, we have three cases to consider, where $\U_{vac}$ describes the vacu
 				S^{(3)} &= \text{ rarefaction head speed}\\[.5em]
 				q^{(1)} &= 0\\
 				q^{(2)} &= 0\\
-				q^{(3)} &= \rho_R\\							
+				q^{(3)} &= \rho_R - \rho_R^*\\							
 			\end{align*}
-
+			
+			Where $\rho^*_R$ is either the density of $\U_R$ or of $\U(x = 0, t = \Delta t/2)$, depending on whether we have a sonic or non-sonic rarefaction.
+			
 	
 	\item 	\textbf{A vacuum is being generated}:
 	
-			This may occur when condition \textbf{REFERENCE} is satisfied.
+			This may occur when condition \ref{eq:vacuum-generating-condition} is satisfied.
 			The solution structure contains two rarefaction fans, to the left and to the right, enclosed by the initial states $U_L$ and $U_R$, and separated by a vacuum state $U_{vac}$.
 			
 			My solution strategy is as follows:
@@ -417,7 +421,7 @@ For vacuum, we have three cases to consider, where $\U_{vac}$ describes the vacu
 			
 			For example, for the left star state, we can compute the rarefaction head speed $S_{L,H}$ and tail speed $S_{L,T}$ and define the average speed $\overline{S}_L = \frac{S_{H,L} + S_{T,L}}{2}$.
 			
-			Now we approximate the entire star state as the solution inside a rarefaction fan, eqns. \textbf{REFERENCE}, at $x/t = \overline{S}_L$.
+			Now we approximate the entire star state as the solution inside a rarefaction fan, eqns. \ref{eq:rho-rarefaction-fan-left}-\ref{eq:pressure-rarefaction-fan-left} and \ref{eq:rho-rarefaction-fan-right}-\ref{eq:pressure-rarefaction-fan-right}, at $x/t = \overline{S}_L$.
 			The same computation can be done for the right rarefaction.
 			
 			Then we say that we have no vacuum state in between, but instead ``stretch out'' the star states to meet at a contact wave with speed $S^* = \frac{S_{T,L} + S_{T,R}}{2}$.
