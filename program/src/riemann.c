@@ -191,19 +191,23 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 
 
 
-void riemann_get_full_solution(pstate* left, pstate* right, float S[3], cstate fluxes[4], float delta_q[3], int dim){
-  /*-----------------------------------------------------------------------------------------------------------------
-   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, the fluxes of all four
-   * states U_L, U*_L, U*_R, U_R, and the difference in densities between each wave.
-   * This function is needed for the WAF method, where we sum up all the occuring fluxes with different weights.
+void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3], 
+    cstate fluxes[4], float delta_q[3], int dim){
+  /*-------------------------------------------------------------------------------------------
+   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, 
+   * the fluxes of all four states U_L, U*_L, U*_R, U_R, and the difference in densities 
+   * between each wave.
+   * This function is needed for the WAF method, where we sum up all the occuring fluxes 
+   * with different weights. This function handles the vacuum case.
    *
    * pstate* left:      left primitive state of Riemann problem
    * pstate* right:     right primitive state of Riemann problem
    * float S[3]:        where wave speeds will be written to
    * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L, F*_R, F_R
-   * float delta_q[3]:  differences in densities over all four waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
-   * TODO: DOX
-   * ---------------------------------------------------------------------------------------------------------------- */
+   * float delta_q[3]:  differences in densities over all four waves: 
+   *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
+   * int dim:           which fluid velocity direction to use. 0: x, 1: y
+   * ------------------------------------------------------------------------------------------ */
 
 #if RIEMANN == HLLC
   throw_error("In riemann_get_full_solution: You shouldn't be calling this function with the HLLC Riemann solver.");
@@ -287,10 +291,11 @@ void riemann_get_full_solution(pstate* left, pstate* right, float S[3], cstate f
   /* state 2 */
   if (pstar <= left->p){
     /* rarefaction. But is it sonic? */
+    /* use approximation for fan instead of adding one more wave and properly integrating */
     float astarL = gas_soundspeed(&star_left);
     float tailL = ustar - astarL;
     if (tailL*S[0] < 0.){
-      /* if head and tail speeds have different sign, we have asonic rarefaction. */
+      /* if head and tail speeds have different sign, we have a sonic rarefaction. */
       gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[1], dim);
     } else {
       /* Non-sonic rarefaction */
@@ -304,6 +309,7 @@ void riemann_get_full_solution(pstate* left, pstate* right, float S[3], cstate f
   /* state 3 */
   if (pstar <= right->p){
     /* rarefaction. But is it sonic? */
+    /* use approximation for fan instead of adding one more wave and properly integrating */
     float astarR = gas_soundspeed(&star_right);
     float tailR = ustar + astarR;
     if (tailR*S[2] < 0.){
@@ -334,22 +340,23 @@ void riemann_get_full_solution(pstate* left, pstate* right, float S[3], cstate f
 
 
 
-void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], cstate* fluxes, float* delta_q, int dim){
-  /*-----------------------------------------------------------------------------------------------------------------
-   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, the fluxes of all four
-   * states U_L, U*_L, U*_R, U_R, and the difference in densities between each wave.
-   * This function is needed for the WAF method, where we sum up all the occuring fluxes with different weights.
-   * This function handles the vacuum case.
+void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right, 
+    float S[3], cstate* fluxes, float* delta_q, int dim){
+  /*-------------------------------------------------------------------------------------------
+   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, 
+   * the fluxes of all four states U_L, U*_L, U*_R, U_R, and the difference in densities 
+   * between each wave.
+   * This function is needed for the WAF method, where we sum up all the occuring fluxes 
+   * with different weights. This function handles the vacuum case.
    *
    * pstate* left:      left primitive state of Riemann problem
    * pstate* right:     right primitive state of Riemann problem
    * float S[3]:        where wave speeds will be written to
    * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L, F*_R, F_R
-   * float delta_q[3]:  differences in densities over all four waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
+   * float delta_q[3]:  differences in densities over all four waves: 
+   *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
    * int dim:           which fluid velocity direction to use. 0: x, 1: y
-   * ---------------------------------------------------------------------------------------------------------------- */
-
-  /* printf("right density %f\n", right->rho); */
+   * ------------------------------------------------------------------------------------------ */
 
   pstate vacuum;
   gas_init_pstate(&vacuum);
@@ -411,6 +418,7 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     /* compute the fluxes */
     gas_get_cflux_from_pstate(left, &fluxes[0], dim);
     gas_get_cflux_from_pstate(&vacuum, &fluxes[1], dim);
+    /* use approximation for fan instead of adding one more wave and properly integrating */
     if (SR*SHR < 0) {
       /* Sonic rarefaction */
       gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[2], dim);
@@ -467,6 +475,7 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
 
     /* compute the fluxes */
     gas_get_cflux_from_pstate(left, &fluxes[0], dim);
+    /* use approximation for fan instead of adding one more wave and properly integrating */
     if (SL*SHL < 0) {
       /* Sonic rarefaction */
       gas_get_cflux_from_pstate(&state_at_x_zero, &fluxes[1], dim);
@@ -483,7 +492,7 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     S[2] = SMALLU;
 
     /* get density jumps */
-    delta_q[0] = left->rho;
+    delta_q[0] = -left->rho;
     delta_q[1] = 0.;
     delta_q[2] = 0.;
   }
@@ -500,7 +509,7 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     float SHL = left->u[dim] - aL;         /* speed of head of left rarefaction fan */
     float SHR = right->u[dim] + aR;        /* speed of head of right rarefaction fan */
 
-    float speed_average, precomp;
+    float speed_average, precomp, f;
 
     pstate star_left;
     gas_init_pstate(&star_left);
@@ -519,22 +528,17 @@ void riemann_get_full_vacuum_solution(pstate* left, pstate* right, float S[3], c
     star_right.u[dim] = 0.5*(SL + SR);
     star_right.p = right->p * pow(precomp, GAMMA);
 
-    precomp = (SHL - SL)/(SHL - 0.5*(SL + SR));
-    star_left.rho *= precomp;
-    star_left.u[dim] *= precomp;
-    star_left.u[dim] = 0.5*(SL + SR);
-    star_left.p *= precomp;
+    f = (SHL - SL)/(SHL - 0.5*(SL + SR));
+    star_left.rho *= f;
+    star_left.p *= f;
 
-    precomp = (SHR - SR)/(SHR - 0.5*(SL + SR));
+    f = (SHR - SR)/(SHR - 0.5*(SL + SR));
     star_right.rho *= precomp;
-    star_right.u[dim] *= precomp;
-    star_right.u[dim] = 0.5*(SL + SR);
     star_right.p *= precomp;
 
 
 
     /* compute the fluxes */
-
     gas_get_cflux_from_pstate(left, &fluxes[0], dim);
     gas_get_cflux_from_pstate(&star_left, &fluxes[1], dim);
     gas_get_cflux_from_pstate(&star_right, &fluxes[2], dim);

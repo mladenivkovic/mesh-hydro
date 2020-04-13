@@ -33,9 +33,9 @@ void riemann_compute_star_states(pstate *left, pstate *right,
 void riemann_sample_solution(pstate* left, pstate* right, 
     float pstar, float ustar, pstate* sol, float xovert, int dim);
 
-void riemann_get_full_solution(pstate* left, pstate* right, 
+void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, 
     float S[3], cstate fluxes[4], float delta_q[3], int dim);
 
-void riemann_get_full_vacuum_solution(pstate* left, pstate* right, 
+void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right, 
     float S[3], cstate fluxes[4], float delta_q[3], int dim);
 #endif

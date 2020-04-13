@@ -342,6 +342,122 @@ Some implemented options are given in section \ref{chap:implemented_limiters}.
 
 
 
+%===================================================================
+\subsubsection{Dealing with Vacuum}\label{chap:hydro-WAF-vacuum}
+%===================================================================
+
+
+Vacuum needs some special attention because it doesn't follow the solution structure of a typical Riemann problem.
+It can easily crash your program:
+Consider for example the computation of the local sound speed $a = \sqrt{\gamma p/\rho}$ for $\rho = 0$.
+There is no more star region present, instead next to the vacuum ($\rho = 0$) we have a contact wave coinciding with the tail of a rarefaction wave - a wave that we also handle only approximately.
+
+I wasn't able to find literature of how to best deal with this, but I was able to find an approximate solution on my own following the idea of how the WAF scheme works.
+
+In the end, what we want is a solution that we can use to get WAF fluxes, namely we need
+
+\begin{itemize}
+	\item 4 fluxes $\F_{i}^{(k)}$ corresponding to the four states $\U_{i}^{(k)}$: $U_L$, $U_L^*$, $U_R^*$, $U_R$
+	\item 3 wave speeds $S_L$, $S^*$, $S_R$
+	\item 3 differences/jumps in density $q^{(k)}$: $\rho_L^* - \rho_L$, $\rho_R^* - \rho_L^*$, $\rho_R - \rho_R^*$
+\end{itemize}
+
+For vacuum, we have three cases to consider, where $\U_{vac}$ describes the vacuum state:
+
+
+\begin{enumerate}
+
+	\item 	\textbf{The right state is a vacuum}:
+	
+			Choose 
+			\begin{align*}
+				\F^{(1)} &= \F(\U_L)\\
+				\F^{(2)} &= \begin{cases}
+								&\F(\U(t = \Delta t/2, \ x = 0) \quad \text{ for a sonic rarefaction } \\
+								&\F(\U_L) \quad \text{ for a non-sonic rarefaction } \\
+							\end{cases}\\
+				\F^{(3)} &= \F(\U_{vac})\\
+				\F^{(4)} &= \F(\U_R)\\[.5em]
+				S^{(1)} &= 0\\
+				S^{(2)} &= \text{ rarefaction tail speed}\\
+				S^{(3)} &= \text{ rarefaction head speed}\\[.5em]
+				q^{(1)} &= -\rho_L\\
+				q^{(2)} &= 0\\
+				q^{(3)} &= 0\\							
+			\end{align*}
+
+	
+	\item 	\textbf{The left state is a vacuum}:
+			
+			Choose 
+			\begin{align*}
+				\F^{(1)} &= \F(\U_L)\\
+				\F^{(2)} &= \F(\U_{vac})\\
+				\F^{(3)} &= \begin{cases}
+								&\F(\U(t = \Delta t/2, \ x = 0) \quad \text{ for a sonic rarefaction } \\
+								&\F(\U_R) \quad \text{ for a non-sonic rarefaction } \\
+							\end{cases}\\
+				\F^{(4)} &= \F(\U_R)\\[.5em]
+				S^{(1)} &= 0\\
+				S^{(2)} &= \text{ rarefaction tail speed}\\
+				S^{(3)} &= \text{ rarefaction head speed}\\[.5em]
+				q^{(1)} &= 0\\
+				q^{(2)} &= 0\\
+				q^{(3)} &= \rho_R\\							
+			\end{align*}
+
+	
+	\item 	\textbf{A vacuum is being generated}:
+	
+			This may occur when condition \textbf{REFERENCE} is satisfied.
+			The solution structure contains two rarefaction fans, to the left and to the right, enclosed by the initial states $U_L$ and $U_R$, and separated by a vacuum state $U_{vac}$.
+			
+			My solution strategy is as follows:
+			Compute an approximate solution to describe the average state inside each rarefaction fan, and then ``stretch'' the states out such that we pretend that there is no vacuum state in between.
+			
+			For example, for the left star state, we can compute the rarefaction head speed $S_{L,H}$ and tail speed $S_{L,T}$ and define the average speed $\overline{S}_L = \frac{S_{H,L} + S_{T,L}}{2}$.
+			
+			Now we approximate the entire star state as the solution inside a rarefaction fan, eqns. \textbf{REFERENCE}, at $x/t = \overline{S}_L$.
+			The same computation can be done for the right rarefaction.
+			
+			Then we say that we have no vacuum state in between, but instead ``stretch out'' the star states to meet at a contact wave with speed $S^* = \frac{S_{T,L} + S_{T,R}}{2}$.
+			However, we want the total mass, momentum, and energy to be conserved.
+			Hence we need to reduce the density, momentum, and energy by a factor
+			\begin{align*}
+				f_{L,R} = \frac{S_{HL,R} - S_{L,R}}{S_{HL,R} - \frac{S_L + S_R}{2}}
+			\end{align*}
+			which is simply the ``stretch factor'' based on the distances the utilized waves would travel at any given time $t > 0 $.
+			
+			In terms of primitive variables, it suffices to apply this factor to density and pressure such that energy, momentum, and mass conservation are satisfied.
+			With this, we have expressions for the two star states and a contact speed $S^*$, and can now easily compute the four necessary fluxes.
+			
+			This solution is not very good, because even when applying flux limiters, it will introduce new peaks at the position of the vacuum.
+			However, due to the lack of a better idea, this is what we have.
+			At least it provides a somewhat usable solution, such that the WAF method can be used in actual hydrodynamics applications without worrying of code crashes should such a condition occur even for very small time steps.
+			
+
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

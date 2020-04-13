@@ -253,15 +253,15 @@ void solver_prepare_flux_computation(cell* left, cell* right, int dim){
   }
 
   if (riemann_has_vacuum(&left->prim, &right->prim, dim)){
-    riemann_get_full_vacuum_solution(&left->prim, &right->prim, left->Sk, 
+    riemann_get_full_vacuum_solution_for_WAF(&left->prim, &right->prim, left->Sk, 
         left->riemann_fluxes, left->delta_q, dim);
   } 
   else {
 #if RIEMANN == HLLC
-    riemann_get_hllc_full_solution(&left->prim, &right->prim, left->Sk, 
+    riemann_get_hllc_full_solution_for_WAF(&left->prim, &right->prim, left->Sk, 
         left->riemann_fluxes, left->delta_q, dim);
 #else
-    riemann_get_full_solution(&left->prim, &right->prim, left->Sk, 
+    riemann_get_full_solution_for_WAF(&left->prim, &right->prim, left->Sk, 
         left->riemann_fluxes, left->delta_q, dim);
 #endif
   }

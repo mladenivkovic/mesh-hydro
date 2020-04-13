@@ -307,20 +307,23 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
 
 
 
-void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cstate fluxes[4], float delta_q[3], int dim){
-  /*--------------------------------------------------------------------------------------------------
-   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, the fluxes of all four
-   * states U_L, U*_L, U*_R, U_R, and the difference in densities between each wave.
-   * This function is needed for the WAF method, where we sum up all the occuring fluxes with different weights.
+void riemann_get_hllc_full_solution_for_WAF(pstate* left, pstate* right, 
+    float S[3], cstate fluxes[4], float delta_q[3], int dim){
+  /*-------------------------------------------------------------------------------------------
+   * Compute (and "return") the full solution of the Riemann problem: Get all wave speeds, 
+   * the fluxes of all four states U_L, U*_L, U*_R, U_R, and the difference in densities 
+   * between each wave.
+   * This function is needed for the WAF method, where we sum up all the occuring fluxes 
+   * with different weights. This function handles the vacuum case.
    *
    * pstate* left:      left primitive state of Riemann problem
    * pstate* right:     right primitive state of Riemann problem
    * float S[3]:        where wave speeds will be written to
    * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L, F*_R, F_R
-   * float delta_q[3]:  differences in densities over all four waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
+   * float delta_q[3]:  differences in densities over all four waves: 
+   *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
    * int dim:           which fluid velocity direction to use. 0: x, 1: y
-   * TODO: dox
-   *--------------------------------------------------------------------------------------------------*/
+   * ------------------------------------------------------------------------------------------ */
 
 
   /* first compute wave speeds */
@@ -330,12 +333,7 @@ void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cst
   float Sstar = 0;
   riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dim);
 
-  float SLMUL = SL - left->u[dim];
-  float SRMUR = SR - right->u[dim];
-  /* float Sstar = ( right->p - left->p + left->rho * left->u[dim] * SLMUL - right->rho * right->u[dim] * SRMUR) / */
-  /*     ( left->rho * SLMUL - right->rho * SRMUR ); */
-
-
+  /* store wave speeds */
   S[0] = SL;
   S[1] = Sstar;
   S[2] = SR;
@@ -362,12 +360,15 @@ void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cst
   cstate UstarL;
   gas_init_cstate(&UstarL);
 
+  float SLMUL = SL - left->u[dim];
+  float SRMUR = SR - right->u[dim];
+
   float lcomp = left->rho * SLMUL / (SL - Sstar);
   UstarL.rho = lcomp;
   UstarL.rhou[dim] = lcomp * Sstar;
   UstarL.rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
 
-  float EL= 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
+  float EL = 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
   UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
       (Sstar + left->p / (left->rho * SLMUL)));
 
@@ -380,7 +381,7 @@ void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cst
   UstarR.rhou[dim] = rcomp * Sstar;
   UstarR.rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
 
-  float ER= 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
+  float ER = 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
   UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
       (Sstar + right->p / (right->rho * SRMUR)));
 
@@ -390,7 +391,6 @@ void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cst
   delta_q[1] = UstarR.rho - UstarL.rho;
   delta_q[2] = UR.rho - UstarR.rho;
 
-  /* printf("Delta q after computation %f %f %f\n", delta_q[0], delta_q[1], delta_q[2]); */
 
 
 
@@ -404,9 +404,6 @@ void riemann_get_hllc_full_solution(pstate* left, pstate* right, float S[3], cst
   cstate FR;
   gas_init_cstate(&FR);
   gas_get_cflux_from_cstate(&UR, &FR, dim);
-
-
-
 
 
 

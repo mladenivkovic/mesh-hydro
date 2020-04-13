@@ -20,7 +20,7 @@ float qLR(float pstar, float pLR);
 void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
     float SR, float Sstar, cstate* sol, float xovert, int dim);
 
-void riemann_get_hllc_full_solution(pstate* left, pstate* right, 
+void riemann_get_hllc_full_solution_for_WAF(pstate* left, pstate* right, 
     float* S, cstate* fluxes, float* delta_q, int dim);
 
 #endif
