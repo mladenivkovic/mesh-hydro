@@ -27,7 +27,7 @@ genparamfile() {
     echo ""                 >> $f
     echo "verbose = 1"      >> $f
     echo "nx = 100"         >> $f
-    echo "nstep_log = 100"  >> $f
+    echo "nstep_log = 50"   >> $f
     echo "nsteps = $1"      >> $f
     echo "tmax = $2"        >> $f
     echo "foutput = $3"     >> $f
@@ -56,7 +56,7 @@ genparamfile_transmissive() {
     echo ""                 >> $f
     echo "verbose = 1"      >> $f
     echo "nx = 100"         >> $f
-    echo "nstep_log = 100"  >> $f
+    echo "nstep_log =  50"  >> $f
     echo "nsteps = $1"      >> $f
     echo "tmax = $2"        >> $f
     echo "foutput = $3"     >> $f
@@ -451,6 +451,9 @@ advection_waf_limiters_1D(){
 }
 
 
+
+
+
 advection_waf_limiters_2D(){
     #-----------------------------------
     # 2D WAF advection with limiters
@@ -553,6 +556,14 @@ riemann_solver(){
 
 
 
+
+
+
+
+
+
+
+
 function godunov_1D() {
     #-------------------------------------------
     # 1D godunov stuff
@@ -586,10 +597,14 @@ function godunov_1D() {
     done
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
-        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-1D
+        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-1D junk
         errexit $?
     done
 }
+
+
+
+
 
 
 
@@ -626,7 +641,7 @@ function godunov_2D() {
     done
 
     for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
-        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-2D
+        ./overplot_riemann_solvers.py "$icprefix" GODUNOV-2D junk
         errexit $?
     done
 
@@ -637,12 +652,158 @@ function godunov_2D() {
     errexit $?
 
     # genparamfile nsteps tmax foutput dt_out basename ccfl
-    genparamfile 0 3 0 0 "kelvin-helmholtz" 0.8
+    genparamfile 0 3 0 0 "GODUNOV-kelvin-helmholtz" 0.8
     ./hydro paramfile.txt ./IC/kelvin-helmholtz-128.dat
-    $plotdir/plot_result.py kelvin-helmholtz-0001.out
+    $plotdir/plot_result.py GODUNOV-kelvin-helmholtz-0001.out
     errexit $?
 
 }
+
+
+
+
+
+
+function waf_1D() {
+    #-------------------------------------------
+    # 1D WAF stuff without limiters
+    #-------------------------------------------
+
+    # this one needs a bit of special attention because the oscillations can crash the code
+
+    for RIEMANN in EXACT TRRS TSRS HLLC; do
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 WAF $RIEMANN NONE
+        make clean && make
+        errexit $?
+
+        # non-vacuum
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+            # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+            genparamfile_transmissive 0 0.1 0 0 "$icprefix"-WAF-1D-$RIEMANN-NO_LIMITER 0.5
+
+            ./hydro paramfile.txt ./IC/"$icprefix".dat
+            errexit $?
+        done
+
+        # vacuum
+        
+        # !!!!!!!!!!!! WAF without limiters introduces strong oscillations, and the code can't finish.
+
+        # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
+        #     genparamfile_transmissive 0 0.005 0 0 "$icprefix"-WAF-1D-$RIEMANN-NO_LIMITER 0.2
+        #
+        #     ./hydro paramfile.txt ./IC/"$icprefix".dat
+        #     errexit $?
+        # done
+
+    done
+
+    for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+        ./overplot_riemann_solvers.py "$icprefix" WAF-1D NO_LIMITER
+        errexit $?
+    done
+
+}
+
+
+
+
+
+
+function waf_1D_limiters() {
+    #-------------------------------------------
+    # 1D WAF stuff with limiters
+    #-------------------------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        for RIEMANN in EXACT TRRS TSRS HLLC; do
+            # genmakefile ndim solver riemann limiter
+            genmakefile 1 WAF $RIEMANN $LIMITER
+            make clean && make
+            errexit $?
+
+            # non-vacuum
+            for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+                # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+                genparamfile_transmissive 0 0.2 0 0 "$icprefix"-WAF-1D-$RIEMANN-$LIMITER 0.9
+
+                ./hydro paramfile.txt ./IC/"$icprefix".dat
+                errexit $?
+            done
+
+            # vacuum
+            for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
+                genparamfile_transmissive 0 0.01 0 0 "$icprefix"-WAF-1D-$RIEMANN-$LIMITER 0.9
+
+                ./hydro paramfile.txt ./IC/"$icprefix".dat
+                errexit $?
+            done
+
+        done
+
+        # plotting
+        for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
+            ./overplot_riemann_solvers.py "$icprefix" WAF-1D $LIMITER
+            errexit $?
+        done
+
+    done
+
+}
+
+
+
+
+
+
+
+function waf_2D_limiters() {
+    #-------------------------------------------
+    # 2D WAF stuff with limiters
+    #-------------------------------------------
+
+    for LIMITER in MINMOD SUPERBEE MC VANLEER; do
+
+        for RIEMANN in EXACT TRRS TSRS HLLC; do
+            # genmakefile ndim solver riemann limiter
+            genmakefile 2 WAF $RIEMANN $LIMITER
+            make clean && make
+            errexit $?
+
+            # non-vacuum
+            for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+                # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+                genparamfile_transmissive 0 0.2 0 0 "$icprefix"-WAF-2D-$RIEMANN-$LIMITER 0.9
+
+                ./hydro paramfile.txt ./IC/"$icprefix".dat
+                errexit $?
+            done
+        done
+
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+            ./overplot_riemann_solvers.py "$icprefix" WAF-2D $LIMITER
+            errexit $?
+        done
+
+    done
+
+    # do kelvin helmholtz only for one
+    genmakefile 2 WAF HLLC VANLEER
+    make clean && make
+    errexit $?
+
+    # genparamfile nsteps tmax foutput dt_out basename ccfl
+    genparamfile 0 3 0 0 "WAF-kelvin-helmholtz" 0.9
+    ./hydro paramfile.txt ./IC/kelvin-helmholtz-128.dat
+    $plotdir/plot_result.py WAF-kelvin-helmholtz-0001.out
+    errexit $?
+
+}
+
+
+
 
 
 
@@ -674,6 +835,9 @@ riemann_solver
 godunov_1D
 godunov_2D
 
+waf_1D
+waf_1D_limiters
+waf_2D_limiters
 
 
 

@@ -870,6 +870,116 @@
 
 
 
+\subsection{2D with different Limiters}
+%--------------------------------------------------------
+
+
+
+
+\clearpage
+\subsubsection{MC limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-MC-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, MC flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-MC-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, MC flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-MC-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, MC flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-MC-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, MC flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+\clearpage
+\subsubsection{MINMOD limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-MINMOD-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-MINMOD-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-MINMOD-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-MINMOD-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+\clearpage
+\subsubsection{van Leer limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-VANLEER-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-VANLEER-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-VANLEER-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-VANLEER-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+\clearpage
+\subsubsection{SUPERBEE limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-SUPERBEE-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-SUPERBEE-riemann-sod-shock-2D.png}%
+        \caption{WAF method for (right facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/WAF-2D-SUPERBEE-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../WAF-2D-SUPERBEE-riemann-sod-shock-reverse-2D.png}%
+        \caption{WAF method for (left facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
 
 
 \clearpage
@@ -878,10 +988,10 @@
 
     \begin{figure}[htbp]
         \centering
-        \includegraphics[width=.9\textwidth]{./figures/GODUNOV-kelvin-helmholtz-0001.png}%
-        \caption{Godunov's method for Kelvin Helmholtz instability. Expected result.}
-        \includegraphics[width=.9\textwidth]{../GODUNOV-kelvin-helmholtz-0001.png}%
-        \caption{Godunov's method for Kelvin Helmholtz instability. Obtained result.}
+        \includegraphics[width=.9\textwidth]{./figures/WAF-kelvin-helmholtz-0001.png}%
+        \caption{WAF method for Kelvin Helmholtz instability. Expected result with HLLC solver and van Leer limiter.}
+        \includegraphics[width=.9\textwidth]{../WAF-kelvin-helmholtz-0001.png}%
+        \caption{WAF method for Kelvin Helmholtz instability. Obtained result with HLLC solver and van Leer limiter.}
     \end{figure}
 
 
