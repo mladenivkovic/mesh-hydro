@@ -1,5 +1,5 @@
 \newpage
-\section{Dimensional Splitting}\label{chap:dimensional-splitting}
+\section{Solving Multidimensional Problems: Dimensional Splitting}\label{chap:dimensional-splitting}
 
 
 To go from one to multiple dimensions, it is tempting to just extend the one dimensional discretisation.
@@ -73,9 +73,21 @@ and then we evolve the solution to the final $\U^{n+1}$ by solving the ``y - swe
 \end{equation}
 
 using the 1D methods that are described.
+This is called ``Strang splitting'' and gives us a first order accurate method.
 
-What's even better is that it can be shown (see \cite{leveque_2002}) that by switching the order of the sweeps every timestep (and keeping the time step interval $\Delta t$ constant) leads to a second order accurate method in time.
-This is called ``Strang splitting''.
+For a second order accurate method, we need to do one more step in 2D:
+
+\begin{enumerate}
+	\item Get $\U^{n + 1/4}$ by doing an x - sweep over the time interval $\Delta t / 2$
+	\item Get $\U^{n + 3/4}$ by doing an y - sweep over the time interval $\Delta t$ and using the intermediate solution $\U^{n + 1/4}$
+	\item Get $\U^{n + 1}$ by doing an x - sweep over the time interval $\Delta t / 2$ and using the intermediate solution $\U^{n + 3/4}$
+\end{enumerate}
+
+
+
+However, if $\Delta t$ is kept constant over multiple time steps, which is often the case for linear advection, we can get the first order method described above to be second order accurate by switching the order of the sweeps every time step (see \cite{leveque_2002}), i.e.
+if for one time step we did the x-sweep first, in the next one we do the y-sweep first, then in the next time step we do the x-sweep first again, and so on.
+The order of the sweeps doesn't matter as long as all sweeps have been done in the end, and by alternating the order we recover the second order method formalism, but with a twice as big time step.
 
 
 

@@ -74,6 +74,9 @@ Then we can get:
 		\end{align*}
 		
 		However, every directional component (i.e. velocities/momentum) needs to have the negative value in the ghost cell compared to the real cell.
+		
+		This is valid for the Euler equations, but not for linear advection.
+		In fact, having reflecting boundary conditions for constant linear advection doesn't really make sense.
 	
 	
 	\item \textbf{transmissive boundary conditions}:
