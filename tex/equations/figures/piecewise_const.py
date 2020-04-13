@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+#-----------------------------------------------------------------
 # Draw a plot representing the piecewise constant discretization
+#-----------------------------------------------------------------
 
 import numpy as np
 from matplotlib import pyplot as plt

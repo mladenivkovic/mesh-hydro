@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-# Create a plot for the Riemann IVP
+#-----------------------------------------------------------------
+# Create a plot for the hydro WAF method
+#-----------------------------------------------------------------
 
 
 import numpy as np

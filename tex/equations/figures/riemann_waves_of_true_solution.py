@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 
+#-----------------------------------------------------------------
 # Get a plot of a Riemann problem with all 3 waves present,
 # and mark the waves appropriately
+#-----------------------------------------------------------------
 
 
 

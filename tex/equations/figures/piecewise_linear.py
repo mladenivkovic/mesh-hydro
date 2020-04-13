@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+#-----------------------------------------------------------------
 # Draw a plot representing the piecewise linear discretization
+#-----------------------------------------------------------------
+
+
 
 # First determine piecewise constant value in each cell
 # then get gradient based on the neighbour's values
-# 
 
 
 import numpy as np
