@@ -65,7 +65,7 @@ CC=gcc -I$(IDIR) #-static
 # flags for gcc compiler
 # CFLAGS= -g -O0 -pedantic -std=c11 \
 #         -fsignaling-nans -ffinite-math-only -fno-signed-zeros \
-#         -Wextra -Werror -Warray-bounds -Wno-unused-parameter
+#         -Wall -Wextra -Werror -Warray-bounds -Wno-unused-parameter
 CFLAGS= -O3
 
 CFLAGS += $(DEFINES)
