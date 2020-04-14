@@ -107,7 +107,7 @@ function waf(){
         for RIEMANN in EXACT TRRS TSRS HLLC; do
             for LIMITER in MINMOD SUPERBEE MC VANLEER; do
                 make clean
-                genmakefile $ndim WAF $RIEMANN NONE hydro-WAF-"$RIEMANN"-"$LIMITER"-"$ndim"D
+                genmakefile $ndim WAF $RIEMANN $LIMITER hydro-WAF-"$RIEMANN"-"$LIMITER"-"$ndim"D
                 make
                 errexit $?
             done
