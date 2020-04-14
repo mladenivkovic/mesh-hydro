@@ -1,0 +1,235 @@
+%=============================================
+\section{WAF Method}
+%=============================================
+
+
+
+
+%==============================================================
+\subsection{Solving Riemann Problems using the WAF Method}
+%==============================================================
+
+
+\quickfigcap
+	{./figures/WAF/WAF-1D-NO_LIMITER-riemann-sod-shock-1D.png}
+	{fig:WAF-no-limiter}
+	{
+		Solution to the sod shock Riemann problem using the WAF method without flux limiters.
+		The black line is the exact solution.
+	}
+
+
+
+
+\quickfigcap
+	{./figures/WAF/WAF-sod_test_modified-EXACT-1D.png}
+	{fig:WAF-riemann-const}
+	{
+		Solution to the modified sod test Riemann problem using the WAF method, an exact Riemann solver and various limiters.
+		The black line is the exact solution.
+	}
+
+
+\quickfigcap
+	{./figures/WAF/WAF-sod_test_modified-MC-1D.png}
+	{fig:WAF-limiter-const-1}
+	{
+		Solution to the modified sod test Riemann problem using the WAF method, an MC limiter, and  various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/WAF/WAF-sod_test_modified-MINMOD-1D.png}
+	{fig:WAF-limiter-const-2}
+	{
+		Solution to the modified sod test Riemann problem using the WAF method, a minmod limiter, and  various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/WAF/WAF-sod_test_modified-SUPERBEE-1D.png}
+	{fig:WAF-limiter-const-3}
+	{
+		Solution to the modified sod test Riemann problem using the WAF method, a superbee limiter, and  various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/WAF/WAF-sod_test_modified-VAN_LEER-1D.png}
+	{fig:WAF-limiter-const-4}
+	{
+		Solution to the modified sod test Riemann problem using the WAF method, a van Leer limiter, and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+
+
+
+
+
+%=======================================================================
+\subsection{Solving Vacuum Riemann Problems using WAF Method}
+%=======================================================================
+
+
+%=======================================================================
+\subsubsection{Left Vacuum State}
+%=======================================================================
+
+
+
+\quickfigcap
+	{./figures/WAF/WAF-left_vacuum-EXACT-1D.png}
+	{fig:waf-left-vacuum-1}
+	{
+		Left Vacuum Riemann problem at for Exact Riemann solver using WAF method and various limiters
+	}
+	
+\quickfigcap
+	{./figures/WAF/WAF-left_vacuum-HLLC-1D.png}
+	{fig:waf-left-vacuum-2}
+	{
+		Left Vacuum Riemann problem at  for HLLC Riemann solver using WAF method and various limiters
+	}
+
+
+
+
+
+
+
+
+%=======================================================================
+\subsubsection{Vacuum Generating ICs}
+%=======================================================================
+
+
+
+\quickfigcap
+	{./figures/WAF/WAF-vacuum_generating-EXACT-1D.png}
+	{fig:waf-vacuum-generating-1}
+	{
+		Vacuum Generating Riemann problem with Exact Riemann solver using WAF method
+	}
+	
+
+
+\quickfigcap
+	{./figures/WAF/WAF-vacuum_generating-HLLC-1D.png}
+	{fig:waf-vacuum-generating-2}
+	{
+		Vacuum Generating Riemann problem with HLLC Riemann solver using WAF method
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Order of Convergence Study}
+%==============================================================
+
+
+
+\quickfigcap
+	{./figures/WAF/waf-convergence-dt-500.png}
+	{fig:waf-convergence-dt}
+	{
+		Testing the method's convergence with respect to the time step $\Delta t$ on Sod test initial conditions.
+		For a fair comparison, both the cell width $\Delta x$ and the number of steps taken are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each Riemann solver used in the legend.
+	}
+
+
+\quickfigcap
+	{./figures/WAF/waf-convergence-dx.png}
+	{fig:godunov-convergence-dx}
+	{
+		Testing the method's convergence with respect to the cell width $\Delta x$ on Sod test initial conditions.
+		For a fair comparison, the Courant number $C_{CFL}$ and the total number of steps are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each limiter used in the legend.
+		The exact Riemann solver has been used.
+	}
+	
+\quickfigcap
+	{./figures/WAF/waf-convergence-CFL-10000.png}
+	{fig:waf-convergence-CFL}
+	{
+		Testing the method's convergence with respect to the Courant number $C_{CFL}$ on Sod test initial conditions.
+		The points are measurements, the lines are just connecting them.
+		The slope of $\half$ is plotted for comparison, and to demonstrate the deviation from it.
+		The exact Riemann solver has been used.
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Conclusions}
+%==============================================================
+
+
+\begin{itemize}
+
+	\item 	The WAF method without limiters, fig. \ref{fig:WAF-no-limiter}, gives terrible results.
+			In fact, in a lot of cases the oscillations would grow too strong and the code would crash.
+
+	\item 	Similar to the piecewise linear advection, the drops around jump discontinuities are now much sharper, i.e. less diffusive, when limiters are applied.
+			Compare fig. \ref{fig:WAF-riemann-const} to fig. \ref{fig:godunov-4}.
+
+	\item 	The choice of the Riemann solver has no noticeable effect on the solution. 
+			See fig. \ref{fig:WAF-riemann-const}.
+	
+	\item 	The effect of the limiter is comparable to how they behave on linear advection. 
+			See fig. \ref{fig:WAF-limiter-const-1} - \ref{fig:WAF-limiter-const-4}.
+
+
+	\item 	The trouble with vacuum that Godunov's method already had persists.
+			I couldn't find literature on how to deal with vacuum using the WAF method, so I made up my own.
+			For small time steps, it ``works'', as in it doesn't crash, and gives better results than the Godunov method if a left or a right state is vacuum.
+			But for vacuum generating conditions, the velocity in the middle develops massive spikes earlier than Godunov's method;
+			Compare figs. \ref{fig:waf-vacuum-generating-1} and \ref{fig:waf-vacuum-generating-2} to \ref{fig:godunov-vacuum-generating-2}.
+			
+			
+
+	\item \textbf{Order of Convergence}
+	
+		\begin{itemize}
+			
+			\item 	Looking at the time step dependence (fig. \ref{fig:waf-convergence-dt}), it's absolutely terrible.
+					I'm not sure why, but it is comparable to the results of WAF advection, fig. \ref{fig:advection-WAF-convergence-dt-step}. 
+					
+			\item 	For the cell width dependence (fig. \ref{fig:godunov-convergence-dx}), we get a remarkable slope of $\approx 1$ for all solvers.
+
+			
+			\item 	For the $C_{cfl}$ dependence, it again doesn't follow the expected slope of the $0.5$ power law that we get for small $\Delta t$.
+					Similarly to the WAF advection (fig. \ref{fig:advection-WAF-convergence-CFL-step}) however, it gets close to a power law (straight line in log space) already at ``high'' $C_{CFL} \approx 0.7$, which is telling us that the diffusion which is $\propto (1 - C_{CFL})$ for first order methods is strongly reduced.
+		\end{itemize}
+\end{itemize}
