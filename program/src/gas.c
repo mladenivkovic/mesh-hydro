@@ -122,8 +122,6 @@ void gas_get_cflux_from_cstate(cstate *c, cstate *f, int dimension){
     f->rhou[(dimension+1) % 2] = c->rhou[(dimension+1) % 2] * v;
     f->E = (c->E + p) * v;
   } else {
-    float v = 0;
-    float p = 0;
     f->rhou[0] = 0;
     f->rhou[1] = 0;
     f->E = 0;

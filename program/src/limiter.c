@@ -160,18 +160,14 @@ void limiter_get_slope_right(cell* c, pstate* slope, int dimension){
   int i, j;
   cell_get_ij(c, &i, &j);
 
-  float vel = 0;
 #if NDIM == 1
-  vel = c->prim.u[0];
   Uip1 = grid[i+1].prim;
   Ui = grid[i].prim;
 #elif NDIM == 2
   if (dimension == 0){
-    vel = c->prim.u[0];
     Uip1 = grid[i+1][j].prim;
     Ui = grid[i][j].prim;
   } else if (dimension == 1){
-    vel = c->prim.u[1];
     Uip1 = grid[i][j+1].prim;
     Ui = grid[i][j].prim;
   }
