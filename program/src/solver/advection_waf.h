@@ -1,4 +1,4 @@
-/* Weighted Average Flux advection scheme 
+/* Weighted Average Flux ADVECTION scheme 
  * declaration of functions additional to those in solver.h */
 
 /* Written by Mladen Ivkovic, JAN 2020

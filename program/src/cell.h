@@ -23,9 +23,11 @@ typedef struct{
   cstate cflux;  /* fluxes of conserved variables */
 
   /* The following is needed for the WAF scheme */
+#if SOLVER == WAF
   float Sk[3];                /* wave speeds of the Riemann solution */
   cstate riemann_fluxes[4];   /* the emerging fluxes: F_L, F*_L, F*_R, F_R */
   float delta_q[3];           /* difference in densities between each wave */
+#endif
 
 } cell;
 

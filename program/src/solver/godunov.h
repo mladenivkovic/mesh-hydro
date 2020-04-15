@@ -1,4 +1,5 @@
-/* First order Godunov scheme */
+/* First order Godunov scheme 
+ * declaration of functions additional to those in solver.h */
 
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
@@ -10,7 +11,6 @@
 #define GODUNOV_H
 
 void solver_init_step();
-void solver_get_dt(float* dt, int step);
 void solver_compute_fluxes(float* dt, int dimension);
 void solver_advance_step(float* dt, int dimension);
 
