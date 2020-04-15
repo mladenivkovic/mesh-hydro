@@ -8,6 +8,7 @@
 
 
 #include "gas.h"
+#include "defines.h"
 
 typedef struct{
 
