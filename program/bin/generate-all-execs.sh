@@ -30,9 +30,9 @@ genmakefile(){
 function errexit() {
     # usage: errexit $? "optional message string"
     if [[ "$1" -ne 0 ]]; then
-        myecho "ERROR OCCURED. ERROR CODE $1"
+        echo "ERROR OCCURED. ERROR CODE $1"
         if [[ $# > 1 ]]; then
-            myecho "$2"
+            echo "$2"
         fi
         exit $1
     else
