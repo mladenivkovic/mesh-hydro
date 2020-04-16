@@ -63,7 +63,7 @@ function advection(){
 
 
     #---------------------------
-    # slope limiters
+    # with limiters
     #---------------------------
     for ndim in 1 2; do
         for solver in ADVECTION_PWLIN ADVECTION_WAF; do
@@ -101,13 +101,39 @@ function godunov(){
 function waf(){
 
     #---------------------------
-    # Godunov
+    # WAF scheme
     #---------------------------
     for ndim in 1 2; do
         for RIEMANN in EXACT TRRS TSRS HLLC; do
             for LIMITER in MINMOD SUPERBEE MC VANLEER; do
                 make clean
                 genmakefile $ndim WAF $RIEMANN $LIMITER hydro-WAF-"$RIEMANN"-"$LIMITER"-"$ndim"D
+                make
+                errexit $?
+            done
+        done
+    done
+    rm -f defines.mk
+}
+
+
+
+
+function muscl(){
+
+    #---------------------------
+    # MUSCL-Hancock scheme
+    #---------------------------
+    for ndim in 1 2; do
+        for RIEMANN in EXACT TRRS TSRS HLLC; do
+            # no limiter first
+            make clean
+            genmakefile $ndim MUSCL $RIEMANN NONE hydro-MUSCL-"$RIEMANN"-NO_LIMITER-"$ndim"D
+            make
+            errexit $?
+            for LIMITER in MINMOD SUPERBEE VANLEER; do # skip MC limiter
+                make clean
+                genmakefile $ndim MUSCL $RIEMANN $LIMITER hydro-MUSCL-"$RIEMANN"-"$LIMITER"-"$ndim"D
                 make
                 errexit $?
             done
@@ -142,3 +168,4 @@ advection
 godunov
 riemann
 waf
+muscl
