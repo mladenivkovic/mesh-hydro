@@ -6,6 +6,7 @@
 #include "gas.h"
 #include "params.h"
 #include "riemann.h"
+#include "utils.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -14,9 +15,11 @@
 
 
 
-void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, int dimension){
+void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
+    int dimension){
   /* -------------------------------------------------------------------------
-   * Solve the Riemann problem posed by a left and right state
+   * Solve the Riemann problem posed by a left and right state.
+   * The HLLC solver gives you the fluxes directly, not the states.
    *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
@@ -47,8 +50,40 @@ void riemann_solve_hllc(pstate* left, pstate* right, cstate* sol, float xovert, 
 
 
 
+void riemann_solve_hllc_state(pstate* left, pstate* right, pstate* sol, 
+    float xovert, int dimension){
+  /* -------------------------------------------------------------------------
+   * Solve the Riemann problem posed by a left and right state
+   * Return the state at xovert := x/t instead of the flux
+   *
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * cstate* sol:     cstate where solution (conserved FLUX) will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
+   * ------------------------------------------------------------------------- */
 
-void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL, float* SR, float* Sstar, int dim){
+  if (riemann_has_vacuum(left, right, dimension)){
+    /* the vacuum solver wants a pstate as the argument for the solution.
+     * so give him one, and later translate it back to the conserved flux. */
+    riemann_compute_vacuum_solution(left, right, sol, xovert, dimension);
+  } 
+  else {
+    float SL = 0;
+    float SR = 0;
+    float Sstar = 0;
+    riemann_compute_wave_speed_estimates(left, right, &SL, &SR, &Sstar, dimension);
+    riemann_sample_hllc_solution_state(left, right, SL, SR, Sstar, sol, xovert, dimension);
+  }
+}
+
+
+
+
+
+
+void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, 
+    float* SL, float* SR, float* Sstar, int dim){
   /*--------------------------------------------------------------------------------------------------------
    * Get estimates for the left and right HLLC wave speed.
    *
@@ -56,6 +91,7 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
    * pstate* right:   right state of Riemann problem
    * float SL:        left wave speed estimate
    * float SR:        right wave speed estimate
+   * float Sstar:     contact wave speed estimate
    * int dim:         which fluid velocity dimension to use. 0: x, 1: y
    * ------------------------------------------------------------------------------------------------------- */
 
@@ -138,7 +174,6 @@ void riemann_compute_wave_speed_estimates(pstate* left, pstate* right, float* SL
 
 
 
-
 float qLR(float pstar, float pLR){
   /*-----------------------------------------------------
    * Compute q_{L,R} needed for the wave speed estimate.
@@ -162,26 +197,77 @@ float qLR(float pstar, float pLR){
 
 
 
-void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
-  float SR, float Sstar, cstate* sol, float xovert, int dim){
-  /*--------------------------------------------------------------------------------------------------
-   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+
+void riemann_hllc_compute_star_cstates(pstate* left, pstate* right, float SL, 
+    float SR, float Sstar, cstate* UstarL, cstate* UstarR, int dim){
+
+   /*-----------------------------------------------------------------------------
+   * Compute the !conserved! star states of the solution of the riemann problem    
    *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
    * float SL:        left wave speed estimate
    * float SR:        right wave speed estimate
+   * float Sstar:     contact wave speed estimate
+   * cstate* UstarL:  left star conserved state (will be written to)
+   * cstate* UstarR:  right star conserved state (will be written to)
+   * int dim:         along which dimension are we working
+   *------------------------------------------------------------------------------ */
+
+  float SLMUL = SL - left->u[dim];
+  float SRMUR = SR - right->u[dim];
+
+
+  /* -------------------------------------------- */ 
+  /* compute left and right conserved star states */
+  /* -------------------------------------------- */ 
+
+
+  float lcomp = left->rho * SLMUL / (SL - Sstar);
+  UstarL->rho = lcomp;
+  UstarL->rhou[dim] = lcomp * Sstar;
+  UstarL->rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
+
+  float EL = 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
+  UstarL->E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
+      (Sstar + left->p / (left->rho * SLMUL)));
+
+
+  float rcomp = right->rho * SRMUR / (SR - Sstar);
+  UstarR->rho = rcomp;
+  UstarR->rhou[dim] = rcomp * Sstar;
+  UstarR->rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
+
+  float ER = 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
+  UstarR->E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
+      (Sstar + right->p / (right->rho * SRMUR)));
+}
+
+
+
+
+
+
+
+void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL, 
+    float SR, float Sstar, cstate* sol, float xovert, int dim){
+  /*--------------------------------------------------------------------------------------------------
+   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   * Directly returns the flux at x/t, not the state like other Riemann solvers!
+   *
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float SL:        left wave speed estimate
+   * float SR:        right wave speed estimate
+   * float Sstar:     contact wave speed estimate
    * cstate* sol:     cstate where solution (conserved FLUX) will be written
    * float xovert:    x / t, point where solution shall be sampled
    * int dim:         which fluid velocity direction to use. 0: x, 1: y
    *--------------------------------------------------------------------------------------------------*/
 
-  float SLMUL = SL - left->u[dim];
-  float SRMUR = SR - right->u[dim];
-
-  /* --------------------------------------- */ 
-  /* compute left and right conserved states */
-  /* --------------------------------------- */ 
+  /* -------------------------------------------- */
+  /* compute left and right star conserved states */
+  /* -------------------------------------------- */
   cstate UL;
   gas_init_cstate(&UL);
   gas_prim_to_cons(left, &UL);
@@ -191,37 +277,11 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
   gas_prim_to_cons(right, &UR);
 
 
-
-
-  /* -------------------------------------------- */ 
-  /* compute left and right conserved star states */
-  /* -------------------------------------------- */ 
-
   cstate UstarL;
   gas_init_cstate(&UstarL);
-
-  float lcomp = left->rho * SLMUL / (SL - Sstar);
-  UstarL.rho = lcomp;
-  UstarL.rhou[dim] = lcomp * Sstar;
-  UstarL.rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
-
-  float EL= 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
-  UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
-      (Sstar + left->p / (left->rho * SLMUL)));
-
-
   cstate UstarR;
   gas_init_cstate(&UstarR);
-
-  float rcomp = right->rho * SRMUR / (SR - Sstar);
-  UstarR.rho = rcomp;
-  UstarR.rhou[dim] = rcomp * Sstar;
-  UstarR.rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
-
-  float ER= 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
-  UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
-      (Sstar + right->p / (right->rho * SRMUR)));
-
+  riemann_hllc_compute_star_cstates(left, right, SL, SR, Sstar, &UstarL, &UstarR, dim);
 
 
 
@@ -236,9 +296,6 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
   cstate FR;
   gas_init_cstate(&FR);
   gas_get_cflux_from_cstate(&UR, &FR, dim);
-
-
-
 
 
 
@@ -298,6 +355,84 @@ void riemann_sample_hllc_solution(pstate* left, pstate* right, float SL,
     sol->E = FR.E;
   }
 
+  return;
+}
+
+
+
+
+
+
+void riemann_sample_hllc_solution_state(pstate* left, pstate* right, float SL, 
+    float SR, float Sstar, pstate* sol, float xovert, int dim){
+  /*--------------------------------------------------------------------------------------------------
+   * Compute the solution of the riemann problem at given time t and x, specified as xovert = x/t     
+   * Returns the state at x/t, not the flux
+   *
+   * pstate* left:    left state of Riemann problem
+   * pstate* right:   right state of Riemann problem
+   * float SL:        left wave speed estimate
+   * float SR:        right wave speed estimate
+   * float Sstar:     contact wave speed estimate
+   * cstate* sol:     cstate where solution (conserved FLUX) will be written
+   * float xovert:    x / t, point where solution shall be sampled
+   * int dim:         which fluid velocity direction to use. 0: x, 1: y
+   *--------------------------------------------------------------------------------------------------*/
+
+  /* compute left and right star conserved states */
+  cstate UL;
+  gas_init_cstate(&UL);
+  gas_prim_to_cons(left, &UL);
+
+  cstate UR;
+  gas_init_cstate(&UR);
+  gas_prim_to_cons(right, &UR);
+
+
+  cstate UstarL;
+  gas_init_cstate(&UstarL);
+  cstate UstarR;
+  gas_init_cstate(&UstarR);
+  riemann_hllc_compute_star_cstates(left, right, SL, SR, Sstar, &UstarL, &UstarR, dim);
+
+
+  /* Get left and right primitive star states */
+  pstate WstarL;
+  gas_init_pstate(&WstarL);
+  gas_cons_to_prim(&UstarL, &WstarL);
+
+  pstate WstarR;
+  gas_init_pstate(&WstarR);
+  gas_cons_to_prim(&UstarR, &WstarR);
+
+
+
+  /* finally, sample the solution */
+  if (xovert <= SL){
+    /* solution is W_L */
+    sol->rho = left->rho;
+    sol->u[0] = left->u[0];
+    sol->u[1] = left->u[1];
+    sol->p = left->p;
+  } else if (xovert <= Sstar){
+    /* solution is W*_L */
+    sol->rho = WstarL.rho;
+    sol->u[0] = WstarL.u[0];
+    sol->u[1] = WstarL.u[1];
+    sol->p = WstarL.p;
+  } else if ( xovert <= SR ){
+    /* solution is W*_R */
+    sol->rho = WstarR.rho;
+    sol->u[0] = WstarR.u[0];
+    sol->u[1] = WstarR.u[1];
+    sol->p = WstarR.p;
+  } else {
+    /* solution is W_R */
+    sol->rho = right->rho;
+    sol->u[0] = right->u[0];
+    sol->u[1] = right->u[1];
+    sol->p = right->p;
+  }
 
   return;
 }
@@ -357,33 +492,13 @@ void riemann_get_hllc_full_solution_for_WAF(pstate* left, pstate* right,
   /* compute left and right conserved star states */
   /* -------------------------------------------- */ 
 
+  /* compute left and right star conserved states */
   cstate UstarL;
   gas_init_cstate(&UstarL);
-
-  float SLMUL = SL - left->u[dim];
-  float SRMUR = SR - right->u[dim];
-
-  float lcomp = left->rho * SLMUL / (SL - Sstar);
-  UstarL.rho = lcomp;
-  UstarL.rhou[dim] = lcomp * Sstar;
-  UstarL.rhou[(dim + 1) % 2] = lcomp * left->u[(dim + 1) % 2];
-
-  float EL = 0.5 * left->rho * (left->u[0] * left->u[0] + left->u[1] * left->u[1]) + left->p / GM1;
-  UstarL.E = lcomp * ( (EL / left->rho ) + (Sstar - left->u[dim]) * 
-      (Sstar + left->p / (left->rho * SLMUL)));
-
-
   cstate UstarR;
   gas_init_cstate(&UstarR);
+  riemann_hllc_compute_star_cstates(left, right, SL, SR, Sstar, &UstarL, &UstarR, dim);
 
-  float rcomp = right->rho * SRMUR / (SR - Sstar);
-  UstarR.rho = rcomp;
-  UstarR.rhou[dim] = rcomp * Sstar;
-  UstarR.rhou[(dim + 1) % 2] = rcomp * right->u[(dim + 1) % 2];
-
-  float ER = 0.5 * right->rho * (right->u[0] * right->u[0] + right->u[1] * right->u[1]) + right->p / GM1;
-  UstarR.E = rcomp * ( (ER / right->rho ) + (Sstar - right->u[dim]) * 
-      (Sstar + right->p / (right->rho * SRMUR)));
 
 
   /* store jumps over density in delta_q */
@@ -451,4 +566,5 @@ void riemann_compute_star_states(pstate *left, pstate *right,
    * for the HLLC solver (riemann_get_hllc_full_solution)
    * so this function is just empty here so that the code
    * will compile correctly. */
+  throw_error("riemann_compute_star_states shouldn't be called for the HLLC solver");
 }

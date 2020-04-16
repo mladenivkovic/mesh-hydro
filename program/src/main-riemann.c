@@ -117,7 +117,11 @@ int main(int argc, char* argv[]){
   for (int i = BC; i<BC+pars.nx; i++){
     float x = (i-BC+0.5)*pars.dx - center;
     float xovert = x / pars.tmax;
+#if RIEMANN == HLLC
+    riemann_solve_hllc_state(&left, &right, &grid[i].prim, xovert, /*dimension=*/0);
+#else
     riemann_solve(&left, &right, &grid[i].prim, xovert, /*dimension=*/0);
+#endif
   }
 
 

@@ -120,7 +120,7 @@ Things to keep in mind
     - WAF advection without the use of flux limiters introduces strong unphysical oscillations (as it is expected to). You probably won't be able to run the code over a long time interval. In fact, most vacuum examples can't even pass the tests.
 - Riemann related:
     - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
-    - You can't use the HLLC solver as an individual solver to just solve a Riemann problem. (You also shouldn't be doing that.)
+    - ~~You can't use the HLLC solver as an individual solver to just solve a Riemann problem.~~ Now you can :)
 
 
 

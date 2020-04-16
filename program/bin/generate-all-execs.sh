@@ -153,7 +153,7 @@ function riemann(){
     # Code as a Riemann Solver
     #---------------------------
 
-    for RIEMANN in EXACT TRRS TSRS; do
+    for RIEMANN in EXACT TRRS TSRS HLLC; do
         make -f Makefile-Riemann clean
         genmakefile 1 NONE $RIEMANN NONE riemann-"$RIEMANN"
         make -f Makefile-Riemann
