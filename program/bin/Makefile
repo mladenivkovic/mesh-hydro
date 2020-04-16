@@ -10,6 +10,15 @@ EXEC = hydro
 # NDIM = 1
 NDIM = 2
 
+# set which hydro solver to use.
+# Choices: GODUNOV, WAF, MUSCL, ADVECTION_PWCONST, ADVECTION_PWLIN, ADVECTION_WAF
+SOLVER = GODUNOV
+# SOLVER = WAF
+# SOLVER = MUSCL
+# SOLVER = ADVECTION_PWCONST
+# SOLVER = ADVECTION_PWLIN
+# SOLVER = ADVECTION_WAF
+
 
 # set which Riemann solver to use.
 # Choices: EXACT, TRRS, TSRS, HLLC
@@ -18,15 +27,6 @@ NDIM = 2
 # RIEMANN = TRRS
 # RIEMANN = TSRS
 RIEMANN = HLLC
-
-
-# set which hydro solver to use.
-# Choices: GODUNOV, WAF, ADVECTION_PWCONST, ADVECTION_PWLIN, ADVECTION_WAF
-SOLVER = GODUNOV
-# SOLVER = WAF
-# SOLVER = ADVECTION_PWCONST
-# SOLVER = ADVECTION_PWLIN
-# SOLVER = ADVECTION_WAF
 
 # set which flux limiter to use.
 # Choices: NONE, MINMOD, SUPERBEE, VANLEER, MC
@@ -41,6 +41,9 @@ LIMITER = NONE
 # if there is a defines.mk present, overwrite the
 # definitions above with its contents
 ifneq ("$(wildcard defines.mk)","")
+$(warning WARNING: ================================================)
+$(warning WARNING: READING IN DEFINITIONS FROM defines.mk)
+$(warning WARNING: ================================================)
 include defines.mk
 endif
 

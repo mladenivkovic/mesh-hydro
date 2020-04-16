@@ -105,7 +105,7 @@ LIMITERINT = 4
 endif
 
 
-COMPILEDATE=$(shell date "+%F %T")
+COMPILEDATE:=$(shell date "+%F %T")
 
 
 
