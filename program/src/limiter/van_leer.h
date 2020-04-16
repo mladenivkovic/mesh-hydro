@@ -10,6 +10,4 @@
 #ifndef VAN_LEER_H
 #define VAN_LEER_H
 
-float limiter_vanleer(float r);
-
 #endif

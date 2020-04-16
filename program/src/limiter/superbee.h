@@ -10,6 +10,4 @@
 #ifndef SUPERBEE_H
 #define SUPERBEE_H
 
-float limiter_superbee(float r);
-
 #endif

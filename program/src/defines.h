@@ -43,6 +43,9 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 /* boxsize */
 #define BOXLEN 1.
 
+/* define slope of each cell in MUSCL scheme as
+ * slope = 0.5* (1 + omega) (U_{i}-U_{i-1}) +  0.5 * (1 - omega) (U_{i+1} - U_{i}) */
+#define OMEGA 0.
 
 
 

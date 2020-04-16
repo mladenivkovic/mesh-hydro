@@ -4,6 +4,7 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include "defines.h"
 #include "gas.h"
 #include "cell.h"
 #include "limiter.h"
@@ -26,20 +27,10 @@ extern params pars;
 
 
 float limiter_phi_of_r(float r){
-  /* -----------------------------
-   * compute the actual phi(r) 
-   * ----------------------------- */
-
-  return(limiter_superbee(r));
-}
-
-
-
-
-float limiter_superbee(float r){
-  /* -----------------------------------------------------
-   * Computes the phi(r) for the superbee slope limiter
-   * ----------------------------------------------------- */
+  /* ---------------------------------------
+   * compute the actual flux limiter phi(r)
+   * for the superbee limiter
+   * --------------------------------------- */
 
   float max = 0.0;
 
@@ -53,4 +44,31 @@ float limiter_superbee(float r){
   if (temp > r) temp = r;       
   if (temp > max) max = temp;
   return(max);
+}
+
+
+
+
+
+
+float limiter_xi_of_r(float r){
+  /* ---------------------------------------
+   * compute the actual slope limiter xi(r)
+   * for the superbee limiter
+   * --------------------------------------- */
+  float xi = 0;
+  if (r > 0.) xi = 2.*r;
+  if (r > 0.5) xi = 1.0;
+  if (r > 1.){
+    float d = 1. - OMEGA + (1. + OMEGA)*r;
+    float xiR = 2./d;
+
+    /* xi = min(xiR, r) */
+    xi = r;
+    if (xiR < xi) xi = xiR;
+
+    /* xi = min(xi, 2) */
+    if (xi > 2.) xi = 2.;
+  }
+  return(xi);
 }

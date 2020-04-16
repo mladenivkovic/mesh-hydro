@@ -8,6 +8,7 @@
 #include "cell.h"
 #include "limiter.h"
 #include "params.h"
+#include "utils.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -33,6 +34,14 @@ float limiter_phi_of_r(float r){
 
 
 
+float limiter_xi_of_r(float r){
+  /* ----------------------------
+   * compute slope limiter xi(r)
+   * NOT IMPLEMENTED FOR MC!!!
+   * ---------------------------- */
+  throw_error("The slope limiter \\xi(r) is not implemented for the MC limiter. \nPlease try something else");
+  return(1.);
+}
 
 
 

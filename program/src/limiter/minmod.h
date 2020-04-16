@@ -10,6 +10,6 @@
 #ifndef MINMOD_H
 #define MINMOD_H
 
-float limiter_minmod(float a, float b);
+float minmod(float a, float b);
 
 #endif

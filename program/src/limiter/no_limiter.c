@@ -35,3 +35,15 @@ float limiter_phi_of_r(float r){
 
   return(phi_no_limiter);
 }
+
+
+
+
+
+float limiter_xi_of_r(float r){
+  /* -----------------------------------------
+   * compute the actual xi(r)
+   * ----------------------------------------- */
+
+  return (1.);
+}
