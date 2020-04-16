@@ -49,7 +49,7 @@ if __name__ == "__main__":
         p = np.mean(p, axis = 0)
         label = "t = {0:.3f}; mean value along y".format(t)
 
-    nsim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])
+    ndim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])
 
     if twostate:
         kwargs = label_to_kwargs(label)
