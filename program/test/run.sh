@@ -808,6 +808,152 @@ function waf_2D_limiters() {
 
 
 
+function muscl_1D(){
+    #-------------------------------------------
+    # 1D MUSCL stuff without limiters
+    #-------------------------------------------
+
+    # this one needs a bit of special attention because the oscillations can crash the code
+
+    for RIEMANN in EXACT TSRS HLLC; do
+        # genmakefile ndim solver riemann limiter
+        genmakefile 1 MUSCL $RIEMANN NONE
+        make clean && make
+        errexit $?
+
+        # non-vacuum
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+            # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+            genparamfile_transmissive 0 0.05 0 0 "$icprefix"-MUSCL-1D-$RIEMANN-NO_LIMITER 0.7
+
+            ./hydro paramfile.txt ./IC/"$icprefix".dat
+            errexit $?
+        done
+
+        # vacuum
+        
+        # !!!!!!!!!!!! MUSCL without limiters introduces strong oscillations, and the code can't finish.
+
+        # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
+        #     genparamfile_transmissive 0 0.005 0 0 "$icprefix"-MUSCL-1D-$RIEMANN-NO_LIMITER 0.2
+        #
+        #     ./hydro paramfile.txt ./IC/"$icprefix".dat
+        #     errexit $?
+        # done
+
+    done
+
+    for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+        ./overplot_riemann_solvers.py "$icprefix" MUSCL-1D NO_LIMITER
+        errexit $?
+    done
+
+
+}
+
+
+
+
+
+function muscl_1D_limiters() {
+    #-------------------------------------------
+    # 1D MUSCL stuff with limiters
+    #-------------------------------------------
+
+    for LIMITER in MINMOD SUPERBEE VANLEER; do
+
+        for RIEMANN in EXACT TSRS HLLC; do
+            # genmakefile ndim solver riemann limiter
+            genmakefile 1 MUSCL $RIEMANN $LIMITER
+            make clean && make
+            errexit $?
+
+            # non-vacuum
+            for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+                # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+                genparamfile_transmissive 0 0.2 0 0 "$icprefix"-MUSCL-1D-$RIEMANN-$LIMITER 0.8
+
+                ./hydro paramfile.txt ./IC/"$icprefix".dat
+                errexit $?
+            done
+
+            # vacuum
+
+            # vacuum isn't well handled with MUSCL. Skip the tests.
+
+            # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
+            #     genparamfile_transmissive 0 0.01 0 0 "$icprefix"-MUSCL-1D-$RIEMANN-$LIMITER 0.5
+            #
+            #     ./hydro paramfile.txt ./IC/"$icprefix".dat
+            #     errexit $?
+            # done
+
+        done
+
+        # plotting
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+        # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating riemann-sod-shock riemann-sod-shock-reverse; do
+            ./overplot_riemann_solvers.py "$icprefix" MUSCL-1D $LIMITER
+            errexit $?
+        done
+
+    done
+
+}
+
+
+
+
+
+
+
+function muscl_2D_limiters() {
+    #-------------------------------------------
+    # 2D MUSCL stuff with limiters
+    #-------------------------------------------
+
+    for LIMITER in MINMOD SUPERBEE VANLEER; do
+
+        for RIEMANN in EXACT TSRS HLLC; do
+            # genmakefile ndim solver riemann limiter
+            genmakefile 2 MUSCL $RIEMANN $LIMITER
+            make clean && make
+            errexit $?
+
+            # non-vacuum
+            for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+                # genparamfile_transmissive nsteps tmax foutput dt_out basename ccfl
+                genparamfile_transmissive 0 0.2 0 0 "$icprefix"-MUSCL-2D-$RIEMANN-$LIMITER 0.9
+
+                ./hydro paramfile.txt ./IC/"$icprefix".dat
+                errexit $?
+            done
+        done
+
+        for icprefix in riemann-sod-shock riemann-sod-shock-reverse; do
+            ./overplot_riemann_solvers.py "$icprefix" MUSCL-2D $LIMITER
+            errexit $?
+        done
+
+    done
+
+    # do kelvin helmholtz only for one
+    genmakefile 2 MUSCL HLLC VANLEER
+    make clean && make
+    errexit $?
+
+    # genparamfile nsteps tmax foutput dt_out basename ccfl
+    genparamfile 0 3 0 0 "MUSCL-kelvin-helmholtz" 0.9
+    ./hydro paramfile.txt ./IC/kelvin-helmholtz-128.dat
+    $plotdir/plot_result.py MUSCL-kelvin-helmholtz-0001.out
+    errexit $?
+
+}
+
+
+
+
+
 
 
 #=====================================
@@ -838,6 +984,10 @@ godunov_2D
 waf_1D
 waf_1D_limiters
 waf_2D_limiters
+
+muscl_1D
+muscl_1D_limiters
+muscl_2D_limiters
 
 
 

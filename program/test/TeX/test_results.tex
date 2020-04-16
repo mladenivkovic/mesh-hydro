@@ -998,4 +998,241 @@
 
 
 
+
+
+
+
+
+
+
+
+
+\clearpage
+%========================================================
+\section{MUSCL Method}
+%========================================================
+
+\subsection{1D with different Limiters}
+%--------------------------------------------------------
+
+
+
+\subsubsection{Without limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-NO_LIMITER-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, no flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-NO_LIMITER-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, no flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-NO_LIMITER-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, no flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-NO_LIMITER-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, no flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+
+
+\clearpage
+\subsubsection{MINMOD limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-MINMOD-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-MINMOD-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-MINMOD-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-MINMOD-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+
+
+\clearpage
+\subsubsection{van Leer limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-VANLEER-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-VANLEER-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-VANLEER-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-VANLEER-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+
+\clearpage
+\subsubsection{SUPERBEE limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-SUPERBEE-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-SUPERBEE-riemann-sod-shock-1D.png}%
+        \caption{MUSCL method for (right facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-1D-SUPERBEE-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-1D-SUPERBEE-riemann-sod-shock-reverse-1D.png}%
+        \caption{MUSCL method for (left facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+
+
+\subsection{2D with different Limiters}
+%--------------------------------------------------------
+
+
+
+
+
+
+\clearpage
+\subsubsection{MINMOD limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-MINMOD-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-MINMOD-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-MINMOD-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, MINMOD flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-MINMOD-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, MINMOD flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+\clearpage
+\subsubsection{van Leer limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-VANLEER-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-VANLEER-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-VANLEER-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, van Leer flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-VANLEER-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, van Leer flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+\clearpage
+\subsubsection{SUPERBEE limiter}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-SUPERBEE-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-SUPERBEE-riemann-sod-shock-2D.png}%
+        \caption{MUSCL method for (right facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-2D-SUPERBEE-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, SUPERBEE flux limiter. Expected result.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-2D-SUPERBEE-riemann-sod-shock-reverse-2D.png}%
+        \caption{MUSCL method for (left facing) sod shock, SUPERBEE flux limiter. Obtained result.}
+    \end{figure}
+
+
+
+
+
+
+
+\clearpage
+\subsection{Others in 2D}
+%--------------------------------------------------------
+
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=.9\textwidth]{./figures/MUSCL-kelvin-helmholtz-0001.png}%
+        \caption{MUSCL method for Kelvin Helmholtz instability. Expected result with HLLC solver and van Leer limiter.}
+        \includegraphics[width=.9\textwidth]{../MUSCL-kelvin-helmholtz-0001.png}%
+        \caption{MUSCL method for Kelvin Helmholtz instability. Obtained result with HLLC solver and van Leer limiter.}
+    \end{figure}
+
+
+
+
+
+
 \end{document}
