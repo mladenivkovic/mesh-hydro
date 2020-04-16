@@ -222,7 +222,6 @@ void solver_prepare_flux_computation(cell* c, float dthalf, int dim){
 }
 
 
-U
 
 
 

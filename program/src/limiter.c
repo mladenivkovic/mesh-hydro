@@ -110,7 +110,7 @@ void limiter_get_phi(cell* c, pstate* phi, int dimension){
    * dimension:   for which dimension we're working
    * ------------------------------------------------------------------------ */
 
-#if SOLVER == ADVECTION_WAF && if LIMITER == NONE
+#if (SOLVER == ADVECTION_WAF) && (LIMITER == NONE)
   /* if we utilize a WAF method and no limiter, the implemented centered 
    * slope will give wrong results. Instead, catch it here and just return 
    * phi = 1. Then psi = 1 - (1 - |c|)phi(r) = |c| and we indeed get the
