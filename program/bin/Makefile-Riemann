@@ -11,10 +11,10 @@ EXEC = riemann
 
 # set which Riemann solver to use.
 # Choices: EXACT, TRRS, TSRS, HLLC
-# RIEMANN = NONE
-# RIEMANN = EXACT
-RIEMANN = TRRS
+RIEMANN = EXACT
+# RIEMANN = TRRS
 # RIEMANN = TSRS
+# RIEMANN = HLLC
 
 
 # set default values if not defined otherwise
@@ -29,6 +29,9 @@ endif
 # if there is a defines.mk present, overwrite the
 # definitions above with its contents
 ifneq ("$(wildcard defines.mk)","")
+$(warning WARNING: ================================================)
+$(warning WARNING: READING IN DEFINITIONS FROM defines.mk)
+$(warning WARNING: ================================================)
 include defines.mk
 endif
 
