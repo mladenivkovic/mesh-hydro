@@ -47,18 +47,19 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 
   int dim;
   float dthalf = *dt*0.5;
-  dim = 0;
+
+  dim = step % 2;
   debugmessage("Advancing dim=%d for half timestep", dim);
   solver_compute_fluxes(&dthalf, dim);
   solver_advance_step(&dthalf, dim);
 
-  dim = 1;
+  dim = (step + 1) % 2;
   debugmessage("Advancing dim=%d for full timestep", dim);
   solver_init_step();
   solver_compute_fluxes(dt, dim);
   solver_advance_step(dt, dim);
 
-  dim = 0;
+  dim = step % 2;
   debugmessage("Advancing dim=%d for half timestep", dim);
   solver_init_step();
   solver_compute_fluxes(&dthalf, dim);
