@@ -15,6 +15,7 @@ You can pick between:
 - Hydro solvers:
 	- Godunov (upwind)
     - Weighted Average Flux (WAF)
+    - MUSCL-Hancock
 - Riemann solvers:
 	- Exact	(exact iterative solver)
 	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
