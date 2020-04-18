@@ -781,8 +781,8 @@ Initially all we need to compute is the star states, then we sample the solution
 
 The specific Riemann solvers are \texttt{/program/src/riemann} directory.
 If we have a vacuum condition, we always use the vacuum solver, which is given above.
-It's not iterative, so no reason to do approximate solutios there.
-Note however that for the Godunov method, we may have problems with the vacuum solution.
+It's not iterative, so no reason to do approximate solutions there.
+Note however that for the Godunov method (section \ref{chap:godunov}), we may have problems with the vacuum solution.
 The vacuum solution of the Riemann problem gives non-zero velocities in regions where $\rho = p = E = 0$.
 So if we have for example a left vacuum, until the initial state boundary we will typically have $\U = 0$, while the Riemann problem will give $u \neq 0$ for the flux;
 So jump discontinuities will form.

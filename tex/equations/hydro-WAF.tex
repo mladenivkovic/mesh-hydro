@@ -321,3 +321,48 @@ For vacuum, we have three cases to consider, where $\U_{vac}$ describes the vacu
 %===================================================================
 
 
+
+The cells are stored just like in the Godunov method.
+Additionally, we need to store
+
+\begin{itemize}
+	\item the three wave speeds $S^{(1)}$, $S^{(2)}$, $S^{(3)}$ as \texttt{float}s
+	\item the four fluxes in the four constant regions $\F_L$, $\F_L^*$, $\F_R^*$, $\F_R$ (in that order) as \texttt{cstate}s
+	\item the three jumps in density $\Delta q^{(1)}$, $\Delta q^{(2)}$, $\Delta q^{(3)}$ between each wave
+\end{itemize}
+
+for each cell.
+
+
+The flux at $x_{i+\half, j}$ and $y_{i, j+\half}$ are stored in \texttt{cflux}of cell \verb|grid[i, j]|.
+Because we're doing dimensional splitting, it suffices to have only one storage place, as they will be used in successive order.
+See section \ref{chap:dimensional-splitting} for details.
+
+We can afford to store $x_{i+\half}$ at cell $i$ because we have at least 2 extra virtual boundary cell which is used to apply boundary conditions, so the flux at $x_{-\half}$ will be stored in \verb|grid[BC-1]|, where \texttt{BC} is the number of boundary cells used, defined in \texttt{defines.h}.
+ 
+
+
+
+The related functions are written in \texttt{/program/src/solver/waf.c} and \texttt{/program/src/solver/waf.h}.
+The hydro related functions are called in the main loop in \texttt{/program/src/main.c} when \verb|solver_step(...)| is called.
+
+The \verb|solver_step(...)| function does the following for the 1D case:
+\begin{itemize}
+	\item 	Reset the stored fluxes from the previous timestep to zero
+	\item 	Compute the primitive states for all cells from the updated conserved states
+	\item 	Impose boundary conditions (section \ref{chap:boundary-conditions})
+	\item 	Find the maximal timestep that you can do by applying the CFL condition \ref{eq:godunov-cfl}.
+	\item 	Compute fluxes:
+	\begin{itemize}
+		\item 	For every cell, first solve the Riemann problem and find the three wave speeds, four fluxes, and three jumps in density.
+				We need all the jumps in density present before we can compute the fluxes, because for the limiting procedure, the $k$-th wave of cell $i$ is compared to the $k$-th wave of cells $i \pm 1$.
+				Hence all the waves between all pairs of cells need to be known before the actual intercell flux can be computed.
+				This is done by first solving the Riemann problems between each cell pair in a single loop over all cells, and then the rest of the solution is done in a second loop over all cells.
+		\item 	For every cell pair, compute the WAF flux using the wave speeds, jumps over density, and fluxes found in the previous loop.
+		\item 	Store the flux $\F_{i+\half}$ in the \texttt{struct cstate cflux} struct of the cell $i$.
+	\end{itemize}
+	\item 	Update the states: Effectively compute $\U^{n+1}$ at this point using $\U_i^n$, the flux $\F_{i+\half}$ stored in every cell $i$, and the flux $\F_{i-\half}$ stored in every cell $i-1$.
+\end{itemize}
+
+
+

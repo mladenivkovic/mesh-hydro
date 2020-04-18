@@ -99,6 +99,8 @@ To read about how to use the code, see the \texttt{/README.md} file.
 			Slope limiter functions (section \ref{chap:limiters}) for specific limiters.
 			They will be included by \texttt{/program/src/limiter.h} during compile time by setting the corresponding variable name in the \texttt{/program/bin/Makefile}.
 			
+			Essentially, these files only contain the actual computation of $\phi(r)$ and $\xi(r)$.
+			
 			
 	\item 	\texttt{/program/src/main.c}:
 			
@@ -119,6 +121,10 @@ To read about how to use the code, see the \texttt{/README.md} file.
 	
 			Riemann solver functions (section \ref{chap:riemann}) for specific Riemann solvers.
 			They will be included by \texttt{/program/src/riemann.h} during compile time by setting the corresponding variable name in the \texttt{/program/bin/Makefile}.
+			
+			Essentially, these files contain only the specific function to get the star state pressure and contact wave velocity.
+			The only exception is the HLLC solver, which works a bit differently than the other implemented solvers.
+			There, essentially everything needs to be done in a special way, so the solver contains its own routines, with a ``\texttt{HLLC}'' added to the function names.
 
 	\item 	\texttt{/program/src/solver.h}, \texttt{/program/src/solver.c}:
 	
