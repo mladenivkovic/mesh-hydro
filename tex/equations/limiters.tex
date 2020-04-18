@@ -138,9 +138,18 @@ Depending on the way you're trying to get high-order accuracy, you can have vari
 
 
 
-
 Let's start with slope limiters.
-The idea is to compute the slope in way that is useful for us based on the current situation of the gas state that we're solving for.
+The idea is to compute the slope of the states in way that is useful for us based on the current situation of the gas state that we're solving for.
+
+
+
+
+
+
+
+%==========================================================
+\subsubsection{Slope Limiters for Linear Advection}
+%==========================================================
 
 The choice of the slope can be expressed via a function $\phi(r)$.
 For linear advection, we are solving the equation:
@@ -267,6 +276,17 @@ We only use the downwind value to estimate the state inside the cell, not to com
 
 
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.9\textwidth]{./figures/limiters.pdf}%
+	\caption{
+		\label{fig:limiters-r-phi}
+		The behaviour for different slope limiters. 
+		The grey zone is the zone allowed by the conditions \ref{eq:TVD-consequence-first}  - \ref{eq:TVD-consequence-last}, and is the region in which $\phi(r)$ yields a TVD method.
+	}
+\end{figure}
+
+
 
 
 
@@ -290,11 +310,38 @@ Other restrictions follow from the constraint that the method should be TVD and 
 Effectively, this defines regions in the $r-\phi(r)$ diagram through which the limiters are allowed to pass such that they are still TVD (fig \ref{fig:limiters-r-phi}).
 The implemented limiters are given in section \ref{chap:implemented_limiters}.
 
+The functions $\phi(r)$ are typically called \emph{flux limiters}, even though we are using them here to limit slopes.
+Because who needs consistency in their life, right?
+In any case, in principle you need to derive your limiters separately for every method that you are trying to use.
+Sometimes you get lucky and can find relations to well known functions like $\phi(r)$, see e.g. \ref{chap:WAF-limiters}.
+
+However, this is not always the case.
+For the MUSCL-Hancock method, we need slope limiters $\xi(r)$ that are different from $\phi(r)$.
+But what we can do is define \emph{analogous} limiters based on how they explore the respective TVD region.
+For example, see how the superbee limiter in fig. \ref{fig:limiters-r-phi} follows the upper boundary of the TVD region?
+So we name the $\xi(r)$ that follows the upper boundary of the TVD region for the MUSCL-Hancock method also superbee.
+Recall that we defined the slope for the MUSCL-Hancock method as 
+
+\begin{equation}
+	\mathbf{s}_i = \frac{1}{2}(1 + \omega) (\U_{i} - \U_{i-1}) + \frac{1}{2} (1 - \omega) (\U_{i+1} - \U_{i})
+\end{equation}
+
+The superbee slope limiter $\xi(r)$ and the superbee flux limiter $\phi(r)$ are plotted w.r.t. $r$ in figure \ref{fig:superbee-xi-vs-phi} for the cases $\omega = 1$ (upwind slope), $\omega = 0$ (centered slope), and $\omega = -1$ (downwind slope).
+You can clearly see that they give different values for $r > 1$.
+The implemented slope limiters $\xi(r)$ are given in section \ref{chap:implemented_limiters}.
 
 
 
 
-
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=.9\textwidth]{./figures/superbee-xi-vs-phi.pdf}%
+	\caption{
+		\label{fig:superbee-xi-vs-phi}
+		Comparison of the superbee slope limiter $\xi(r)$ for $\omega = 1$ (upwind slope), $\omega = 0$ (centered slope), and $\omega = -1$ (downwind slope) and the flux limiter $\phi(r)$.
+		They are equivalent, but not equal.
+	}
+\end{figure}
 
 
 
@@ -316,8 +363,6 @@ The implemented limiters are given in section \ref{chap:implemented_limiters}.
 
 
 
-
-
 In general, flux limiters need to be constructed for each method individually.
 There are some general approaches to help you get started, see e.g. \cite{toro}.
 
@@ -328,7 +373,7 @@ Lucky for us, for linear advection, we can find relations between the slope limi
 
 
 %=============================================================
-\subsubsection{The limited WAF flux}
+\subsubsection{The limited WAF flux}\label{chap:WAF-limiters}
 %=============================================================
 
 
@@ -380,6 +425,12 @@ Some possible choices for the limiter function $\phi(r)$ are given in section \r
 
 
 
+
+
+%=============================================================================
+\subsubsection{Flux limiters $\phi(r)$}
+%=============================================================================
+
 Some popular (and implemented) limiters are:
 \begin{flalign}
 	\text{Minmod} 								&&\quad \phi(r) &= \mathrm{minmod}(1, r)\\
@@ -405,15 +456,54 @@ The functions $\phi(r)$ are shown in fig. \ref{fig:limiters-r-phi}.
 
 
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=.9\textwidth]{./figures/limiters.pdf}%
-	\caption{
-		\label{fig:limiters-r-phi}
-		The behaviour for different slope limiters. 
-		The grey zone is the zone allowed by the conditions \ref{eq:TVD-consequence-first}  - \ref{eq:TVD-consequence-last}, and is the region in which $\phi(r)$ yields a TVD method.
-	}
-\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+%=============================================================================
+\subsubsection{Slope limiters $\xi(r)$}
+%=============================================================================
+
+Some popular (and implemented) limiters are:
+\begin{flalign}
+	\text{Minmod} 								&&\quad \xi(r) &= 
+					\begin{cases}
+						0, & r \leq 0\\
+						r, & 0 \leq r \leq 1\\
+						\min\{1, \xi_R(r)\}, & r \geq 1\\
+					\end{cases}
+			\\
+	\text{Superbee} 							&&\quad \xi(r) &= 
+						\begin{cases}
+							0, & r \leq 0\\
+							2r, & 0 \leq r \leq \frac{1}{2}\\
+							1, & \frac{1}{2} \leq r \leq 1 \\
+							\min\{r, \xi_R(r), 2\}, & r \geq 1\\
+						\end{cases}
+				\\
+	\text{van Leer}								&&\quad \xi(r) &= 
+						\begin{cases}
+							0, & r \leq 0\\
+							\min\{\frac{2r}{1+r},  \xi_R(r)\}, & r \geq 0\\
+						\end{cases}
+				\\
+\end{flalign}
+
+where
+
+\begin{align}
+	\xi_R(r) &= \frac{2}{1 - \omega + (1 + \omega) r} \\
+	r &= \frac{\U_i - \U_{i-1}}{\U_{i+1} - \U_{i}} \quad\quad \text{for each component of }\U
+\end{align}
 
 
 
