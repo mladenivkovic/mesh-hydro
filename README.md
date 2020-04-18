@@ -117,10 +117,14 @@ Things to keep in mind
 - Hydrodynamics related:
     - This code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
     - If you change the adiabatic index in the definitions, and want to overplot exact Riemann solutions using the python scripts, don't forget to change gamma in `py/module/hydro_riemann.py` as well!
-    - WAF advection without the use of flux limiters introduces strong unphysical oscillations (as it is expected to). You probably won't be able to run the code over a long time interval. In fact, most vacuum examples can't even pass the tests.
+    - WAF methods (advection and hydro) without the use of flux limiters introduces strong unphysical oscillations (as it is expected to). You probably won't be able to run the code over a long time interval. In fact, most vacuum examples can't even pass the tests.
+    - The MUSCL-Hancock method doesn't work well with the TRRS solver. Like the WAF methods, oscillations occur if no limiter is used, and the code may crash and/or produce NANs.
+    - The MUSCL-Hancock method doesn't handle vacuum very well with this interpretation. Best to avoid it.
+    - There is no MC limiter implemented that works with the MUSCL-Hancock method. The code will throw an error if you try to run with it.
 - Riemann related:
     - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
     - ~~You can't use the HLLC solver as an individual solver to just solve a Riemann problem.~~ Now you can :)
+    - The TRRS solver doesn't do well with the MUSCL method. Best to avoid it.
 
 
 
