@@ -72,6 +72,8 @@ void io_read_ic_type(int* skip_lines){
     if (line_is_empty(tempbuff)) continue;
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
+    remove_whitespace(varname);
+    remove_whitespace(varvalue);
 
 
     if (strcmp(varname, "filetype") == 0) {
@@ -104,6 +106,8 @@ void io_read_ic_type(int* skip_lines){
       if (line_is_empty(tempbuff)) continue;
 
       sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
+      remove_whitespace(varname);
+      remove_whitespace(varvalue);
 
 
       if (strcmp(varname, "nx") == 0) {
@@ -178,6 +182,8 @@ void io_read_ic_twostate(int skip){
     if (!check_name_equal_value_present(tempbuff)) continue;
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
+    remove_whitespace(varname);
+    remove_whitespace(varvalue);
   
     if (strcmp(varname,"rho_L") == 0) {
       left.rho = atof(varvalue);
@@ -383,6 +389,8 @@ void io_read_paramfile(){
     if (!check_name_equal_value_present(tempbuff)) continue;
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
+    remove_whitespace(varname);
+    remove_whitespace(varvalue);
 
     if (strcmp(varname,"verbose") == 0) {
       pars.verbose = atoi(varvalue);
@@ -660,6 +668,41 @@ int line_is_comment(char* line){
     return(0); 
   }
 }
+
+
+
+
+
+void remove_whitespace(char* line){
+  /*---------------------------------------------------------
+   * remove heading and trailing whitespaces
+   * --------------------------------------------------------*/
+
+  int start = 0;
+  int stop = strlen(line);
+
+  /* find first non-whitespace character */
+  for (int i = 0; i < MAX_LINE_SIZE; i++){
+    if ((line[i] != ' ') && (line[i] != '\t')){
+      start = i;
+      break;
+    }
+  }
+
+  /* find last non-whitespace character */
+  for (int i = 0; i < stop; i++){
+    if ((line[stop-i-1] != ' ') && (line[stop-i-1] != '\t')){
+      stop = stop - i - 1;
+      break;
+    }
+  }
+
+  char newline[MAX_LINE_SIZE];
+  strncpy(newline, line+start, stop-start+1);
+  newline[stop-start+1] = '\0';
+  strcpy(line, newline);
+}
+
 
 
 
