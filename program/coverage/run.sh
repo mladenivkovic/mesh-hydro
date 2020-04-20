@@ -57,6 +57,7 @@ hydro_solvers="GODUNOV WAF MUSCL"
 advection_solvers="ADVECTION_WAF ADVECTION_PWLIN ADVECTION_PWCONST"
 ndims="1 2"
 limiters="NONE MC SUPERBEE MINMOD VANLEER"
+# limiters="NONE SUPERBEE MINMOD VANLEER"
 riemann_solvers="EXACT HLLC TRRS TSRS"
 
 paramfiles="paramfile-boundary-0  paramfile-boundary-2  paramfile-force-dt  paramfile-tmax paramfile-basename  paramfile-boundary-1  paramfile-dtout paramfile-foutput paramfile-dtoutlist"
@@ -68,8 +69,10 @@ icfiles_hydro="IC/riemann-left-vacuum.dat  IC/riemann-right-vacuum.dat  IC/riema
 
 
 #----------------------
-# Run main tests
+# Run tests
 #----------------------
+
+# methods, solvers, limiters, dimensions...
 
 for ndim in $ndims; do
     for limiter in $limiters; do
@@ -80,27 +83,23 @@ for ndim in $ndims; do
             make clean
             genmakefile $ndim $solver NONE $limiter #RIEMANN=NONE
             make
-            for pars in $paramfiles; do
-                ./hydro $pars ./IC/advection-"$ndim"D.dat > /dev/null
-                # errexit $?
-                run_gcovr
-            done
+            ./hydro paramfile-default ./IC/advection-"$ndim"D.dat > /dev/null
+            # ./hydro paramfile-default ./IC/advection-"$ndim"D.dat
+            # errexit $?
+            run_gcovr
         done
 
         # hydro
-        for solver in WAF; do
-        # for solver in $hydro_solvers; do
-            for riemann in HLLC; do
-            # for riemann in $riemann_solvers; do
+        for solver in $hydro_solvers; do
+            for riemann in $riemann_solvers; do
                 make clean
                 genmakefile $ndim $solver $riemann $limiter
                 make
-                for pars in $paramfiles; do
-                    for icfile in $icfiles_hydro ./IC/advection-"$ndim"D.dat; do
-                        ./hydro $pars $icfile > /dev/null
-                        # errexit $?
-                        run_gcovr
-                    done
+                for icfile in $icfiles_hydro ./IC/advection-"$ndim"D.dat; do
+                    ./hydro paramfile-default $icfile > /dev/null
+                    # ./hydro paramfile-default $icfile
+                    # errexit $?
+                    run_gcovr
                 done
             done
         done
@@ -109,7 +108,7 @@ for ndim in $ndims; do
 done
 
 
-# Riemann solver tests
+Riemann solver tests
 for riemann in $riemann_solvers; do
     make -f Makefile-Riemann clean
     genmakefile 1 NONE $riemann NONE
@@ -119,6 +118,18 @@ for riemann in $riemann_solvers; do
             ./riemann $paramfile $icfile > /dev/null
             run_gcovr
         done
+    done
+done
+
+
+# parameter IO tests
+for ndim in $ndims; do
+    make clean
+    genmakefile $ndim GODUNOV EXACT MINMOD; 
+    make
+    for paramfile in $paramfiles; do
+        ./hydro $paramfile ./IC/advection-"$ndim"D.dat > /dev/null
+        run_gcovr
     done
 done
 
@@ -137,7 +148,8 @@ done
 
 
 gcovr . --root ../src/ $tracefileline --html-details -o coverage.html
+echo "finished writing coverage.html"
 
 
 # clean up after yourself
-rm *gcda *gcno *json
+rm *gcda *gcno *json *.out
