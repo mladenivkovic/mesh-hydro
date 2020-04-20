@@ -15,9 +15,6 @@
 
 ifndef SOLVER
 SOLVER = GODUNOV
-ifeq ($(strip $(RIEMANN)), NONE)
-RIEMANN = EXACT
-endif
 endif
 
 ifndef RIEMANN
@@ -31,6 +28,29 @@ endif
 ifndef NDIM
 NDIM = 1
 endif
+
+
+
+# make sure Riemann solvers are selected if 
+# hydro is being solved
+
+ifeq ($(strip $(SOLVER)), GODUNOV)
+ifeq ($(strip $(RIEMANN)), NONE)
+RIEMANN = EXACT
+endif
+endif
+ifeq ($(strip $(SOLVER)), WAF)
+ifeq ($(strip $(RIEMANN)), NONE)
+RIEMANN = EXACT
+endif
+endif
+ifeq ($(strip $(SOLVER)), MUSCL)
+ifeq ($(strip $(RIEMANN)), NONE)
+RIEMANN = EXACT
+endif
+endif
+
+
 
 
 # set advection flag if solver is advection
