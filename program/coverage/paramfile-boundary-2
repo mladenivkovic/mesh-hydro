@@ -1,0 +1,18 @@
+// parameter file for hydro program.
+// comments and empty lines are handled in the program.
+
+/* behaviour options */
+verbose = 3         /* 0: quiet. 1: talky. 2: no secrets. 3: debugging. */
+nstep_log = 1       /* how many steps to skip when writing log messages to screen */
+
+/* simulation related */
+nx = 20             /* number of cells in each dimension if two-state IC is used. */
+ccfl = 0.7          /* Courant factor */
+nsteps = 5         /* Number of steps to run for. Will stop the run even if tmax isn't reached. */
+tmax = 1.0          /* end time for simulation in arbitrary units. Will stop the run even if nsteps isn't reached. */
+boundary = 2        /* boundary conditions. 0: periodoc; 1: reflective; 2: transmissive */
+force_dt = 0        /* force a time step size. If a smaller time step is required, the sim will stop. */
+
+/* output related */
+foutput = 0         /* output frequency in number of steps. 0: write only IC and end result.*/
+dt_out = 0          /* after what time interval to drop an output. 0: write only IC and end result. */

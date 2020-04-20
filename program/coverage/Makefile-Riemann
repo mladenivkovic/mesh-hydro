@@ -1,0 +1,83 @@
+# Compile a version of the code which is meant to be used
+# as a 1D Riemann solver only
+
+include defines.mk
+include ../bin/processing.mk
+
+
+#==================================
+# COMPILATION TIME PARAMETERS
+#==================================
+
+# executable name
+EXEC = riemann  
+
+
+# set default values if not defined otherwise
+ifndef RIEMANN
+RIEMANN = EXACT
+endif
+ifeq ($(strip $(RIEMANN)), NONE)
+RIEMANN = EXACT
+endif
+
+
+
+# override defines and objects
+DEFINES= -DNDIM=1 -DSOLVER=0 -DRIEMANN=$(RIEMANNINT) -DLIMITER=0 -DCOMPDATE="$(COMPILEDATE)" -DUSE_AS_RIEMANN_SOLVER
+OBJECTS=$(RIEMANN_OBJECTS)
+
+
+
+
+
+
+
+
+#==================================
+# COMPILER OPTIONS AND DIRECTIVES
+#==================================
+
+
+#Compiler to use
+CC=gcc -I$(IDIR)
+
+
+# flags for gcc compiler
+CFLAGS=  -Wall -fprofile-arcs -ftest-coverage -fPIC -O0
+
+CFLAGS += $(DEFINES)
+
+LDFLAGS= -lm -lgcov
+
+
+
+
+
+
+#==================================
+# RECEPIES
+#==================================
+
+
+default: $(EXEC)
+
+
+$(EXEC): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+
+
+
+
+
+#==================================
+#==================================
+
+.PHONY: clean # keeps makefile from doing something with a file named clean
+
+clean:
+	rm -f $(EXEC) *.o

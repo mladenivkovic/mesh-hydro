@@ -1,0 +1,8 @@
+*.gcda
+*.gcno
+*.html
+*.json
+*.gcov
+defines.mk
+hydro
+riemann
