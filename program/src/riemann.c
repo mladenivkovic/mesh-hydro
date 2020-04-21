@@ -84,10 +84,12 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
    * int dim:   which fluid velocity dim to use. 0: x, 1: y
    * ------------------------------------------------------------------------- */
 
+  int notdim = (dim + 1) % 2;
 
   if (left->rho <= SMALLRHO && right->rho <= SMALLRHO){
     sol->rho = SMALLRHO;
     sol->u[dim] = SMALLU;
+    sol->u[notdim] = SMALLU;
     sol->p = SMALLP;
     return;
   }
@@ -108,6 +110,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 #else
       sol->u[dim] = SMALLU;
 #endif
+      sol->u[notdim] = SMALLU;
       sol->p = SMALLP;
     } 
     else if (xovert < SHR){
@@ -115,12 +118,14 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
       float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert) ), (2./GM1));
       sol->rho = right->rho * precomp;
       sol->u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+      sol->u[notdim] = right->u[notdim];
       sol->p = right->p * pow(precomp, GAMMA);
     }
     else{
       /* original right pstate */
       sol->rho = right->rho;
       sol->u[dim] = right->u[dim];
+      sol->u[notdim] = right->u[notdim];
       sol->p = right->p;
     }
   }
@@ -142,6 +147,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 #else
       sol->u[dim] = SMALLU;
 #endif
+      sol->u[notdim] = SMALLU;
       sol->p = SMALLP;
     }
     else if (xovert > SHL){
@@ -149,12 +155,14 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
       float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - xovert) ), (2./GM1));
       sol->rho = left->rho * precomp;
       sol->u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+      sol->u[notdim] = left->u[notdim];
       sol->p = left->p * pow(precomp, GAMMA);
     }
     else{
       /* original left pstate */
       sol->rho = left->rho;
       sol->u[dim] = left->u[dim];
+      sol->u[notdim] = left->u[notdim];
       sol->p = left->p;
     }
   }
@@ -174,6 +182,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
       /* left original pstate*/
       sol->rho = left->rho;
       sol->u[dim] = left->u[dim];
+      sol->u[notdim] = left->u[notdim];
       sol->p = left->p;
     }
     else if (xovert < SL){
@@ -181,6 +190,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
       float precomp = pow(( 2. / GP1 + GM1OGP1 / aL *(left->u[dim] - xovert) ), (2./GM1));
       sol->rho = left->rho * precomp;
       sol->u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+      sol->u[notdim] = left->u[notdim];
       sol->p = left->p * pow(precomp, GAMMA);
     }
     else if (xovert < SR) {
@@ -191,6 +201,7 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
 #else
       sol->u[dim] = SMALLU;
 #endif
+      sol->u[notdim] = SMALLU;
       sol->p = SMALLP;
     }
     else if (xovert < SHR){
@@ -198,12 +209,14 @@ void riemann_compute_vacuum_solution(pstate* left, pstate* right, pstate* sol,
       float precomp = pow( (2. / GP1 - GM1OGP1 / aR *(right->u[dim] - xovert)), (2./GM1));
       sol->rho = right->rho * precomp;
       sol->u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+      sol->u[notdim] = right->u[notdim];
       sol->p = right->p * pow(precomp, GAMMA);
     }
     else{
       /* right original pstate */
       sol->rho = right->rho;
       sol->u[dim] = right->u[dim];
+      sol->u[notdim] = right->u[notdim];
       sol->p = right->p;
     }
   }
@@ -384,6 +397,8 @@ void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3],
   throw_error("In riemann_get_full_solution: You shouldn't be calling this function with the HLLC Riemann solver.");
 #endif
 
+  int notdim = (dim + 1) % 2;
+
   /* First, get the star velocity and pressure */
   float pstar, ustar;
   riemann_compute_star_states(left, right, &pstar, &ustar, dim);
@@ -392,7 +407,7 @@ void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3],
   pstate star_left;
   gas_init_pstate(&star_left);
   star_left.u[dim] = ustar;
-  star_left.u[(dim+1) % 2] = left->u[(dim+1) % 2];
+  star_left.u[notdim] = left->u[notdim];
   star_left.p = pstar;
   float pstaroverpL = pstar / left->p;
   if (pstar <= left->p){
@@ -406,7 +421,7 @@ void riemann_get_full_solution_for_WAF(pstate* left, pstate* right, float S[3],
   pstate star_right;
   gas_init_pstate(&star_right);
   star_right.u[dim] = ustar;
-  star_right.u[(dim+1) % 2] = right->u[(dim+1) % 2];
+  star_right.u[notdim] = right->u[notdim];
   star_right.p = pstar;
   float pstaroverpR = pstar / right->p;
   if (pstar <= right->p){
@@ -527,6 +542,8 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
    * int dim:           which fluid velocity direction to use. 0: x, 1: y
    * ------------------------------------------------------------------------------------------ */
 
+  int notdim = (dim + 1) % 2;
+
   pstate vacuum;
   gas_init_pstate(&vacuum);
 
@@ -566,7 +583,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
     if (0. <= SR){
       state_at_x_zero.rho = SMALLRHO;
       state_at_x_zero.u[dim] = SMALLU;
-      state_at_x_zero.u[(dim +1) % 2] = SMALLU;
+      state_at_x_zero.u[notdim] = SMALLU;
       state_at_x_zero.p = SMALLP;
     } 
     else if (0. < SHR){
@@ -574,14 +591,14 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
       float precomp = pow(( 2. / GP1 - GM1OGP1 / aR *(right->u[dim] /*- x/t */) ), (2./GM1));
       state_at_x_zero.rho = right->rho * precomp;
       state_at_x_zero.u[dim] = 2./ GP1 * (GM1HALF * right->u[dim] - aR /* + x/t */);
-      state_at_x_zero.u[(dim +1) % 2] = right->u[(dim + 1) % 2];
+      state_at_x_zero.u[notdim] = right->u[notdim];
       state_at_x_zero.p = right->p * pow(precomp, GAMMA);
     }
     else{
       /* original right pstate */
       state_at_x_zero.rho = right->rho;
       state_at_x_zero.u[dim] = right->u[dim];
-      state_at_x_zero.u[(dim +1) % 2] = right->u[(dim + 1) % 2];
+      state_at_x_zero.u[notdim] = right->u[notdim];
       state_at_x_zero.p = right->p;
     }
 
@@ -627,7 +644,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
       /* right vacuum */
       state_at_x_zero.rho = SMALLRHO;
       state_at_x_zero.u[dim] = SMALLU;
-      state_at_x_zero.u[(dim + 1) % 2] = SMALLU;
+      state_at_x_zero.u[notdim] = SMALLU;
       state_at_x_zero.p = SMALLP;
     }
     else if (0. > SHL){
@@ -635,14 +652,14 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate* left, pstate* right,
       float precomp = pow( (2. / GP1 + GM1OGP1 / aL *(left->u[dim] /* - x/t */) ), (2./GM1));
       state_at_x_zero.rho = left->rho * precomp;
       state_at_x_zero.u[dim] = 2./GP1 * (GM1HALF * left->u[dim] + aL /* + x/t */);
-      state_at_x_zero.u[(dim + 1) % 2] = left->u[(dim + 1) % 2];
+      state_at_x_zero.u[notdim] = left->u[notdim];
       state_at_x_zero.p = left->p * pow(precomp, GAMMA);
     }
     else{
       /* original left pstate */
       state_at_x_zero.rho = left->rho;
       state_at_x_zero.u[dim] = left->u[dim];
-      state_at_x_zero.u[(dim + 1) % 2] = left->u[(dim + 1) % 2];
+      state_at_x_zero.u[notdim] = left->u[notdim];
       state_at_x_zero.p = left->p;
     }
 

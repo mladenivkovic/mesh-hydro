@@ -347,6 +347,8 @@ void solver_advance_step(float* dt, int dimension){
 
 
 
+
+
 void solver_update_state(cell* left, cell* right, float dtdx){
   /* ------------------------------------------------------
    * Update the state using the fluxes in the cell and dt
