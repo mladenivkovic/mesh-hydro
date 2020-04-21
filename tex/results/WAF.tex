@@ -151,7 +151,7 @@
 
 \quickfigcap
 	{./figures/WAF/waf-convergence-dx.png}
-	{fig:godunov-convergence-dx}
+	{fig:waf-convergence-dx}
 	{
 		Testing the method's convergence with respect to the cell width $\Delta x$ on Sod test initial conditions.
 		For a fair comparison, the Courant number $C_{CFL}$ and the total number of steps are fixed.
@@ -226,7 +226,7 @@
 			\item 	Looking at the time step dependence (fig. \ref{fig:waf-convergence-dt}), it's absolutely terrible.
 					I'm not sure why, but it is comparable to the results of WAF advection, fig. \ref{fig:advection-WAF-convergence-dt-step}. 
 					
-			\item 	For the cell width dependence (fig. \ref{fig:godunov-convergence-dx}), we get a remarkable slope of $\approx 1$ for all solvers.
+			\item 	For the cell width dependence (fig. \ref{fig:waf-convergence-dx}), we get a remarkable slope of $\approx 1$ for all solvers.
 
 			
 			\item 	For the $C_{cfl}$ dependence, it again doesn't follow the expected slope of the $0.5$ power law that we get for small $\Delta t$.

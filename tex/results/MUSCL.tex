@@ -1,0 +1,214 @@
+%=============================================
+\section{MUSCL-Hancock Method}
+%=============================================
+
+
+
+
+%==============================================================
+\subsection{Solving Riemann Problems using the MUSCL-Hancock Method}
+%==============================================================
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-1D-NO_LIMITER-riemann-sod-shock-1D.png}
+	{fig:MUSCL-no-limiter}
+	{
+		Solution to the sod shock Riemann problem using the MUSCL method without flux limiters.
+		The black line is the exact solution.
+	}
+
+
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-sod_test_modified-EXACT-1D.png}
+	{fig:MUSCL-riemann-const}
+	{
+		Solution to the modified sod test Riemann problem using the MUSCL-Hancock method, an exact Riemann solver and various limiters.
+		The black line is the exact solution.
+	}
+
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-sod_test_modified-MINMOD-1D.png}
+	{fig:MUSCL-limiter-const-1}
+	{
+		Solution to the modified sod test Riemann problem using the MUSCL-Hancock method, a minmod limiter, and  various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-sod_test_modified-SUPERBEE-1D.png}
+	{fig:MUSCL-limiter-const-2}
+	{
+		Solution to the modified sod test Riemann problem using the MUSCL-Hancock method, a superbee limiter, and  various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-sod_test_modified-VAN_LEER-1D.png}
+	{fig:MUSCL-limiter-const-3}
+	{
+		Solution to the modified sod test Riemann problem using the MUSCL-Hancock method, a van Leer limiter, and various Riemann solvers.
+		The black line is the exact solution.
+	}
+
+
+
+
+
+
+%=======================================================================
+\subsection{Solving Vacuum Riemann Problems using MUSCL-Hancock Method}
+%=======================================================================
+
+
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-left_vacuum-EXACT-1D.png}
+	{fig:MUSCL-left-vacuum-1}
+	{
+		Left Vacuum Riemann problem for Exact Riemann solver using MUSCL-Hancock method and various limiters
+	}
+	
+\quickfigcap
+	{./figures/MUSCL/MUSCL-left_vacuum-HLLC-1D.png}
+	{fig:MUSCL-left-vacuum-2}
+	{
+		Left Vacuum Riemann problem for HLLC Riemann solver using MUSCL-Hancock method and various limiters
+	}
+
+
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-vacuum_generating-EXACT-1D.png}
+	{fig:MUSCL-vacuum-generating-1}
+	{
+		Vacuum Generating Riemann problem with Exact Riemann solver using MUSCL-Hancock method
+	}
+	
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-vacuum_generating-HLLC-1D.png}
+	{fig:MUSCL-vacuum-generating-2}
+	{
+		Vacuum Generating Riemann problem with HLLC Riemann solver using MUSCL-Hancock method
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Order of Convergence Study}
+%==============================================================
+
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-convergence-dt-500.png}
+	{fig:MUSCL-convergence-dt}
+	{
+		Testing the method's convergence with respect to the time step $\Delta t$ on Sod test initial conditions.
+		For a fair comparison, both the cell width $\Delta x$ and the number of steps taken are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each Riemann solver used in the legend.
+	}
+
+
+\quickfigcap
+	{./figures/MUSCL/MUSCL-convergence-dx.png}
+	{fig:MUSCL-convergence-dx}
+	{
+		Testing the method's convergence with respect to the cell width $\Delta x$ on Sod test initial conditions.
+		For a fair comparison, the Courant number $C_{CFL}$ and the total number of steps are fixed.
+		The points are measurements, the lines are a linear fit, with the slope of the line given in the legend for each limiter used in the legend.
+		The exact Riemann solver has been used.
+	}
+	
+\quickfigcap
+	{./figures/MUSCL/MUSCL-convergence-CFL-10000.png}
+	{fig:MUSCL-convergence-CFL}
+	{
+		Testing the method's convergence with respect to the Courant number $C_{CFL}$ on Sod test initial conditions.
+		The points are measurements, the lines are just connecting them.
+		The slope of $\half$ is plotted for comparison, and to demonstrate the deviation from it.
+		The exact Riemann solver has been used.
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%==============================================================
+\subsection{Conclusions}
+%==============================================================
+
+
+\begin{itemize}
+
+	\item 	The MUSCL method without limiters, fig. \ref{fig:MUSCL-no-limiter}, gives terrible results.
+			In fact, in a lot of cases the oscillations would grow too strong and the code would crash.
+
+	\item 	Similar to the piecewise linear advection, the drops around jump discontinuities are now much sharper, i.e. less diffusive, when limiters are applied.
+			Compare fig. \ref{fig:MUSCL-riemann-const} to fig. \ref{fig:godunov-4}.
+
+	\item 	The choice of the Riemann solver has no noticeable effect on the solution. 
+			See fig. \ref{fig:MUSCL-riemann-const}.
+	
+	\item 	The effect of the limiter is comparable to how they behave on linear advection. 
+			See fig. \ref{fig:MUSCL-limiter-const-1} - \ref{fig:MUSCL-limiter-const-3}.
+
+
+	\item 	If vacuum already exists, the method handles it reasonably well (fig \ref{fig:MUSCL-left-vacuum-1}, \ref{fig:MUSCL-left-vacuum-2}) compared with the other two finite volume methods.
+			If there is vacuum generating conditions (fig \ref{fig:MUSCL-vacuum-generating-1}, \ref{fig:MUSCL-vacuum-generating-2}), things go down the drain. 
+			I had to use $C_{cfl} = 0.1$ to get results like in those figure.
+			Clearly the method is not TVD in that case, because new peaks arise.
+			But I don't understand exactly why.
+			
+			
+
+	\item \textbf{Order of Convergence}
+	
+		\begin{itemize}
+			
+			\item 	The time step dependence (fig. \ref{fig:MUSCL-convergence-dt}) is comparable to the results of piecewise linear advection, fig. \ref{fig:advection-convergence-dt-step}. 
+					
+			\item 	For the cell width dependence (fig. \ref{fig:MUSCL-convergence-dx}), we get a remarkable slope of $\approx 1$ for all solvers.
+
+			
+			\item 	For the $C_{cfl}$ dependence, it is essentially a power law (straight line in log space) for all $C_{CFL}$, which is telling us that the diffusion which is $\propto (1 - C_{CFL})$ for first order methods is strongly reduced.
+		\end{itemize}
+\end{itemize}
