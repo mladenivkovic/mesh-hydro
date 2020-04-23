@@ -14,14 +14,16 @@ typedef struct{
 
   int id;
 
-  float x;     /* x position of cell center */
-  float y;     /* y position of cell center */
+  float x;        /* x position of cell center */
+  float y;        /* y position of cell center */
 
-  pstate prim;  /* primitive state vector */
-  cstate cons;  /* conserved state vector */
+  pstate prim;    /* primitive state vector */
+  cstate cons;    /* conserved state vector */
 
-  pstate pflux;  /* fluxes of primitive variables */
-  cstate cflux;  /* fluxes of conserved variables */
+  pstate pflux;   /* fluxes of primitive variables */
+  cstate cflux;   /* fluxes of conserved variables */
+
+  float acc[2];   /* acceleration from external sources */
 
 #if SOLVER == WAF
   /* The following is needed for the WAF scheme */
@@ -31,8 +33,8 @@ typedef struct{
 #endif
 #if SOLVER == MUSCL
   /* The following is needed for the MUSCL scheme */
-  cstate ULmid;
-  cstate URmid;
+  cstate ULmid;     /* updated left extrapolated boundary value */
+  cstate URmid;     /* updated right extrapolated boundary value */
 #endif
 
 } cell;

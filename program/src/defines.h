@@ -9,8 +9,9 @@
 #define DEFINES_H
 
 
-/* some behaviour options */
-/* ---------------------- */
+/* -------------------------------------------------------------------
+ * some behaviour options you are free to tinker with
+ * ------------------------------------------------------------------- */
 
 /* keep one global velocity, and keep it constant */
 #ifdef ADVECTION
@@ -26,15 +27,6 @@
 
 #define GAMMA  (5./3.)
 // #define GAMMA 1.4
-
-static const float GM1 = GAMMA - 1.;
-static const float GP1 = GAMMA + 1.;
-static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
-static const float GM1OGP1 = (GAMMA - 1.) / (GAMMA + 1.);
-static const float ONEOVERGAMMA = 1. / GAMMA;
-static const float GM1HALF = 0.5 * (GAMMA - 1.);
-static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
-
 
 /* boundary cells */
 #define BC 2 /* how many virtual/ghost boundary cells on each side to make */
@@ -52,8 +44,8 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 
 /* ---------------------------------------------------------------------------------- *
  * you shouldn't be modifying stuff below
- * this line unless you know what you're
- * doing                                  */
+ * this line unless you know what you're doing
+ * ---------------------------------------------------------------------------------- */
 
 /* File related stuff */
 
@@ -89,6 +81,30 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 
 
 
+
+
+
+
+
+/* ---------------------------------------------------------------------------------- *
+ * Nobody should be changing things below this line
+ * ----------------------------------------------------------------------------------*/
+
+
+/* Compute gamma related constants */
+
+static const float GM1 = GAMMA - 1.;
+static const float GP1 = GAMMA + 1.;
+static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
+static const float GM1OGP1 = (GAMMA - 1.) / (GAMMA + 1.);
+static const float ONEOVERGAMMA = 1. / GAMMA;
+static const float GM1HALF = 0.5 * (GAMMA - 1.);
+static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
+
+
+/* PI */
+#define PI 3.14159265 /* I know there are better ways of doing this. Sue me. */
+
 /* define solvers as integers */
 #define ADVECTION_PWCONST 1
 #define ADVECTION_PWLIN 2
@@ -109,5 +125,10 @@ static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 #define SUPERBEE 2
 #define VANLEER 3
 #define MC 4
+
+/* define sources as integers */
+#define SRC_CONST 1
+#define SRC_RADIAL 2
+
 
 #endif

@@ -14,6 +14,7 @@
 #include "limiter.h"
 #include "params.h"
 #include "riemann.h"
+#include "sources.h"
 #include "utils.h"
 
 
@@ -38,10 +39,13 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   /* check this here in case you need to limit time step for output */
   *write_output = io_is_output_step(*t, dt, step); 
 
+
 #if NDIM == 1
+
 
   solver_compute_fluxes(dt, /*dimension =*/0);
   solver_advance_step(dt, /*dimension=*/0);
+
 
 #elif NDIM == 2
 
@@ -55,7 +59,16 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_advance_step(dt, dimension);
   /* cell_reset_fluxes(); */ /* will be done in solver_init_step */
 
+#endif /* ndim = 2 */
+
+
+
+  /* after the step is finished, compute the source terms if there are
+   * any present. This gives a first order accurate scheme */
+#ifdef WITH_SOURCES
+  sources_update_state(*dt);
 #endif
+
 }
 
 

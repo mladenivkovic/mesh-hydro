@@ -29,6 +29,13 @@ ifndef NDIM
 NDIM = 1
 endif
 
+ifndef SOURCES
+SOURCES = NONE
+endif
+
+ifndef INTEGRATOR
+INTEGRATOR = RK4
+endif
 
 
 # make sure Riemann solvers are selected if 
@@ -51,6 +58,13 @@ endif
 endif
 
 
+# make sure an integrator is selected if
+# sources are selected
+ifneq ($(strip $(SOURCES)), NONE)
+ifeq ($(strip $(INTEGRATOR)), NONE)
+INTEGRATOR = RK4
+endif
+endif
 
 
 # set advection flag if solver is advection
@@ -125,18 +139,36 @@ LIMITERINT = 4
 endif
 
 
+
+ifeq ($(strip $(SOURCES)), NONE)
+SOURCESINT = 0
+endif
+ifeq ($(strip $(SOURCES)), CONSTANT)
+SOURCESINT = 1
+endif
+ifeq ($(strip $(SOURCES)), RADIAL)
+SOURCESINT = 2
+endif
+
+
+
 COMPILEDATE:=$(shell date "+%F %T")
 
 
 
 
 
-DEFINES= -DNDIM=$(NDIM) -DSOLVER=$(SOLVERINT) -DRIEMANN=$(RIEMANNINT) -DLIMITER=$(LIMITERINT) -DCOMPDATE="$(COMPILEDATE)" 
+DEFINES= -DNDIM=$(NDIM) -DSOLVER=$(SOLVERINT) -DRIEMANN=$(RIEMANNINT) -DLIMITER=$(LIMITERINT) -DSOURCE=$(SOURCESINT) -DCOMPDATE="$(COMPILEDATE)" 
 
 
 ifdef ADVECTION
 DEFINES += -DADVECTION
 endif
+
+ifneq ($(strip $(SOURCES)), NONE)
+DEFINES += -DWITH_SOURCES
+endif
+
 
 
 
@@ -148,7 +180,7 @@ endif
 SRCDIR=../src
 
 #include paths. Will be followed in that order.
-VPATH=$(SRCDIR):$(SRCDIR)/limiter:$(SRCDIR)/solver:$(SRCDIR)/riemann
+VPATH=$(SRCDIR):$(SRCDIR)/limiter:$(SRCDIR)/solver:$(SRCDIR)/riemann:$(SRCDIR)/sources:$(SRCDIR)/integrate
 
 #include directories for headers
 IDIR=$(SRCDIR)
@@ -212,5 +244,32 @@ endif
 
 
 
-OBJECTS = main.o gas.o params.o io.o utils.o cell.o solver.o limiter.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ)
+ifeq ($(strip $(SOURCES)), NONE)
+	SRCOBJ=
+endif
+ifeq ($(strip $(SOURCES)), CONSTANT)
+	SRCOBJ=sources.o sources-constant.o
+endif
+ifeq ($(strip $(SOURCES)), RADIAL)
+	SRCOBJ=sources.o sources-radial.o
+endif
+
+
+
+ifeq ($(strip $(INTEGRATOR)), NONE)
+	INTOBJ=
+endif
+ifeq ($(strip $(INTEGRATOR)), RK2)
+	INTOBJ=integrate-runge-kutta-2.o
+endif
+ifeq ($(strip $(INTEGRATOR)), RK4)
+	INTOBJ=integrate-runge-kutta-4.o
+endif
+
+
+
+
+
+
+OBJECTS = main.o gas.o params.o io.o utils.o cell.o solver.o limiter.o $(HYDROOBJ) $(LIMITEROBJ) $(RIEMANNOBJ) $(SRCOBJ) $(INTOBJ)
 RIEMANN_OBJECTS = main-riemann.o gas.o params.o io.o utils.o cell.o $(RIEMANNOBJ)

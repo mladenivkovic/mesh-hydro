@@ -37,6 +37,23 @@ LIMITER = NONE
 # LIMITER = VANLEER
 
 
+# set whether and which source terms to use
+# Choices: NONE, CONSTANT, RADIAL
+SOURCES = NONE
+# SOURCES = CONSTANT
+# SOURCES = RADIAL
+
+
+# set which integrator to use (only for sources)
+# Choices: RK2, RK4
+INTEGRATOR = NONE
+# INTEGRATOR = RK2
+# INTEGRATOR = RK4
+
+
+
+
+
 
 # if there is a defines.mk present, overwrite the
 # definitions above with its contents

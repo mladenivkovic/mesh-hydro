@@ -42,6 +42,9 @@ void cell_init_cell(cell * c){
   gas_init_pstate(&(c->pflux));
   gas_init_cstate(&(c->cons));
   gas_init_cstate(&(c->cflux));
+
+  c->acc[0] = 0.;
+  c->acc[1] = 0.;
 }
 
 
@@ -383,6 +386,8 @@ void cell_print_grid_part(char field[4], int* limits){
    *  "fuy": velocity / momentum flux in y
    *  "fpr": pressure flux
    *  "ene": energy
+   *  "acx": acceleration in x direction
+   *  "acy": acceleration in y direction
    *
    *  limits: array of indices for the boundary of
    *          what to print; i.e. [imin, imax, jmin, jmax]
@@ -423,6 +428,10 @@ void cell_print_grid_part(char field[4], int* limits){
       printf("%8.3f", grid[i].pflux.p);
     } else if (strcmp(field, "ene") == 0){
       printf("%8.3f", grid[i].cons.E);
+    } else if (strcmp(field, "acx") == 0){
+      printf("%8.3f", grid[i].acc[0]);
+    } else if (strcmp(field, "acy") == 0){
+      printf("%8.3f", grid[i].acc[1]);
     }
   }
   printf("\n");
@@ -462,6 +471,10 @@ void cell_print_grid_part(char field[4], int* limits){
       } else if (strcmp(field, "fpr") == 0){
         len = 8;
       } else if (strcmp(field, "ene") == 0){
+        len = 8;
+      } else if (strcmp(field, "acx") == 0){
+        len = 8;
+      } else if (strcmp(field, "acy") == 0){
         len = 8;
       }
 
@@ -504,6 +517,10 @@ void cell_print_grid_part(char field[4], int* limits){
         printf("%8.3f", grid[i][j].pflux.p);
       } else if (strcmp(field, "ene") == 0){
         printf("%8.3f", grid[i][j].cons.E);
+      } else if (strcmp(field, "acx") == 0){
+        printf("%8.3f", grid[i][j].acc[0]);
+      } else if (strcmp(field, "acy") == 0){
+        printf("%8.3f", grid[i][j].acc[1]);
       }
     }
     printf("\n");

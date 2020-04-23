@@ -14,6 +14,7 @@
 #include "limiter.h"
 #include "params.h"
 #include "riemann.h"
+#include "sources.h"
 #include "utils.h"
 
 
@@ -38,6 +39,25 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   /* check this here in case you need to limit time step for output */
   *write_output = io_is_output_step(*t, dt, step); 
 
+
+
+
+#if defined WITH_SOURCES || NDIM > 1
+  float dthalf = 0.5*(*dt);
+#endif
+
+#ifdef WITH_SOURCES
+  /* if we have source terms to add to the Euler equations, update them
+   * for half the timestep now, and for half the time step after the
+   * homogeneous part of the Euler equations has been solved. This results
+   * in a second order accurate scheme to include source terms.*/
+  debugmessage("Computing source term ODE for half timestep before hydro step");
+  sources_update_state(dthalf);
+#endif
+
+
+
+
 #if NDIM == 1
 
   solver_compute_fluxes(dt, /*dimension =*/0);
@@ -46,7 +66,6 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #elif NDIM == 2
 
   int dim;
-  float dthalf = *dt*0.5;
 
   dim = step % 2;
   debugmessage("Advancing dim=%d for half timestep", dim);
@@ -64,7 +83,18 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_init_step();
   solver_compute_fluxes(&dthalf, dim);
   solver_advance_step(&dthalf, dim);
+
 #endif
+
+
+
+#ifdef WITH_SOURCES
+  /* Update the source terms for the second time over half the time step
+   * for second order accuracy. */
+  debugmessage("Computing source term ODE for half timestep after hydro step has finished");
+  sources_update_state(dthalf);
+#endif
+
 }
 
 

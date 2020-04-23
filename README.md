@@ -29,6 +29,12 @@ You can pick between:
     - van Leer
 - Number of dimensions:
 	- 1 or 2
+- Source terms:
+    - constant cartesian
+    - constant radial w.r.t. box center
+- Integrators (for source terms):
+    - Runge Kutta 2
+    - Runge Kutta 4
 
 at compile time by setting the corresponding values in the Makefile.
 
@@ -125,6 +131,11 @@ Things to keep in mind
     - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
     - ~~You can't use the HLLC solver as an individual solver to just solve a Riemann problem.~~ Now you can :)
     - The TRRS solver doesn't do well with the MUSCL method. Best to avoid it.
+- Source terms:
+    - Source terms have only been implemented for hydro applications. It should be straightforward to add them to advection though.
+- Integrators:
+    - Integrators are only employed if there are source terms to add to the Euler equations.
+
 
 
 
@@ -165,37 +176,52 @@ Accepted names, their datatypes and default values are:
 
 ### Simulation Related Options and Parameters
 
-| name          |  default value    | type  | description                                                                   |
-|---------------|-------------------|-------|-------------------------------------------------------------------------------|
-| `nx`          | = 100             | `int` | Number of cells to use if you're running with a two-state type IC file. Otherwise, it needs to be specified in the initial conditions.  If you're not using a two-state IC, the value will be overwritten by the value given in the IC file.  |
-|               |                   |       |                                                                               |
-| `ccfl`        | = 0.9             |`float`| courant factor; `dt = ccfl * dx / vmax`                                       |
-|               |                   |       |                                                                               |
-| `nsteps`      | = 1               | `int` | Up to how many steps to do. If = 0, run until `t >= tmax`                     |
-|               |                   |       |                                                                               |
-| `tmax`        | = 0               |`float`|  Up to which time to simulate. If `nsteps` is given, will stop running if `nsteps` steps are reached before `tmax` is.     |
-|               |                   |       |                                                                               |
-| `boundary`    | = 0               | `int` | Boundary conditions  0: periodic. 1: reflective. 2: transmissive.             |
-|               |                   |       |                                                                               |
-| `force_dt`    | = 0               |`float`| force a time step size. If a smaller time step is required, the sim will stop.|
-|               |                   |       |                                                                               |
+| name              |  default value    | type  | description                                                                   |
+|-------------------|-------------------|-------|-------------------------------------------------------------------------------|
+| `nx`              | = 100             | `int` | Number of cells to use if you're running with a two-state type IC file. Otherwise, it needs to be specified in the initial conditions.  If you're not using a two-state IC, the value will be overwritten by the value given in the IC file.  |
+|                   |                   |       |                                                                               |
+| `ccfl`            | = 0.9             |`float`| courant factor; `dt = ccfl * dx / vmax`                                       |
+|                   |                   |       |                                                                               |
+| `nsteps`          | = 1               | `int` | Up to how many steps to do. If = 0, run until `t >= tmax`                     |
+|                   |                   |       |                                                                               |
+| `tmax`            | = 0               |`float`|  Up to which time to simulate. If `nsteps` is given, will stop running if `nsteps` steps are reached before `tmax` is.     |
+|                   |                   |       |                                                                               |
+| `force_dt`        | = 0               |`float`| force a time step size. If a smaller time step is required, the sim will stop.|
+|                   |                   |       |                                                                               |
+| `boundary`        | = 0               | `int` | Boundary conditions  0: periodic. 1: reflective. 2: transmissive. This sets the boundary conditions for all walls. |
+|                   |                   |       |                                                                               |
 
 
 
 ### Output related Options and Parameters
 
 
-| name          |  default value    | type  | description                                                                   |
-|---------------|-------------------|-------|-------------------------------------------------------------------------------|
-| `foutput`     | = 0               | `int` | Frequency of writing outputs in number of steps. If = 0, will only write initial and final steps.  |
-|               |                   |       |                                                                               |
-| `dt_out`      | = 0               |`float`| Frequency of writing outputs in time intervals. Code will always write initial and final steps as well.  |
-|               |                   |       |                                                                               |
-| `toutfile`    | None              |`string`| File name containing desired times (in code units) of output. Syntax of the file: One float per line with increasing value.  |
-|               |                   |       |                                                                               |
-| `basename`    | None              |`string`| Basename for outputs.  If not given, a basename will be generated based on compilation parameters and IC filename.       |
-|               |                   |       |                                                                               |
+| name          |  default value    | type    | description                                                                   |
+|---------------|-------------------|---------|-------------------------------------------------------------------------------|
+| `foutput`     | = 0               | `int`   | Frequency of writing outputs in number of steps. If = 0, will only write initial and final steps.  |
+|               |                   |         |                                                                               |
+| `dt_out`      | = 0               |`float`  | Frequency of writing outputs in time intervals. Code will always write initial and final steps as well.  |
+|               |                   |         |                                                                               |
+| `toutfile`    | None              |`string` | File name containing desired times (in code units) of output. Syntax of the file: One float per line with increasing value.  |
+|               |                   |         |                                                                               |
+| `basename`    | None              |`string` | Basename for outputs.  If not given, a basename will be generated based on compilation parameters and IC filename.       |
+|               |                   |         |                                                                               |
 
+
+
+### Source Term related Options and Parameters
+
+The source term related options will only take effect if the code has been compiled to add source terms.
+
+
+| name              |  default value    | type   | description                                                                   |
+|-------------------|-------------------|--------|-------------------------------------------------------------------------------|
+| `src_const_acc_x` | = 0               | `float`| constant acceleration in x direction for constant source terms                |
+|                   |                   |        |                                                                               |
+| `src_const_acc_y` | = 0               | `float`| constant acceleration in y direction for constant source terms                |
+|                   |                   |        |                                                                               |
+| `src_const_acc_r` | = 0               | `float`| constant acceleration in radial direction for radial source terms             |
+|                   |                   |        |                                                                               |
 
 
 Initial Conditions

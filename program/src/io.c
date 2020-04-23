@@ -393,21 +393,25 @@ void io_read_paramfile(){
     remove_whitespace(varvalue);
 
     if (strcmp(varname,"verbose") == 0) {
-      pars.verbose = atoi(varvalue);
+      pars.verbose    = atoi(varvalue);
+    } else if (strcmp(varname, "nstep_log") == 0){
+      pars.nstep_log  = atoi(varvalue);
     } else if (strcmp(varname, "nsteps") == 0){
-      pars.nsteps = atoi(varvalue);
+      pars.nsteps     = atoi(varvalue);
     } else if (strcmp(varname, "tmax") == 0){
-      pars.tmax = atof(varvalue);
-    } else if (strcmp(varname, "force_dt") == 0){
-      pars.force_dt = atof(varvalue);
+      pars.tmax       = atof(varvalue);
     } else if (strcmp(varname, "nx") == 0){
-      pars.nx = atoi(varvalue);
-    } else if (strcmp(varname, "foutput") == 0){
-      pars.foutput = atoi(varvalue);
-    } else if (strcmp(varname, "dt_out") == 0){
-      pars.dt_out = atof(varvalue);
+      pars.nx         = atoi(varvalue);
     } else if (strcmp(varname, "ccfl") == 0){
-      pars.ccfl = atof(varvalue);
+      pars.ccfl       = atof(varvalue);
+    } else if (strcmp(varname, "force_dt") == 0){
+      pars.force_dt   = atof(varvalue);
+    } else if (strcmp(varname, "boundary") == 0){
+      pars.boundary   = atoi(varvalue);
+    } else if (strcmp(varname, "foutput") == 0){
+      pars.foutput    = atoi(varvalue);
+    } else if (strcmp(varname, "dt_out") == 0){
+      pars.dt_out     = atof(varvalue);
     } else if (strcmp(varname, "basename") == 0){
       if (! line_is_empty(varvalue)) {
         strcpy(pars.outputfilename, varvalue);
@@ -417,10 +421,15 @@ void io_read_paramfile(){
         strcpy(pars.toutfilename, varvalue);
         pars.use_toutfile = 1;
       }
-    } else if (strcmp(varname, "boundary") == 0){
-      pars.boundary= atoi(varvalue);
-    } else if (strcmp(varname, "nstep_log") == 0){
-      pars.nstep_log= atoi(varvalue);
+    } else if (strcmp(varname, "src_const_acc_x") == 0){
+      pars.src_const_acc_x  = atof(varvalue);
+      pars.sources_are_read = 1;
+    } else if (strcmp(varname, "src_const_acc_y") == 0){
+      pars.src_const_acc_y  = atof(varvalue);
+      pars.sources_are_read = 1;
+    } else if (strcmp(varname, "src_const_acc_r") == 0){
+      pars.src_const_acc_r  = atof(varvalue);
+      pars.sources_are_read = 1;
     } else{
       log_message("ATTENTION: Unrecongized parameter : \"%s\"\n", varname);
     }

@@ -23,35 +23,52 @@ void params_init_defaults(){
   /* Initialize parameters to default values  */
   /*------------------------------------------*/
 
+  /* Talking related parameters */
   pars.verbose = 0;
+  pars.nstep_log = 0;
 
+
+  /* simulation related parameters */
   pars.nsteps = 0;
   pars.tmax = 0;
-  pars.force_dt = 0;
 
-  pars.ccfl = 0.9;
   pars.nx = 100;
-  pars.nxtot = 100+BCTOT;
-  pars.dx = BOXLEN / 100;
+  pars.ccfl = 0.9;
+  pars.force_dt = 0;
+  pars.boundary = 0;
 
+  pars.nxtot = 100+BCTOT;
+  pars.dx = BOXLEN / pars.nx;
+
+
+  /* output related parameters */
+  pars.foutput = 0;
+  pars.dt_out = 0;
+  strcpy(pars.outputfilename, "");
+
+  strcpy(pars.toutfilename, "");
+  pars.use_toutfile = 0;
+  pars.noutput_tot = 0;
+  pars.noutput = 0;
+  pars.outputtimes = NULL;
+
+
+  /* IC related parameters */
   pars.twostate_ic = 0;
   pars.ndim_ic = -1;
   strcpy(pars.datafilename, "");
 
-  pars.foutput = 0;
-  pars.dt_out = 0;
-  strcpy(pars.outputfilename, "");
-  pars.nstep_log = 0;
-
-  pars.use_toutfile = 0;
-  pars.noutput_tot = 0;
-  pars.noutput = 0;
-  strcpy(pars.toutfilename, "");
-  pars.outputtimes = NULL;
-
   strcpy(pars.paramfilename, "");
 
-  pars.boundary = 0; 
+
+  /* Sources related parameters */
+  pars.src_const_acc_x = 0.;
+  pars.src_const_acc_y = 0.;
+  pars.src_const_acc_r = 0.;
+  pars.constant_acceleration = 0;
+  pars.constant_acceleration_computed = 0;
+  pars.sources_are_read = 0;
+
 }
 
 
@@ -159,6 +176,16 @@ void params_init_derived(){
     }
 
   }
+
+
+
+  /* Mark if we use constant sources */
+  /* ------------------------------- */
+#if (SOURCE == SRC_CONST) || (SOURCE == SRC_RADIAL)
+  pars.constant_acceleration = 1;
+#endif
+
+
 }
 
 
@@ -217,6 +244,14 @@ void params_print_log(){
   }
 
   log_message("output file basename:        %s\n", pars.outputfilename);
+
+#if SOURCE == SRC_CONST
+  log_message("constant source in x:        %g\n", pars.src_const_acc_x);
+  log_message("constant source in y:        %g\n", pars.src_const_acc_y);
+#elif SOURCE == SRC_RADIAL
+  log_message("constant source in r:        %g\n", pars.src_const_acc_r);
+#endif
+  
   log_message("-----------------------------------------------------------------------------------------\n");
 }
 
@@ -263,6 +298,22 @@ void params_check(){
       throw_error("You're trying to use an arbitrary IC filetype for ndim=%d, but the code is compiled for ndim=%d", pars.ndim_ic, nd);
     }
   }
+
+
+
+
+  /* check source related stuff. */
+#ifdef WITH_SOURCES
+  if (!pars.sources_are_read) {
+    /* Have we compiled with sources, but read in what the sources are? */
+    throw_error("Code is compiled to work with sources, but I haven't read in any source related parameters.");
+  }
+#else
+  /* have we compiled without sources, but read in sources? */
+  if (pars.sources_are_read) {
+    throw_error("Code is compiled to work without sources, but I read in source related parameters.");
+  }
+#endif
 }
 
 
@@ -333,5 +384,3 @@ void params_generate_riemann_output_filename(){
     strcat(pars.outputfilename, riemann);
   }
 }
-
-
