@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #---------------------------------------------------
-# Create IC conditions for 1D advection where the
+# Create IC conditions for 2D advection where the
 # profile is just a step function
 #---------------------------------------------------
 
