@@ -8,7 +8,7 @@ nstep_log = 1       /* how many steps to skip when writing log messages to scree
 /* simulation related */
 nx = 20             /* number of cells in each dimension if two-state IC is used. */
 ccfl = 0.7          /* Courant factor */
-nsteps = 5         /* Number of steps to run for. Will stop the run even if tmax isn't reached. */
+nsteps = 100         /* Number of steps to run for. Will stop the run even if tmax isn't reached. */
 tmax = 1e-6          /* end time for simulation in arbitrary units. Will stop the run even if nsteps isn't reached. */
 boundary = 0        /* boundary conditions. 0: periodoc; 1: reflective; 2: transmissive */
 force_dt = 0        /* force a time step size. If a smaller time step is required, the sim will stop. */

@@ -33,9 +33,6 @@ ifndef SOURCES
 SOURCES = NONE
 endif
 
-ifndef INTEGRATOR
-INTEGRATOR = RK4
-endif
 
 
 # make sure Riemann solvers are selected if 
@@ -61,8 +58,11 @@ endif
 # make sure an integrator is selected if
 # sources are selected
 ifneq ($(strip $(SOURCES)), NONE)
+ifndef INTEGRATOR
+INTEGRATOR = RK2
+endif
 ifeq ($(strip $(INTEGRATOR)), NONE)
-INTEGRATOR = RK4
+INTEGRATOR = RK2
 endif
 endif
 

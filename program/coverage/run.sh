@@ -29,11 +29,35 @@ genmakefile(){
     echo "LIMITER = $4" >> $f
 }
 
+
+
+genmakefile_sources(){
+    # generate makefile "header" which 
+    # will be included into the actual 
+    # Makefile.
+    # $1: ndim
+    # $2: solver
+    # $3: riemann solver
+    # $3: limiter
+
+    f=defines.mk
+    echo "# generated with run.sh" > $f
+    echo ""             >> $f
+    echo "NDIM = $1"    >> $f
+    echo "SOURCES = $2"  >> $f
+    echo "INTEGRATOR = $3"  >> $f
+    echo "SOLVER = $4"  >> $f
+    echo "RIEMANN = HLLC" >> $f
+    echo "LIMITER = SUPERBEE" >> $f
+}
+
+
+
 function run_gcovr(){
     # run gcovr for a test case, create json intermediate output
     # then raise the output index
     # usage: run_gcovr
-    fname=run"$out".json
+    fname=gcov_run"$out".json
     out=$((out + 1))
     gcovr . --root ../src/ --json -o "$fname"
 }
@@ -74,15 +98,17 @@ icfiles_hydro="IC/riemann-left-vacuum.dat  IC/riemann-right-vacuum.dat  IC/riema
 
 # methods, solvers, limiters, dimensions...
 
+echo "Running deault use coverage"
+
 for ndim in $ndims; do
     for limiter in $limiters; do
 
         # advection
         for solver in $advection_solvers; do
             # advection tests
-            make clean
+            make clean > /dev/null
             genmakefile $ndim $solver NONE $limiter #RIEMANN=NONE
-            make
+            make > /dev/null
             ./hydro paramfile-default ./IC/advection-"$ndim"D.dat > /dev/null
             # ./hydro paramfile-default ./IC/advection-"$ndim"D.dat
             # errexit $?
@@ -92,9 +118,9 @@ for ndim in $ndims; do
         # hydro
         for solver in $hydro_solvers; do
             for riemann in $riemann_solvers; do
-                make clean
+                make clean > /dev/null
                 genmakefile $ndim $solver $riemann $limiter
-                make
+                make > /dev/null
                 for icfile in $icfiles_hydro ./IC/advection-"$ndim"D.dat; do
                     ./hydro paramfile-default $icfile > /dev/null
                     # ./hydro paramfile-default $icfile
@@ -108,11 +134,14 @@ for ndim in $ndims; do
 done
 
 
-Riemann solver tests
+# Riemann solver tests
+
+echo "Running Riemann solver coverage"
+
 for riemann in $riemann_solvers; do
-    make -f Makefile-Riemann clean
+    make -f Makefile-Riemann clean > /dev/null
     genmakefile 1 NONE $riemann NONE
-    make -f Makefile-Riemann
+    make -f Makefile-Riemann > /dev/null
     for icfile in $icfiles_hydro; do
         for paramfile in paramfile-tmax paramfile-basename; do
             ./riemann $paramfile $icfile > /dev/null
@@ -123,15 +152,40 @@ done
 
 
 # parameter IO tests
+
+echo "running parameter I/O coverage"
+
 for ndim in $ndims; do
-    make clean
-    genmakefile $ndim GODUNOV EXACT MINMOD; 
-    make
+    make clean > /dev/null
+    genmakefile $ndim GODUNOV EXACT MINMOD;
+    make > /dev/null
     for paramfile in $paramfiles; do
         ./hydro $paramfile ./IC/advection-"$ndim"D.dat > /dev/null
         run_gcovr
     done
 done
+
+
+
+# sources and integrators tests
+
+echo "running sources and integrators coverage"
+
+for ndim in $ndims; do
+    for SOURCE in CONSTANT RADIAL; do
+        for INTEGR in RK2 RK4; do
+            for SOLVER in GODUNOV WAF MUSCL; do
+                make clean > /dev/null
+                genmakefile_sources $ndim $SOURCE $INTEGR $SOLVER;
+                make > /dev/null
+                ./hydro paramfile-sources ./IC/advection-"$ndim"D.dat > /dev/null
+                run_gcovr
+            done
+        done
+    done
+done
+
+
 
 
 
@@ -143,7 +197,7 @@ done
 # generate cmd line args for all tracefiles
 tracefileline=""
 for i in `seq 0 $((out - 1))`; do 
-    tracefileline="$tracefileline"" --add-tracefile ""run""$i".json
+    tracefileline="$tracefileline"" --add-tracefile ""gcov_run""$i".json
 done
 
 
