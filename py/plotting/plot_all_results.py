@@ -7,6 +7,9 @@
 # If more than one cmdline arg is given, it will instead interpret every arg as an
 # individual file, and only plot those.
 #
+# If the first two files have the same output time, the lines will be labelled by
+# the file name, not the output time.
+#
 # ONLY WORKS FOR 1D OUTPUT.
 # Plots all results in one plot.
 #
@@ -40,14 +43,35 @@ if __name__ == "__main__":
 
 
     fig = None
-    for f in filelist:
+    tlist = []
+    label_is_fname = False
+    i = 0
+    while i < len(filelist):
+        f = filelist[i]
 
         ndim, rho, u, p, t, step = read_output(f)
+
+        # store first time and file name
+        if not label_is_fname:
+            if t not in tlist:
+                tlist.append(t)
+                labelval = t
+            else:
+                label_is_fname = True
+                labelval = f
+                fig = None
+                i = 0 # restart!
+                continue
+        else:
+            labelval = f
+
 
         if ndim != 1:
             print("I can't overplot 2D stuff...")
             quit(1)
         else:
-            fig = plot_1D(rho, u, p, draw_legend=True, fig = fig, kwargs = label_to_kwargs(t), )
+            fig = plot_1D(rho, u, p, draw_legend=True, fig = fig, kwargs = label_to_kwargs(labelval), )
+
+        i+=1
 
     save_plot(fig, f)
