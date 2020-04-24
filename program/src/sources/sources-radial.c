@@ -1,4 +1,6 @@
 /* radial constant source acceleration         */
+/* Definition: Positive acceleration points from
+ * the center of the box (or line in 1D) outwards */
 
 /* Written by Mladen Ivkovic, APR 2020
  * mladen.ivkovic@hotmail.com           */
@@ -38,7 +40,7 @@ void sources_get_acceleration(){
     cell* c = &grid[i];
 
     float s = 1;
-    if (c->x > cx) s = -1;
+    if (c->x < cx) s = -1;
 
     c->acc[0] = s * pars.src_const_acc_r;
     c->acc[1] = 0.;
