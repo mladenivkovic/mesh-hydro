@@ -106,22 +106,22 @@ endif
 # ------------------------------------------------
 
 ifeq ($(strip $(SOLVER)), ADVECTION_PWCONST)
-SOLVERINT = 1
+SOLVERINT = 11
 endif
 ifeq ($(strip $(SOLVER)), ADVECTION_PWLIN)
-SOLVERINT = 2
-endif
-ifeq ($(strip $(SOLVER)), GODUNOV)
-SOLVERINT = 3
+SOLVERINT = 12
 endif
 ifeq ($(strip $(SOLVER)), ADVECTION_WAF)
-SOLVERINT = 4
+SOLVERINT = 13
+endif
+ifeq ($(strip $(SOLVER)), GODUNOV)
+SOLVERINT = 21
 endif
 ifeq ($(strip $(SOLVER)), WAF)
-SOLVERINT = 5
+SOLVERINT = 22
 endif
 ifeq ($(strip $(SOLVER)), MUSCL)
-SOLVERINT = 6
+SOLVERINT = 23
 endif
 
 

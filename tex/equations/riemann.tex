@@ -391,7 +391,7 @@ with
 
 
 %====================================================================
-\subsection{Exact Solver}
+\subsection{Exact Solver}\label{chap:riemann-exact}
 %====================================================================
 
 
@@ -461,9 +461,9 @@ All that is left to do is sample the solution, which is described in section \re
 
 
 
-%====================================================================
-\subsubsection{Two-Rarefaction Riemann Solver (TRRS)}
-%====================================================================
+%=================================================================================
+\subsubsection{Two-Rarefaction Riemann Solver (TRRS)}\label{chap:riemann-trrs}
+%=================================================================================
 
 
 
@@ -514,9 +514,9 @@ But eq. \ref{eq:pstar-trrs} is computationally more efficient if we compute $u^*
 
 
 
-%====================================================================
-\subsubsection{Two-Shock Riemann Solver (TSRS)}
-%====================================================================
+%=============================================================================
+\subsubsection{Two-Shock Riemann Solver (TSRS)}\label{chap:riemann-tsrs}
+%=============================================================================
 
 
 The big idea is to assume a priori that both the left and right waves are going to be shock waves, and to use that assumption to get an expression for $p^*$ and $u^*$, the pressure and velocity in the star region, respectively.
@@ -565,7 +565,7 @@ A good choice for $p_0$ is coming from the linearised solution of the primitive 
 
 
 %====================================================================
-\subsubsection{HLLC Solver}
+\subsubsection{HLLC Solver}\label{chap:riemann-hllc}
 %====================================================================
 
 

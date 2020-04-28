@@ -65,6 +65,13 @@ To read about how to use the code, see the \texttt{/README.md} file.
 
 
 
+
+
+
+
+
+
+
 %===============================================================================
 \subsection{Contents of specific files and directories in \texttt{/program/src/}}
 %===============================================================================
@@ -151,3 +158,201 @@ To read about how to use the code, see the \texttt{/README.md} file.
 
 
 
+
+
+
+
+
+
+
+
+
+
+%===============================================================================
+\subsection{Compilation Flags}
+%===============================================================================
+
+%===============================================================================
+\subsubsection{Intended to be set by the user}
+%===============================================================================
+
+\begin{center}
+\begin{tabular}{l p{4cm} p{8cm}}
+\textbf{variable}		&	\textbf{options}			& 	\textbf{description}	\\
+\hline
+
+\texttt{EXEC} 			&	\texttt{some_name} 			&	resulting executable name. Can be set as you wish. \\
+\hline
+
+
+\texttt{NDIM}			&	\texttt{1}					& 	Number of dimensions 	\\
+						&	\texttt{2}					&	\\
+\hline
+
+\texttt{SOLVER}			&	\multicolumn{2}{p{13cm}}{\textit{%
+							Which conservation law solver to use. Two classes are implemented: 
+							To solve advection (section \ref{chap:advection}) and Euler equations 
+							(section \ref{chap:hydro}).}} \\
+						&	\texttt{ADVECTION_PWCONST}	&	Piecewise constant advection (section \ref{chap:advection-pwconst}) \\
+						&	\texttt{ADVECTION_PWLIN}	&	Piecewise linear advection (section \ref{chap:advection-pwlin}) \\
+						&	\texttt{ADVECTION_WAF}		&	Weighted Average Flux advection (section \ref{chap:advection-waf}) \\
+						&	\texttt{GODUNOV}			&	Godunov Upwind first order hydrodynamics (section \ref{chap:godunov}) \\
+						&	\texttt{WAF}				&	Weighted Average Flux hydrodynamics (section \ref{chap:hydro-WAF}) \\
+						&	\texttt{MUSCL}				&	MUSCL-Hancock hydrodynamics (section \ref{chap:MUSCL-hancock}) \\
+\hline
+
+\texttt{RIEMANN}		&	\multicolumn{2}{p{13cm}}{\textit{%
+							Riemann solvers (section \ref{chap:riemann}) are used in combination with hydro solvers 
+							for the Euler equations. Advection solvers don't need them.}}\\
+						&	\texttt{EXACT}				&	Exact Riemann solver (section \ref{chap:riemann-exact}) \\
+						&	\texttt{HLLC}				&	HLLC (section \ref{chap:riemann-hllc}) \\
+						&	\texttt{TRRS}				&	Two Rarefaction Riemann solver (section \ref{chap:riemann-trrs}) \\
+						&	\texttt{TSRS}				&	Two Shock Riemann solver (section \ref{chap:riemann-tsrs}) \\
+\hline
+
+\texttt{LIMITER}		&	\multicolumn{2}{p{13cm}}{\textit{%
+							Flux/slope limiters (section \ref{chap:limiters})  are needed for all methods 
+							higher than first order to avoid unphysical oscillations that arise from the 
+							numerical schemes.}}\\
+						&	\texttt{MC}					&	Monotoniced Center Difference limiter (section \ref{chap:implemented_limiters}) \\
+						&	\texttt{MINMOD}				&	Minmod limiter (section \ref{chap:implemented_limiters}) \\
+						&	\texttt{SUPERBEE}			&	Superbee limiter (section \ref{chap:implemented_limiters}) \\
+						&	\texttt{VANLEER}			&	Van Leer limiter (section \ref{chap:implemented_limiters}) \\
+\hline
+
+
+\texttt{SOURCES}		&	\multicolumn{2}{p{13cm}}{\textit{%
+							Source Terms (section \ref{chap:sources}) from external forces. Can be left undefined.}} \\
+						&	\texttt{NONE}				&	No source terms  \\
+						&	\texttt{CONSTANT}			&	Constant source terms (section \ref{chap:implemented-sources}) \\
+						&	\texttt{RADIAL}				&	Radial constant source terms (section \ref{chap:implemented-sources}) \\
+\hline
+
+\texttt{INTEGRATOR}		&	\multicolumn{2}{p{13cm}}{\textit{%
+							Which integrator to use to integrate the source terms (section \ref{chap:sources}) from external forces in time. Can (and should) be left undefined if sources are \texttt{NONE} or undefined.}} \\
+						&	\texttt{NONE}				&	No source terms  \\
+						&	\texttt{RK2}				&	Runge-Kutta 2 integrator (section \ref{chap:integrators}) \\
+						&	\texttt{RK4}				&	Runge-Kutta 4 integrator (section \ref{chap:integrators}) \\
+\hline
+
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+
+%===============================================================================
+\subsubsection{Behind the Scenes}
+%===============================================================================
+
+
+It's simpler to pass on an integer as a definition \texttt{-Dsomedefinition} than any kind of string, in particular if you want to do comparisons like \verb|#if SOLVER == GODUNOV| inside the code.
+Hence all choices are being translated to integers behind the scenes.
+Here is the list of translations:
+
+
+
+
+\begin{center}
+\begin{tabular}{l l l}
+
+\textbf{variable}		&	\textbf{option}				&	\textbf{integer} \\
+\hline
+\texttt{SOLVER}			&	\texttt{ADVECTION_PWCONST}	&	11 \\
+						&	\texttt{ADVECTION_PWLIN}	&	12 \\
+						&	\texttt{ADVECTION_WAF}		&	13 \\
+						&	\texttt{GODUNOV}			&	21 \\
+						&	\texttt{WAF}				&	22 \\
+						&	\texttt{MUSCL}				&	23 \\
+\hline
+
+\texttt{RIEMANN}		&	\texttt{NONE}				&	0 \\
+						&	\texttt{EXACT}				&	1 \\
+						&	\texttt{HLLC}				&	2 \\
+						&	\texttt{TRRS}				&	3 \\
+						&	\texttt{TSRS}				&	4 \\
+
+\hline
+
+\texttt{LIMITER}		&	\texttt{NONE}				&	0 \\
+						&	\texttt{MINMOD}				&	1 \\
+						&	\texttt{SUPERBEE}			&	2 \\
+						&	\texttt{VANLEER}			&	3 \\
+						&	\texttt{MC}					&	4 \\
+\hline
+
+
+\texttt{SOURCES}		&	\texttt{NONE}				&	0 \\
+						&	\texttt{CONSTANT}			&	1 \\
+						&	\texttt{RADIAL}				&	2 \\
+\hline
+
+\texttt{INTEGRATOR}		&	\texttt{NONE}				&	- \\
+						&	\texttt{RK2}				&	- \\
+						&	\texttt{RK4}				&	- \\
+\hline
+
+\end{tabular}
+\end{center}
+
+
+
+The \texttt{INTEGRATOR} definition requires no checks, it only determines which files will be included and compiled, so no integers are assigned.
+
+
+
+Some other definitions for checks are required.
+These definitions are automatically identified and passed to the compiler, so no additional action from the user's side is required.
+
+\begin{itemize}
+	\item 	If any advection solver is used, the code needs an additional \texttt{-DADVECTION} flag
+	\item 	If any source terms are used, the code needs an additional \texttt{-DWITH_SOURCES} flag
+\end{itemize}
+
+
+
+All these things are handled in the \texttt{/program/bin/processing.mk} file, as well as checks whether all required variables are defined, and if not, default values are set.
+
+The default values are:
+
+\begin{center}
+\begin{tabular}{l l}
+
+\textbf{variable}		&	\textbf{default value}		\\
+\hline
+
+\texttt{SOLVER}			&	\texttt{GODUNOV}			\\
+\texttt{RIEMANN}		&	\texttt{EXACT}				\\
+\texttt{LIMITER}		&	\texttt{NONE}				\\
+\texttt{SOURCES}		&	\texttt{NONE}				\\
+\end{tabular}
+\end{center}
+
+
+
+
+
+
+
+
+
+
+%===============================================================================
+\subsection{Tests}
+%===============================================================================
+
+%===============================================================================
+\subsubsection*{Check whether the code works as intended}
+%===============================================================================
+
+
+%===============================================================================
+\subsubsection*{Code Coverage}
+%===============================================================================
