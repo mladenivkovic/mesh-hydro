@@ -1,6 +1,219 @@
+\newpage
 %===============================================================================
 \section{Source Terms: Dealing with External Forces}\label{chap:sources}
 %===============================================================================
+
+
+
+
+
+
+
+So far, the hydro solvers have been dealing with the homogeneous, i.e. source free, Euler equations.
+But what if external forces like gravity or combustion are present?
+Then the full governing equations are given by
+
+\begin{align}
+	\deldt
+	\begin{pmatrix}
+		\rho \\
+		\rho \V \\
+		E
+	\end{pmatrix}
+	+
+	\nabla \cdot
+	\begin{pmatrix}
+		\rho \V\\
+		\rho \V \otimes \V + p\\
+		(E + p) \V
+	\end{pmatrix}
+	=
+	\begin{pmatrix}
+		0\\
+		\rho \mathbf{a}\\
+		\rho \mathbf{a} \V
+	\end{pmatrix}
+\end{align}
+
+
+
+
+
+where $\mathbf{a}$ is some external (velocity-independent) acceleration resulting from an external force.
+In 1D, the equations can be written as
+
+
+\begin{align}
+	\deldt
+	\begin{pmatrix}
+		\rho \\
+		\rho u \\
+		E
+	\end{pmatrix}
+	+
+	\deldx
+	\begin{pmatrix}
+		\rho u\\
+		\rho u^2 + p\\
+		(E + p) u
+	\end{pmatrix}
+	&=
+	\begin{pmatrix}
+		0\\
+		\rho a\\
+		\rho a u
+	\end{pmatrix}
+	\\
+%
+	\deldt \U + \deldx \F(\U) &= \mathbf{S}(\U)
+\end{align}
+
+
+
+
+
+Just like for the dimensional splitting approach, one can derive first and second order accurate schemes to include source terms by using the operator splitting technique:
+We split the PDE and solve for the two ``operators'' $\deldx \F(\U)$ and $\mathbf{S}(\U)$ individually, where we use the updated solution of the application of the first operator as the initial conditions for the application of the second operator.
+
+Let $F(\Delta t)$ describe the operator $\deldx \F(\U)$ applied over a time step $\Delta t$, and let $S(\Delta t)$ be the operator $\mathbf{S}(\U)$ over a time step $\Delta t$, such that
+
+\begin{align}
+	\DELDT \U + F [\U] = S [\U]
+\end{align}
+
+analytically.
+To obtain a first order accurate scheme, we need to complete the following two steps:
+
+\begin{enumerate}
+
+
+\item 	We obtain an intermediate result $\U^{n+\half}$ by solving the homogeneous Euler equation over the full time interval $\Delta t$ :
+	\begin{align}
+		&\begin{cases}
+			\text{PDE: } & \deldt{\U} + \deldx{\F(\U)} = 0\\
+			\text{IC: } &  \U^n\\
+		\end{cases}\\
+		&\U^{n+\half} = F(\Delta t)[\U^n]
+	\end{align}
+
+\item  then we evolve the solution to the final $\U^{n+1}$ by solving source ODE over the full time interval $\Delta t$ :
+
+	\begin{align}
+		&\begin{cases}
+			\text{PDE: } & \deldt{\U}  = \mathbf{S}\\
+			\text{IC: } & \U^{n+\half} \\
+		\end{cases}\\
+		& \U^{n+1} = S(\Delta t)[\U^{n+\half}]
+	\end{align}
+	
+	Possible integrators to solve this equation is discussed in section \ref{chap:integrators}.
+
+\end{enumerate}
+
+
+
+The order of which operator is solved first doesn't matter.
+The method is first order accurate as long as the operator $F$ is also at least first order accurate.
+It can be shown that the operator splitting technique is second order accurate if we instead evolve the source term over half a time step twice:
+
+\begin{equation}
+	\U^{n+1} = S(\Delta t / 2)  F(\Delta t) S(\Delta t / 2) [\U^n]
+\end{equation}
+
+To achieve second order accuracy, the operator $F$ needs also to be at least second order accurate.
+
+
+
+Finally, we already use the operator splitting technique to get a multidimensional scheme.
+How will a second order accurate scheme in multiple dimensions look like?
+
+Let us express the two dimensional Euler equations as
+
+
+
+
+
+
+\begin{align}
+	\deldt{ 
+		\begin{pmatrix}
+			\rho \\ \rho u \\ \rho v \\ E
+		\end{pmatrix}
+		}
+	+ \deldx {
+		\begin{pmatrix}
+			\rho u\\
+			\rho u^2  + p\\
+			\rho uv\\
+			(E + p) u
+		\end{pmatrix}
+	} 
+	+ \frac{\del}{\del y}
+		\begin{pmatrix}
+			\rho v\\
+			\rho uv\\
+			\rho v^2  + p\\
+			(E + p) v
+		\end{pmatrix}
+	&= 	\begin{pmatrix}
+			0\\
+			\rho a_x\\
+			\rho a_y\\
+			\rho \mathbf{a} \cdot \V
+		\end{pmatrix}\\
+%
+    \DELDT{ \U } + \DELDX{\F(\U)} + \frac{\del \mathbf{G}(\U)}{\del y} &= \mathbf{S}(\U)
+\end{align}
+
+
+Let again $F(\Delta t)$ describe the operator $\deldx \F(\U)$ applied over a time step $\Delta t$, $G(\Delta t)$ describe the operator $\frac{\del}{\del y} \mathbf{G}(\U)$ applied over a time step $\Delta t$, and let $S(\Delta t)$ be the operator $\mathbf{S}(\U)$ over a time step $\Delta t$, such that
+
+\begin{align}
+	\DELDT \U + F[\U] + G[\U] = S [\U]
+\end{align}
+
+analytically.
+Let $H[\U]$ be the operator describing the homogeneous part of the Euler equations, i.e. $H[\U] = F[\U] + G[\U]$.
+The condition for first order accuracy is that in the scheme
+
+\begin{align}
+	\U^{n+1} = H(\Delta t) S(\Delta t) [\U^n]
+\end{align}
+
+$H[\U]$ must be at least first order accurate.
+This is given when we split the $F$ and $G$ operators just like for dimensional splitting:
+
+\begin{align}
+	H(\Delta t) [\U] = F(\Delta t) G(\Delta t) [\U]
+\end{align}
+
+
+So finally, a first order accurate two dimensional method is given by
+
+\begin{align}
+	\U^{n+1} = F(\Delta t) G(\Delta t) S(\Delta t) [\U]
+\end{align}
+
+
+The same logic can be applied for second order accuracy.
+A second order accurate operator $H(\Delta t)$ is given by
+
+\begin{align}
+	H(\Delta t) [\U] = F(\Delta t / 2) G(\Delta t) F(\Delta t / 2)[\U]
+\end{align}
+
+
+So finally, a second order accurate two dimensional method is given by
+
+\begin{align}
+	\U^{n+1} &= S(\Delta t / 2) H(\Delta t) S(\Delta t / 2)[\U]\\
+			 &= S(\Delta t / 2) F(\Delta t / 2) G(\Delta t) F(\Delta t / 2) S(\Delta t / 2)[\U]
+\end{align}
+
+
+
+
+
 
 
 
@@ -14,6 +227,70 @@
 
 
 
+\subsubsection*{Constant Acceleration}
+
+Probably the simplest external force terms are constant accelerations, i.e. the acceleration $\mathbf{a}$ doesn't change during the entire simulation.
+The value of the acceleration term $\mathbf{a}$ in each (Cartesian) direction can be set in the parameter file.
+
+
+
+
+
+
+
+
+
+\subsubsection*{Constant Radial Acceleration}
+
+This one was mainly implemented to see whether acceleration works at all, and whether it works correctly.
+The acceleration is assumed to be constant and radial with origin at the middle of the simulation box, $(0.5, 0.5)$ in 2D or $(0.5)$ in 1D.
+A positive acceleration value points away from the origin at the center of the box, a negative towards it.
+
+
+
+
+
+
+
+
+
+
+
+
 %===============================================================================
 \subsection{Implemented Integrators}\label{chap:integrators}
 %===============================================================================
+
+\newcommand{\KB}{\mathbf{K}}
+\newcommand{\SB}{\mathbf{S}}
+
+Throughout, we assume that the source terms $\SB$ may depend both on the time $t$ and on the conserved state $\U$: $\SB = \SB(t, \U)$
+
+
+\subsubsection*{Runge Kutta 2}
+
+
+The Runge Kutta 2 second-order explicit integrator is given by
+\begin{align*}
+	\KB_1 &= \Delta t \ \SB(t^n, \U^n)\\
+	\KB_2 &= \Delta t \ \SB(t^n + \Delta t, \U^n + \KB_1)\\
+	\U^{n+1} &= \U^n + \frac{1}{2} (\KB_1 + \KB_2)
+\end{align*}
+
+
+
+
+\subsubsection*{Runge Kutta 4}
+
+
+The Runge Kutta 4 fourth-order explicit integrator is given by
+\begin{align*}
+	\KB_1 &= \Delta t \ \SB(t^n, \U^n)\\
+	\KB_2 &= \Delta t \ \SB(t^n + \frac{1}{2}\Delta t, \U^n + \frac{1}{2}\KB_1)\\
+	\KB_3 &= \Delta t \ \SB(t^n + \frac{1}{2}\Delta t, \U^n + \frac{1}{2}\KB_2)\\
+	\KB_4 &= \Delta t \ \SB(t^n + \Delta t, \U^n + \KB_3)\\
+	\U^{n+1} &= \U^n + \frac{1}{6} (\KB_1 + 2\KB_2 + 2\KB_3 + \KB_4)
+\end{align*}
+
+
+
