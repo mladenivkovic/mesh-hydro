@@ -1076,32 +1076,32 @@ function sources() {
 
 # first check whether we can even plot stuff
 
-# advection_pwconst_1D
-# advection_pwconst_2D
-#
-# advection_pwlin_1D
-# advection_pwlin_2D
-# advection_pwlin_limiters_1D
-# advection_pwlin_limiters_2D
-#
-# advection_waf_1D
-# advection_waf_2D
-# advection_waf_limiters_1D
-# advection_waf_limiters_2D
-#
-# riemann_vacuum
-# riemann_solver
-#
-# godunov_1D
-# godunov_2D
+advection_pwconst_1D
+advection_pwconst_2D
 
-# waf_1D
-# waf_1D_limiters
-# waf_2D_limiters
-#
-# muscl_1D
-# muscl_1D_limiters
-# muscl_2D_limiters
+advection_pwlin_1D
+advection_pwlin_2D
+advection_pwlin_limiters_1D
+advection_pwlin_limiters_2D
+
+advection_waf_1D
+advection_waf_2D
+advection_waf_limiters_1D
+advection_waf_limiters_2D
+
+riemann_vacuum
+riemann_solver
+
+godunov_1D
+godunov_2D
+
+waf_1D
+waf_1D_limiters
+waf_2D_limiters
+
+muscl_1D
+muscl_1D_limiters
+muscl_2D_limiters
 
 sources
 
@@ -1109,4 +1109,4 @@ sources
 #=====================================
 # create TeX
 #=====================================
-# generate_tex
+generate_tex

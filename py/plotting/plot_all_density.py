@@ -70,4 +70,6 @@ if __name__ == "__main__":
         else:
             fig = plot_1D_density_only(rho, draw_legend=True, fig = fig, kwargs=label_to_kwargs(labelval), )
 
+        i+= 1
+
     save_plot(fig, f, case="density-overplotted")
