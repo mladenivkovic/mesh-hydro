@@ -353,6 +353,24 @@ The default values are:
 %===============================================================================
 
 
+A primitive test suite is set up in \texttt{/program/test} and can be run by executing \texttt{/program/test/run.sh}.
+It will compile pretty much every possible combination of solvers, Riemann solvers, limiters, dimensions etc. and run some pre-defined tests.
+When finished correctly, a LaTeX pdf \texttt{/proram/test/test_results.pdf} will be generated, with the generated results being shown right below expected results.
+
+It's not the most exact way of testing the code, but if you break something major, you will notice.
+
+
+
+
+
+
+
+
 %===============================================================================
 \subsubsection*{Code Coverage}
 %===============================================================================
+
+A coverage test is set up in \texttt{/program/coverage}.
+It uses \texttt{gcovr} and compiles and runs pretty much all possible versions of the code.
+Finally, it combines the coverage data from all runs and generates a html  file \texttt{/program/coverage/coverage.html}
+that shows the code coverage.
