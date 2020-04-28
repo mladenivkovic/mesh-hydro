@@ -35,6 +35,16 @@ endif
 
 
 
+
+
+
+
+
+
+#----------------------------------------------------
+# Do some checks
+#----------------------------------------------------
+
 # make sure Riemann solvers are selected if 
 # hydro is being solved
 
@@ -64,7 +74,10 @@ endif
 ifeq ($(strip $(INTEGRATOR)), NONE)
 INTEGRATOR = RK2
 endif
+else # if SOURCES = NONE
+INTEGRATOR = NONE
 endif
+
 
 
 # set advection flag if solver is advection
@@ -84,7 +97,14 @@ endif
 
 
 
+
+
+
+
+# ------------------------------------------------
 # transform defines into integers where needed
+# ------------------------------------------------
+
 ifeq ($(strip $(SOLVER)), ADVECTION_PWCONST)
 SOLVERINT = 1
 endif
@@ -152,10 +172,13 @@ endif
 
 
 
+
+
+#-----------------------------------
+# Set up Definition Flags
+#-----------------------------------
+
 COMPILEDATE:=$(shell date "+%F %T")
-
-
-
 
 
 DEFINES= -DNDIM=$(NDIM) -DSOLVER=$(SOLVERINT) -DRIEMANN=$(RIEMANNINT) -DLIMITER=$(LIMITERINT) -DSOURCE=$(SOURCESINT) -DCOMPDATE="$(COMPILEDATE)" 
