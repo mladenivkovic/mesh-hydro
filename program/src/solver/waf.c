@@ -59,7 +59,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #if NDIM == 1
 
   solver_compute_fluxes(dt, /*dimension =*/0);
-  solver_advance_step(dt, /*dimension=*/0);
+  solver_advance_step_hydro(dt, /*dimension=*/0);
 
 #elif NDIM == 2
 
@@ -69,19 +69,19 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   dim = step % 2;
   debugmessage("Advancing dim=%d for half timestep", dim);
   solver_compute_fluxes(&dthalf, dim);
-  solver_advance_step(&dthalf, dim);
+  solver_advance_step_hydro(&dthalf, dim);
 
   dim = (step + 1) % 2;
   debugmessage("Advancing dim=%d for full timestep", dim);
   solver_init_step();
   solver_compute_fluxes(dt, dim);
-  solver_advance_step(dt, dim);
+  solver_advance_step_hydro(dt, dim);
 
   dim = step % 2;
   debugmessage("Advancing dim=%d for half timestep", dim);
   solver_init_step();
   solver_compute_fluxes(&dthalf, dim);
-  solver_advance_step(&dthalf, dim);
+  solver_advance_step_hydro(&dthalf, dim);
 
 #endif
 
@@ -336,59 +336,4 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
   left->cflux.rhou[0] = 0.5 * (left->riemann_fluxes[0].rhou[0] + left->riemann_fluxes[3].rhou[0] - fluxsum.rhou[0]);
   left->cflux.rhou[1] = 0.5 * (left->riemann_fluxes[0].rhou[1] + left->riemann_fluxes[3].rhou[1] - fluxsum.rhou[1]);
   left->cflux.E       = 0.5 * (left->riemann_fluxes[0].E       + left->riemann_fluxes[3].E       - fluxsum.E);
-
-}
-
-
-
-
-
-
-
-
-void solver_advance_step(float* dt, int dimension){
-  /* ---------------------------------------------
-   * Integrate the equations for one time step
-   * --------------------------------------------- */
-
-  debugmessage("Called solver_advance_step with dt = %f", *dt);
-
-  float dtdx = *dt / pars.dx;
-
-#if NDIM == 1
-  for (int i = BC; i < pars.nx + BC; i++){
-    solver_update_state(&(grid[i-1]), &(grid[i]), dtdx);
-  }
-#elif NDIM == 2
-  for (int i = BC; i < pars.nx + BC; i++){
-    for (int j = BC; j < pars.nx + BC; j++){
-      if (dimension == 0){
-        solver_update_state(&(grid[i-1][j]), &grid[i][j], dtdx);
-      } else if (dimension == 1){
-        solver_update_state(&(grid[i][j-1]), &grid[i][j], dtdx);
-      }
-    }
-  }
-#endif
-}
-
-
-
-
-
-
-
-void solver_update_state(cell* left, cell* right, float dtdx){
-  /* ------------------------------------------------------
-   * Update the state using the fluxes in the cell and dt
-   * dtdx: dt / dx
-   * right is the cell with index i that we are trying to
-   * update; left is the cell i-1, which stores the flux
-   * at i-1/2
-   * ------------------------------------------------------ */
-
-  right->cons.rho     = right->cons.rho     + dtdx * (left->cflux.rho     - right->cflux.rho );
-  right->cons.rhou[0] = right->cons.rhou[0] + dtdx * (left->cflux.rhou[0] - right->cflux.rhou[0] );
-  right->cons.rhou[1] = right->cons.rhou[1] + dtdx * (left->cflux.rhou[1] - right->cflux.rhou[1] );
-  right->cons.E       = right->cons.E       + dtdx * (left->cflux.E       - right->cflux.E );
 }

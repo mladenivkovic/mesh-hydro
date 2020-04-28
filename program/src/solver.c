@@ -132,6 +132,55 @@ void solver_get_advection_dt(float* dt){
 
 
 
+void solver_advance_step_advection(float* dt){
+  /* ---------------------------------------------
+   * Integrate the equations for one time step
+   * --------------------------------------------- */
+
+  debugmessage("Called solver_advance_step with dt = %f", *dt);
+
+  float dtdx = *dt / pars.dx;
+
+#if NDIM == 1
+  for (int i = BC; i < pars.nx + BC; i++){
+    solver_update_state_advection(&(grid[i]), dtdx);
+  }
+#elif NDIM == 2
+  for (int i = BC; i < pars.nx + BC; i++){
+    for (int j = BC; j < pars.nx + BC; j++){
+      solver_update_state_advection(&(grid[i][j]), dtdx);
+    }
+  }
+#endif
+}
+
+
+
+
+
+
+void solver_update_state_advection(cell *c, float dtdx){
+  /* ------------------------------------------------------
+   * Update the state using the fluxes in the cell and dt
+   * dtdx: dt / dx
+   * ------------------------------------------------------ */
+
+  c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
+#ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
+  c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
+#if NDIM > 1
+  c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
+#endif
+#endif
+  c->prim.p = c->prim.p + dtdx * c->pflux.p;
+}
+
+
+
+
+
+
+
 void solver_get_hydro_dt(float* dt, int step){
   /* ---------------------------------------------- 
    * Computes the maximal allowable time step size
@@ -196,3 +245,52 @@ void solver_get_hydro_dt(float* dt, int step){
 }
 
 
+
+
+
+
+
+void solver_advance_step_hydro(float* dt, int dimension){
+  /* ---------------------------------------------
+   * Integrate the equations for one time step
+   * --------------------------------------------- */
+
+  debugmessage("Called solver_advance_step with dt = %f", *dt);
+
+  float dtdx = *dt / pars.dx;
+
+#if NDIM == 1
+  for (int i = BC; i < pars.nx + BC; i++){
+    solver_update_state_hydro(&(grid[i-1]), &(grid[i]), dtdx);
+  }
+#elif NDIM == 2
+  for (int i = BC; i < pars.nx + BC; i++){
+    for (int j = BC; j < pars.nx + BC; j++){
+      if (dimension == 0){
+        solver_update_state_hydro(&(grid[i-1][j]), &grid[i][j], dtdx);
+      } else if (dimension == 1){
+        solver_update_state_hydro(&(grid[i][j-1]), &grid[i][j], dtdx);
+      }
+    }
+  }
+#endif
+}
+
+
+
+
+
+void solver_update_state_hydro(cell* left, cell* right, float dtdx){
+  /* ------------------------------------------------------
+   * Update the state using the fluxes in the cell and dt
+   * dtdx: dt / dx
+   * right is the cell with index i that we are trying to
+   * update; left is the cell i-1, which stores the flux
+   * at i-1/2
+   * ------------------------------------------------------ */
+
+  right->cons.rho     = right->cons.rho     + dtdx * (left->cflux.rho     - right->cflux.rho );
+  right->cons.rhou[0] = right->cons.rhou[0] + dtdx * (left->cflux.rhou[0] - right->cflux.rhou[0] );
+  right->cons.rhou[1] = right->cons.rhou[1] + dtdx * (left->cflux.rhou[1] - right->cflux.rhou[1] );
+  right->cons.E       = right->cons.E       + dtdx * (left->cflux.E       - right->cflux.E );
+}

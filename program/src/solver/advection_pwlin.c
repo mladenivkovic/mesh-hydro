@@ -41,18 +41,18 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #if NDIM == 1
 
   solver_compute_fluxes(dt, /*dimension =*/0);
-  solver_advance_step(dt);
+  solver_advance_step_advection(dt);
 
 #elif NDIM == 2
 
   int dimension = step % 2; /* gives 0 or 1, switching each step */
   solver_compute_fluxes(dt, dimension);
-  solver_advance_step(dt);
+  solver_advance_step_advection(dt);
 
   dimension = (dimension + 1) % 2; /* 1 -> 0 or 0 -> 1 */
   solver_init_step();
   solver_compute_fluxes(dt, dimension);
-  solver_advance_step(dt);
+  solver_advance_step_advection(dt);
 
 #endif
 }
@@ -199,50 +199,4 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, float* dt, int d
 #endif
   c->pflux.p = uw->prim.u[dim] * ( uw->prim.p +  0.5 * su.p * dsu ) -
                dw->prim.u[dim] * ( dw->prim.p +  0.5 * sd.p * dsd );
-}
-
-
-
-
-
-void solver_advance_step(float* dt){
-  /* ---------------------------------------------
-   * Integrate the equations for one time step
-   * --------------------------------------------- */
-
-  debugmessage("Called solver_advance_step with dt = %f", *dt);
-
-  float dtdx = *dt / pars.dx;
-
-#if NDIM == 1
-  for (int i = BC; i < pars.nx + BC; i++){
-    solver_update_state(&(grid[i]), dtdx);
-  }
-#elif NDIM == 2
-  for (int i = BC; i < pars.nx + BC; i++){
-    for (int j = BC; j < pars.nx + BC; j++){
-      solver_update_state(&(grid[i][j]), dtdx);
-    }
-  }
-#endif
-}
-
-
-
-
-
-void solver_update_state(cell *c, float dtdx){
-  /* ------------------------------------------------------
-   * Update the state using the fluxes in the cell and dt
-   * dtdx: dt / dx
-   * ------------------------------------------------------ */
-
-  c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
-#ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->prim.u[0] = c->prim.u[0] + dtdx * c->pflux.u[0];
-#if NDIM >= 2
-  c->prim.u[1] = c->prim.u[1] + dtdx * c->pflux.u[1];
-#endif
-#endif
-  c->prim.p = c->prim.p + dtdx * c->pflux.p;
 }
