@@ -32,8 +32,12 @@ The scheme is again based on the explicit conservative formula
 \end{equation}
 
 
+The main idea is to get a better expression for the flux compared to the Godunov scheme.
+The Godunov method assumes that during the entire time step $\Delta t$, both the left and right state stay constant, which is not the case.
+The states should be changing with infinitesimally small time intervals $\de t$ instead.
+So we try to find a better approximation to the actual states and fluxes throughout the time step $\Delta t$ by taking the averages of the occurring fluxes at half the time step $t^n + \Delta t / 2$.
+Hence the intercell flux $\F_{i + \half}$ is defined as an integral average of the flux function:
 
-The intercell flux $\F_{i + \half}$ is defined as an integral average of the flux function:
 
 \begin{equation}
 	\F_{i + \half} = \frac{1}{\Delta x} \int_{-\frac{1}{2} \Delta x} ^{\frac{1}{2} \Delta x} \F (\U_{i+\half} ( x, \frac{1}{2}\Delta t)) \de x \label{eq:hydro-waf-flux}
