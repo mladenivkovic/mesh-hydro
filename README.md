@@ -1,11 +1,12 @@
 Mesh-based Hydro Solvers
-========================
+===============================
 
 
 Description
 -----------------------
 
-A program to learn about and play with finite volume mesh based hydrodynamics and advection solvers.
+A program to learn about and play with mesh/cell/grid based hydrodynamics and advection solvers.
+Currently, only finite volume methods are implemented.
 You can pick between:
 
 - Advection solvers:
