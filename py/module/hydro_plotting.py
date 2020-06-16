@@ -162,6 +162,9 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
     t:           time of simulation, optional. Will be put on the plot to label it. If it is a string, it will be used just as the label.
 
     kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
+
+    returns:
+        fig:     pyplot.figure() object containing the plots
     """
 
     fig = plt.figure(figsize=(6, 5))
@@ -210,12 +213,13 @@ def plot_2D(rho, u, p, t = None, kwargs={}):
     Create a plot from 2D data.
     rho, u, p:   np arrays of physical quantities
     t:           time of the simulation
-    draw_legend: whether to draw a legend. The line labels will be the time.
-    nosave:      don't save this figure.
     fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
                  if not, a new one will be generated and returned.
 
     kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
+
+    returns:
+        fig:     pyplot.figure() object containing the plots
     """
 
     fig = plt.figure(figsize=(21, 5))
@@ -291,6 +295,9 @@ def plot_2D_velnorm(rho, u, p, t = None, kwargs={}):
     t:           time of the simulation
 
     kwargs get passed to matplotlib.pyplot.imshow(), and need to be a dictionnary
+
+    returns:
+        fig:    pyplot figure object
     """
 
     unorm = np.sqrt(u[:,:,0]**2 + u[:,:,1]**2)
@@ -358,12 +365,11 @@ def plot_2D_in_3D(rho, u, p, t = None, kwargs={}):
     Create a 3D plot from 2D data.
     rho, u, p:   np arrays of physical quantities
     t:           time of the simulation
-    draw_legend: whether to draw a legend. The line labels will be the time.
-    nosave:      don't save this figure.
-    fig:         a pyplot.figure object. If present, plots will be added to the axes of the figure.
-                 if not, a new one will be generated and returned.
 
     kwargs get passed to matplotlib.pyplot.plot_surface(), and need to be a dictionnary
+
+    returns:
+        fig:    pyplot figure object
     """
 
     fig = plt.figure(figsize=(21, 5))
