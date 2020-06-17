@@ -666,7 +666,9 @@ int line_is_comment(char* line){
    * <slash>*                               
    * -------------------------------------- */
 
-  char firsttwo[3];
+  /* initialize firsttwo explicily for valgrind */
+  char firsttwo[3] = {0, 0, 0};
+
   strncpy(firsttwo, line, 2);
 
   /* strcmp returns 0 if strings are equal */
