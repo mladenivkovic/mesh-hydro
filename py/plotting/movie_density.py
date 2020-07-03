@@ -23,9 +23,9 @@ from check_module_is_in_pythonpath import try_to_import
 try_to_import()
 
 
-from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
-from hydro_io import read_output
-from hydro_plotting import get_figname
+from mesh_hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
+from mesh_hydro_io import read_output
+from mesh_hydro_plotting import get_figname
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 from sys import argv

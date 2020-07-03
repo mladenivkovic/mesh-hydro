@@ -13,9 +13,9 @@ from check_module_is_in_pythonpath import try_to_import
 try_to_import()
 
 
-from hydro_io import read_output
-from hydro_plotting import plot_1D, save_plot
-from hydro_utils import label_to_kwargs
+from mesh_hydro_io import read_output
+from mesh_hydro_plotting import plot_1D, save_plot
+from mesh_hydro_utils import label_to_kwargs
 
 from sys import argv
 

@@ -13,9 +13,9 @@
 
 
 
-from hydro_utils import get_only_cmdlinearg
-from hydro_io import read_output, write_ic
-from hydro_plotting import plot_1D, plot_2D
+from mesh_hydro_utils import get_only_cmdlinearg
+from mesh_hydro_io import read_output, write_ic
+from mesh_hydro_plotting import plot_1D, plot_2D
 
 
 # plotting parameters

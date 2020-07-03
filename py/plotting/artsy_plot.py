@@ -23,9 +23,9 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import numpy as np
 
-from hydro_plotting import plot_1D_density_only, save_plot
-from hydro_io import read_output
-from hydro_utils import get_only_cmdlinearg, label_to_kwargs
+from mesh_hydro_plotting import plot_1D_density_only, save_plot
+from mesh_hydro_io import read_output
+from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 
 # Plot parameters
 params = {

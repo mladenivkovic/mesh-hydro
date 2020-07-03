@@ -18,9 +18,9 @@ import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
 
-from hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
-from hydro_io import read_output, read_ic, check_file_exists
-from hydro_riemann import riemann_solver
+from mesh_hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
+from mesh_hydro_io import read_output, read_ic, check_file_exists
+from mesh_hydro_riemann import riemann_solver
 
 from sys import argv
 from scipy import stats

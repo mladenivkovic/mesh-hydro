@@ -7,7 +7,7 @@
 
 
 import numpy as np
-from hydro_io import write_ic
+from mesh_hydro_io import write_ic
 
 
 nx = 256

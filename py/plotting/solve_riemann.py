@@ -17,10 +17,10 @@ from check_module_is_in_pythonpath import try_to_import
 try_to_import()
 
 
-from hydro_io import read_ic, read_output, check_file_exists
-from hydro_riemann import riemann_solver
-from hydro_plotting import plot_1D, save_plot
-from hydro_utils import label_to_kwargs
+from mesh_hydro_io import read_ic, read_output, check_file_exists
+from mesh_hydro_riemann import riemann_solver
+from mesh_hydro_plotting import plot_1D, save_plot
+from mesh_hydro_utils import label_to_kwargs
 from sys import argv
 from matplotlib import pyplot as plt
 

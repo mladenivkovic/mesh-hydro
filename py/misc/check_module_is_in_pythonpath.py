@@ -14,10 +14,10 @@ def try_to_import():
     Tell me where the module path is if import fails.
     """
     try:
-        import hydro_io
-        import hydro_plotting
-        import hydro_riemann
-        import hydro_utils
+        import mesh_hydro_io
+        import mesh_hydro_plotting
+        import mesh_hydro_riemann
+        import mesh_hydro_utils
 
     except ImportError:
 

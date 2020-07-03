@@ -23,4 +23,9 @@
 # ../plotting/plot_result.py advection-0010.out
 # ../plotting/plot_result.py advection-2D-0004.out
 # ../plotting/plot_riemann_result.py sod-shock-0001.out ic-twostate.dat
+# ../plotting/plot_all_riemann_results.py sod-shock-000*.out ic-twostate.dat
 ../plotting/solve_riemann.py  ic-twostate.dat 0.25
+
+# ../plotting/artsy_plot.py advection-2D-0004.out
+# ../plotting/movie_density.py advection-2D-0004.out
+# ../plotting/plot_all_2D_velnorm_individually.py advection-2D-0004.out
