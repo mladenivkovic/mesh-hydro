@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-#------------------------------------------------------
+# ------------------------------------------------------
 # Check whether the module files can be imported.
 # If not, tell me which directory I should add to my
 # pythonpath.
-#------------------------------------------------------
-
+# ------------------------------------------------------
 
 
 def try_to_import():
@@ -22,13 +21,16 @@ def try_to_import():
     except ImportError:
 
         import os
+
         cwd = os.getcwd()
         pre, mesh, post = cwd.partition("mesh-hydro")
         meshdir = os.path.join(pre, mesh)
         moddir = os.path.join(meshdir, "py", "module")
 
         print("ERROR: Couldn't find the hydro plotting module files.")
-        print("ERROR: To use the python plotting, evaluation, or IC generating scripts,")
+        print(
+            "ERROR: To use the python plotting, evaluation, or IC generating scripts,"
+        )
         print("ERROR: You first need to add the directory to your PYTHONPATH.")
         print("ERROR: The module is located at:")
         print("ERROR:      ", moddir)

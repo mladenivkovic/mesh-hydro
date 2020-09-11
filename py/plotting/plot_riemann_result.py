@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 
-
-#----------------------------------------------------
+# ----------------------------------------------------
 # Plot results of a 1D or 2D file as 1D solutions,
 # and overplot the analytical solution to the Riemann
 # problem.
@@ -13,13 +12,13 @@
 # it needs the IC file as well in order do be able to
 # solve the riemann problem. If you just want to plot
 # the results, use the appropriate scripts.
-#----------------------------------------------------
+# ----------------------------------------------------
 
 
 # first things first: check whether you can import the hydro python modules
 from check_module_is_in_pythonpath import try_to_import
-try_to_import()
 
+try_to_import()
 
 
 from mesh_hydro_io import read_ic, read_output, check_file_exists
@@ -30,14 +29,12 @@ from sys import argv
 import numpy as np
 
 
-
 if __name__ == "__main__":
-    
+
     fname = argv[1]
     check_file_exists(fname)
     icfname = argv[2]
     check_file_exists(icfname)
-
 
     ndim, rho, u, p, t, step = read_output(fname)
 
@@ -46,7 +43,7 @@ if __name__ == "__main__":
     if ndim == 2:
         rho = np.mean(rho, axis=0)
         u = np.mean(u[:, :, 0], axis=0)
-        p = np.mean(p, axis = 0)
+        p = np.mean(p, axis=0)
         label = "t = {0:.3f}; mean value along y".format(t)
 
     ndim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])
@@ -56,11 +53,13 @@ if __name__ == "__main__":
         fig = plot_1D(rho, u, p, draw_legend=True, kwargs=kwargs)
 
         rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
-        kwargs = { "linestyle":"--", }
+        kwargs = {
+            "linestyle": "--",
+        }
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
-        fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs = kwargs)
+        fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs=kwargs)
 
-        save_plot(fig, fname, case='not-overplotted')
+        save_plot(fig, fname, case="not-overplotted")
 
     else:
         print("Can't work with non-riemann ICs.")

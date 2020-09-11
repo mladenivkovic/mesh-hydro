@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 
 
-#-------------------------------------
+# -------------------------------------
 # Create a nice looking plot without
 # any scientific significance.
 # plots density only without borders
 # nor axes nor colorbars.
 #
 # NOT INTENDED FOR GENERAL USE.
-#-------------------------------------
+# -------------------------------------
 
 
 # first things first: check whether you can import the hydro python modules
 from check_module_is_in_pythonpath import try_to_import
+
 try_to_import()
 
 import matplotlib
 from matplotlib import pyplot as plt
+
 #  matplotlib.use("Agg")
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 from mpl_toolkits.mplot3d import Axes3D
@@ -29,29 +31,27 @@ from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 
 # Plot parameters
 params = {
-    'axes.labelsize': 12,
-    'axes.titlesize': 14,
-    'font.size': 12,
-    'font.family': 'serif',
-    'font.serif': 'DejaVu Sans',
-    'legend.fontsize': 12,
-    'xtick.labelsize': 10,
-    'ytick.labelsize': 10,
-    'text.usetex': True,
-    'figure.subplot.left'    : 0.,
-    'figure.subplot.right'   : 1.,
-    'figure.subplot.bottom'  : 0.,
-    'figure.subplot.top'     : 1.,
-    'figure.subplot.wspace'  : 0.,
-    'figure.subplot.hspace'  : 0.,
-    'figure.dpi' : 200,
-    'lines.markersize' : 6,
-    'lines.linewidth' : 2.
+    "axes.labelsize": 12,
+    "axes.titlesize": 14,
+    "font.size": 12,
+    "font.family": "serif",
+    "font.serif": "DejaVu Sans",
+    "legend.fontsize": 12,
+    "xtick.labelsize": 10,
+    "ytick.labelsize": 10,
+    "text.usetex": True,
+    "figure.subplot.left": 0.0,
+    "figure.subplot.right": 1.0,
+    "figure.subplot.bottom": 0.0,
+    "figure.subplot.top": 1.0,
+    "figure.subplot.wspace": 0.0,
+    "figure.subplot.hspace": 0.0,
+    "figure.dpi": 200,
+    "lines.markersize": 6,
+    "lines.linewidth": 2.0,
 }
 
 matplotlib.rcParams.update(params)
-
-
 
 
 def plot_2D_density_only(rho, t=None, kwargs={}):
@@ -70,11 +70,7 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
     nx = rho.shape[0]
 
     ax1 = fig.add_subplot(1, 1, 1)
-    im1 = ax1.imshow(rho,
-            origin='lower', 
-            extent=(0,1,0,0.5),
-             **kwargs,
-            )
+    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 0.5), **kwargs,)
 
     # turn off axis
     ax1.set_axis_off()
@@ -83,13 +79,11 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
     ax1.xaxis.set_major_locator(plt.NullLocator())
     ax1.yaxis.set_major_locator(plt.NullLocator())
 
-
     return fig
 
 
-
 if __name__ == "__main__":
-    
+
     fname = get_only_cmdlinearg()
     ndim, rho, u, p, t, step = read_output(fname)
 

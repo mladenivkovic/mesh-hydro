@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-#---------------------------------------
+# ---------------------------------------
 # Stuff that shouldn't be used any more.
-#---------------------------------------
-
-
+# ---------------------------------------
 
 
 def read_arbitrary_ic_metadata(fname):
@@ -22,7 +20,9 @@ def read_arbitrary_ic_metadata(fname):
         # safety measure
         linecount += 1
         if linecount > 1000:
-            print("================ Got to linecount = 1000 without having filetype found. Wtf? Exiting now.")
+            print(
+                "================ Got to linecount = 1000 without having filetype found. Wtf? Exiting now."
+            )
             quit(1)
 
         line = f.readline()
@@ -51,6 +51,5 @@ def read_arbitrary_ic_metadata(fname):
             break
 
     f.close()
-
 
     return nx, ndim
