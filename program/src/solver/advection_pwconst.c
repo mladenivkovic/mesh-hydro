@@ -14,7 +14,6 @@
 #include "solver.h"
 #include "utils.h"
 
-
 #if NDIM == 1
 extern cell *grid;
 #elif NDIM == 2
@@ -23,10 +22,7 @@ extern cell **grid;
 
 extern params pars;
 
-
-
-
-void solver_step(float *t, float* dt, int step, int* write_output){
+void solver_step(float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -34,7 +30,7 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_init_step();
   solver_get_advection_dt(dt);
   /* check this here in case you need to limit time step for output */
-  *write_output = io_is_output_step(*t, dt, step); 
+  *write_output = io_is_output_step(*t, dt, step);
 
 #if NDIM == 1
 
@@ -55,12 +51,8 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 #endif
 }
 
-
-
-
-
-void solver_init_step(){
-  /* --------------------------------------------- 
+void solver_init_step() {
+  /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
    * finally advance the simulation
@@ -71,12 +63,7 @@ void solver_init_step(){
   cell_set_boundary();
 }
 
-
-
-
-
-
-void solver_compute_fluxes(int dimension){
+void solver_compute_fluxes(int dimension) {
   /* ------------------------------------------------------
    * Computes the actual fluxes between cells
    * Here we compute F^{n+1/2}_{i-1/2} - F^{n+1/2}_{i+1/2}
@@ -87,13 +74,13 @@ void solver_compute_fluxes(int dimension){
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
-  cell *c; /* this cell */
+  cell *c;  /* this cell */
   cell *uw; /* the cell upwind of the flux at the interface of *c */
   cell *dw; /* the cell downwind of the flux at the interface of *c */
 
 #if NDIM == 1
 
-  for (int i = BC; i < pars.nx + BC; i++){
+  for (int i = BC; i < pars.nx + BC; i++) {
     c = &(grid[i]);
     if (c->prim.u[0] > 0) { /* we do upwind differencing */
       dw = c;
@@ -105,12 +92,11 @@ void solver_compute_fluxes(int dimension){
     solver_compute_cell_pair_flux(c, uw, dw, /*dimension=*/0);
   }
 
-
 #elif NDIM == 2
 
-  if (dimension == 0){
-    for (int i = BC; i < pars.nx + BC; i++){
-      for (int j = BC; j < pars.nx + BC; j++){
+  if (dimension == 0) {
+    for (int i = BC; i < pars.nx + BC; i++) {
+      for (int j = BC; j < pars.nx + BC; j++) {
         c = &(grid[i][j]);
         if (c->prim.u[0] > 0) {
           dw = c;
@@ -122,30 +108,25 @@ void solver_compute_fluxes(int dimension){
         solver_compute_cell_pair_flux(c, uw, dw, dimension);
       }
     }
-  } else if (dimension == 1){
-    for (int i = BC; i < pars.nx + BC; i++){
-      for (int j = BC; j < pars.nx + BC; j++){
+  } else if (dimension == 1) {
+    for (int i = BC; i < pars.nx + BC; i++) {
+      for (int j = BC; j < pars.nx + BC; j++) {
         c = &(grid[i][j]);
         if (c->prim.u[1] > 0) {
           dw = c;
-          uw = &(grid[i][j-1]);
+          uw = &(grid[i][j - 1]);
         } else {
-          dw = &(grid[i][j+1]);
+          dw = &(grid[i][j + 1]);
           uw = c;
         }
         solver_compute_cell_pair_flux(c, uw, dw, dimension);
       }
     }
-
   }
 #endif /* ndim */
 }
 
-
-
-
-
-void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim){
+void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, int dim) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with
@@ -155,10 +136,13 @@ void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim){
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-  c->pflux.rho = uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
+  c->pflux.rho =
+      uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->pflux.u[0] = uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
-  c->pflux.u[1] = uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
+  c->pflux.u[0] =
+      uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
+  c->pflux.u[1] =
+      uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
 #endif
   c->pflux.p = uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
 }

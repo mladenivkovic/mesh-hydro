@@ -9,14 +9,13 @@
 
 #include "cell.h"
 #include "defines.h"
-#include "solver.h"
 #include "io.h"
 #include "limiter.h"
 #include "params.h"
 #include "riemann.h"
+#include "solver.h"
 #include "sources.h"
 #include "utils.h"
-
 
 #if NDIM == 1
 extern cell *grid;
@@ -26,10 +25,7 @@ extern cell **grid;
 
 extern params pars;
 
-
-
-
-void solver_step(float *t, float* dt, int step, int* write_output){
+void solver_step(float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -37,15 +33,12 @@ void solver_step(float *t, float* dt, int step, int* write_output){
   solver_init_step();
   solver_get_hydro_dt(dt, step);
   /* check this here in case you need to limit time step for output */
-  *write_output = io_is_output_step(*t, dt, step); 
-
+  *write_output = io_is_output_step(*t, dt, step);
 
 #if NDIM == 1
 
-
   solver_compute_fluxes(dt, /*dimension =*/0);
   solver_advance_step_hydro(dt, /*dimension=*/0);
-
 
 #elif NDIM == 2
 
@@ -61,22 +54,15 @@ void solver_step(float *t, float* dt, int step, int* write_output){
 
 #endif /* ndim = 2 */
 
-
-
   /* after the step is finished, compute the source terms if there are
    * any present. This gives a first order accurate scheme */
 #ifdef WITH_SOURCES
   sources_update_state(*dt);
 #endif
-
 }
 
-
-
-
-
-void solver_init_step(){
-  /* --------------------------------------------- 
+void solver_init_step() {
+  /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
    * finally advance the simulation
@@ -88,53 +74,47 @@ void solver_init_step(){
   cell_set_boundary();
 }
 
-
-
-
-
-
-
-
-void solver_compute_fluxes(float* dt, int dimension){
+void solver_compute_fluxes(float *dt, int dimension) {
   /* ------------------------------------------------------------
    * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
    * and store it in cell i.
    * BUT: Start with the first boundary cell, such that even the
-   * first real cell can access F_{i-1/2} by accessing the 
+   * first real cell can access F_{i-1/2} by accessing the
    * neighbour at i-1
    * ----------------------------------------------------------- */
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
-  cell *left; /* this cell */
+  cell *left;  /* this cell */
   cell *right; /* the right neighbour */
 
 #if NDIM == 1
 
-  for (int i = BC-1; i < pars.nx + BC; i++){
+  for (int i = BC - 1; i < pars.nx + BC; i++) {
     left = &grid[i];
-    right = &grid[i+1];
+    right = &grid[i + 1];
     solver_compute_cell_pair_flux(left, right, dt, /*dimension=*/0);
   }
 
-
 #elif NDIM == 2
 
-  if (dimension == 0){
-    for (int i = BC-1; i < pars.nx + BC; i++){
-      for (int j = BC-1; j < pars.nx + BC; j++){
+  if (dimension == 0) {
+    for (int i = BC - 1; i < pars.nx + BC; i++) {
+      for (int j = BC - 1; j < pars.nx + BC; j++) {
         left = &(grid[i][j]);
-        right = &(grid[i+1][j]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
+        right = &(grid[i + 1][j]);
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d",
+         * i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
-  } else if (dimension == 1){
-    for (int i = BC-1; i < pars.nx + BC; i++){
-      for (int j = BC-1; j < pars.nx + BC; j++){
+  } else if (dimension == 1) {
+    for (int i = BC - 1; i < pars.nx + BC; i++) {
+      for (int j = BC - 1; j < pars.nx + BC; j++) {
         left = &(grid[i][j]);
-        right = &(grid[i][j+1]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
+        right = &(grid[i][j + 1]);
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d",
+         * i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
@@ -143,11 +123,8 @@ void solver_compute_fluxes(float* dt, int dimension){
 #endif /* ndim */
 }
 
-
-
-
-
-void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
+void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
+                                   int dim) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * left:  pointer to cell which stores the left state
@@ -161,10 +138,10 @@ void solver_compute_cell_pair_flux(cell* left, cell* right, float* dt, int dim){
    * system between the left and right cell.
    * -------------------------------------------------------------------- */
 
-
 #if RIEMANN == HLLC
   /* the HLLC solver gives us the flux directly. */
-  riemann_solve_hllc(&left->prim, &right->prim, &left->cflux, /*xovert=*/0.0, dim);
+  riemann_solve_hllc(&left->prim, &right->prim, &left->cflux, /*xovert=*/0.0,
+                     dim);
 #else
   pstate solution;
   gas_init_pstate(&solution);

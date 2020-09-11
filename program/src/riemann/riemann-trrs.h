@@ -7,5 +7,4 @@
 #ifndef RIEMANN_TRRS_H
 #define RIEMANN_TRRS_H
 
-
 #endif

@@ -13,33 +13,28 @@
 
 extern params pars;
 
-
-
-
-void print_header(){
+void print_header() {
   /*----------------------*/
   /* Print a nice header  */
   /*----------------------*/
   printf("===============================================================\n");
   printf("___  ___ _____ _____ _   _      _   ___   _____________ _____ \n");
-  printf("|  \\/  ||  ___/  ___| | | |    | | | \\ \\ / /  _  \\ ___ \\  _  |\n");
+  printf(
+      "|  \\/  ||  ___/  ___| | | |    | | | \\ \\ / /  _  \\ ___ \\  _  |\n");
   printf("| .  . || |__ \\ `--.| |_| |    | |_| |\\ V /| | | | |_/ / | | |\n");
   printf("| |\\/| ||  __| `--. \\  _  |    |  _  | \\ / | | | |    /| | | |\n");
-  printf("| |  | || |___/\\__/ / | | |    | | | | | | | |/ /| |\\ \\\\ \\_/ /\n");
-  printf("\\_|  |_/\\____/\\____/\\_| |_/    \\_| |_/ \\_/ |___/ \\_| \\_|\\___/ \n");
+  printf(
+      "| |  | || |___/\\__/ / | | |    | | | | | | | |/ /| |\\ \\\\ \\_/ /\n");
+  printf("\\_|  |_/\\____/\\____/\\_| |_/    \\_| |_/ \\_/ |___/ \\_| "
+         "\\_|\\___/ \n");
   printf("\n");
   printf("===============================================================\n");
 }
 
-
-
-
-
-void print_compile_defines(){
+void print_compile_defines() {
   /* ----------------------------------- */
   /* print compile time definitions      */
   /* ----------------------------------- */
-
 
   char solver[80];
   char riemann[80];
@@ -47,24 +42,21 @@ void print_compile_defines(){
 
   utils_get_macro_strings(solver, riemann, limiter);
 
-  log_message("-----------------------------------------------------------------------------------------\n");
+  log_message("----------------------------------------------------------------"
+              "-------------------------\n");
   log_message("\n");
   log_message("Compile time parameters are:\n");
   log_message("\n");
 
-  log_message("Compile time:                "STR(COMPDATE)"\n");
-  log_message("Dimensions:                  "STR(NDIM)"\n");
+  log_message("Compile time:                " STR(COMPDATE) "\n");
+  log_message("Dimensions:                  " STR(NDIM) "\n");
   log_message("Hydro solver:                %s\n", solver);
   log_message("Riemann solver:              %s\n", riemann);
   log_message("Limiter:                     %s\n", limiter);
 }
 
-
-
-
-
-void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
-  /* ------------------------------------------------------------------------ 
+void utils_get_macro_strings(char *solver, char *riemann, char *limiter) {
+  /* ------------------------------------------------------------------------
    * Get string names for the solver, riemann solver, and limiter in use.
    * ------------------------------------------------------------------------ */
 
@@ -84,7 +76,6 @@ void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
   strcpy(solver, "");
 #endif
 
-
 #if RIEMANN == NONE
   strcpy(riemann, "NONE");
 #elif RIEMANN == EXACT
@@ -101,7 +92,6 @@ void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
   strcpy(riemann, "unknown");
 #endif
 
-
 #if LIMITER == NONE
   strcpy(limiter, "NONE");
 #elif LIMITER == MINMOD
@@ -115,15 +105,13 @@ void utils_get_macro_strings(char* solver, char* riemann, char* limiter){
 #endif
 }
 
-
-
-
-void log_message(const char *format, ...){
+void log_message(const char *format, ...) {
   /*------------------------------------------------------
    * just prepends [LOG] to printing. Use like printf()
    *------------------------------------------------------*/
 
-  if (pars.verbose < 1) return;
+  if (pars.verbose < 1)
+    return;
 
   printf("%-12s", "[LOG] ");
 
@@ -138,19 +126,20 @@ void log_message(const char *format, ...){
 
   va_end(arg); /* do whatever cleanup is necessary */
 
-  if (done < 0) throw_error("My own log_message() function exited with error code %d", done);
+  if (done < 0)
+    throw_error("My own log_message() function exited with error code %d",
+                done);
 }
 
-
-
-void debugmessage(const char *format, ...){
+void debugmessage(const char *format, ...) {
   /*---------------------------------------------------------------
-   * if verbose is 3 or higher, write whatever you want to write 
-   * to screen. Use it like you use printf(), except this function 
+   * if verbose is 3 or higher, write whatever you want to write
+   * to screen. Use it like you use printf(), except this function
    * will add a newline by itself :)
    *---------------------------------------------------------------*/
 
-  if (pars.verbose < 3) return;
+  if (pars.verbose < 3)
+    return;
 
   printf("%-12s", "[DEBUGGING] ");
 
@@ -167,20 +156,21 @@ void debugmessage(const char *format, ...){
 
   printf("\n");
 
-  if (done < 0) throw_error("My own debugmessage() function exited with error code %d", done);
+  if (done < 0)
+    throw_error("My own debugmessage() function exited with error code %d",
+                done);
 }
 
-
-
-void log_extra(const char *format, ...){
+void log_extra(const char *format, ...) {
   /*-----------------------------------------------
    * if verbose is 2 or higher, write whatever you
    * want to write to screen. Use it like you use
-   * printf(), except this function will add a 
+   * printf(), except this function will add a
    * newline by itself :) .
    *-----------------------------------------------*/
 
-  if (pars.verbose < 2) return;
+  if (pars.verbose < 2)
+    return;
 
   printf("%-12s", "[EXTRA] ");
 
@@ -197,15 +187,14 @@ void log_extra(const char *format, ...){
 
   printf("\n");
 
-  if (done < 0) throw_error("My own log_extra() function exited with error code %d", done);
+  if (done < 0)
+    throw_error("My own log_extra() function exited with error code %d", done);
 }
 
-
-
-void throw_error(const char *format, ...){
+void throw_error(const char *format, ...) {
   /*-----------------------------------------------
    * Print a formatted error message to screen.
-   * Use it like you use printf(), except this 
+   * Use it like you use printf(), except this
    * function will add a newline by itself :) .
    * Then it will exit.
    *-----------------------------------------------*/
@@ -225,20 +214,21 @@ void throw_error(const char *format, ...){
 
   printf("\n"); /* always end with a newline! :) */
 
-  if (done < 0) throw_error("ERROR: your errormessage() function exited with error code %d\n", done);
+  if (done < 0)
+    throw_error(
+        "ERROR: your errormessage() function exited with error code %d\n",
+        done);
 
   printf("GG yall, I'm out\n");
   exit(1);
 }
 
-
-
-void printbool(int boolean){
+void printbool(int boolean) {
   /*-------------------------------------*/
   /* prints "True" or "False"            */
   /*-------------------------------------*/
 
-  if (boolean){
+  if (boolean) {
     printf("true");
   } else {
     printf("false");

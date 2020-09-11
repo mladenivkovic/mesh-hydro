@@ -4,8 +4,8 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "gas.h"
-#include "riemann.h"
 #include "params.h"
+#include "riemann.h"
 #include "utils.h"
 
 #include <math.h>
@@ -14,13 +14,11 @@
 
 extern params pars;
 
-
-
-
-
-void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, float *ustar, int dim){
+void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
+                                 float *ustar, int dim) {
   /* ------------------------------------------------------------------------------------------
-   * computes the star region pressure and velocity given the left and right pstates.         
+   * computes the star region pressure and velocity given the left and right
+   *pstates.
    *
    * pstate* left:    left state of Riemann problem
    * pstate* right:   right state of Riemann problem
@@ -39,18 +37,19 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar, floa
   float delta_u = right->u[dim] - left->u[dim];
 
   /* Find initial guess for star pressure */
-  float pguess = 0.5*(left->p + right->p) - 0.125 * delta_u *
-        (left->rho + right->rho) * (aL + aR);
-  if (pguess < EPSILON_ITER) pguess = EPSILON_ITER;
-
+  float pguess = 0.5 * (left->p + right->p) -
+                 0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
+  if (pguess < EPSILON_ITER)
+    pguess = EPSILON_ITER;
 
   float gL = sqrtf(AL / (pguess + BL));
   float gR = sqrtf(AR / (pguess + BR));
-  *pstar = (gL * left->p + gR * right->p - delta_u) /
-            ( gL + gR );
-  if (SMALLP > *pstar) *pstar = SMALLP;
+  *pstar = (gL * left->p + gR * right->p - delta_u) / (gL + gR);
+  if (SMALLP > *pstar)
+    *pstar = SMALLP;
 
-  *ustar = 0.5*(right->u[dim] + left->u[dim] + (*pstar - right->p)*gR - (*pstar - left->p)*gL);
+  *ustar = 0.5 * (right->u[dim] + left->u[dim] + (*pstar - right->p) * gR -
+                  (*pstar - left->p) * gL);
 
   /* debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar); */
 }

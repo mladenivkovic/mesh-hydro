@@ -7,5 +7,4 @@
 #ifndef RIEMANN_EXACT_H
 #define RIEMANN_EXACT_H
 
-
 #endif
