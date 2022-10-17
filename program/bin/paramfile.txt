@@ -1,14 +1,20 @@
 // parameter file for hydro program.
 
-/* behaviour options */
+nstep_log = 20
 verbose = 1                 /* 0: quiet. 1: talky. 2: no secrets. 3: debugging. */
 
 /* simulation related */
-ccfl = 0.7                  /* Courant factor */
-nsteps = 0                  /* Number of steps to run for. Will stop the run even if tmax isn't reached. */
-tmax = 2.5                  /* end time for simulation in arbitrary units. Will stop the run even if nsteps isn't reached. */
-boundary = 0                /* boundary conditions. 0: periodoc; 1: reflective; 2: transmissive */
+ccfl = 0.1                  /* Courant factor */
+nsteps = 0                 /* Number of steps to run for. Will stop the run even if tmax isn't reached. */
+tmax = 0.20                 /* end time for simulation in arbitrary units. Will stop the run even if nsteps isn't reached. */
+boundary = 2                /* boundary conditions. 0: periodic; 1: reflective; 2: transmissive */
+nx = 900;
 
 /* output related */
-dt_out = 0.10               /* after what time interval to drop an output. 0: write only IC and end result. */
-basename = kelvin-helmholtz
+dt_out = 0.05
+foutput = 0
+
+/* sources related */
+//src_const_acc_x = 0.
+//src_const_acc_y = 10
+//src_const_acc_r = -1.

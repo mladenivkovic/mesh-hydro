@@ -27,7 +27,7 @@ def f(x):
     return 2. + 1.3 * np.sin(x) * np.exp(-x/10)
 
 def integral_f(x):
-    return 2*x - 0.128713 * np.exp(-0.1*x) - 1.28713*np.exp(-0.1*x) * np.cos(x)
+    return 2. * x - 1.28713 * np.exp(-0.1 * x) * np.cos(x) - 0.128713 * np.exp(-0.1 * x) * np.sin(x)
 
 
 

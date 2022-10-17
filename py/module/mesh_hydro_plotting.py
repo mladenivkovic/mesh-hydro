@@ -18,14 +18,14 @@ import numpy as np
 
 # Plot parameters
 params = {
-    "axes.labelsize": 12,
-    "axes.titlesize": 14,
-    "font.size": 12,
+    "axes.labelsize": 14,
+    "axes.titlesize": 16,
+    "font.size": 14,
     "font.family": "serif",
     "font.serif": "DejaVu Sans",
-    "legend.fontsize": 12,
-    "xtick.labelsize": 10,
-    "ytick.labelsize": 10,
+    "legend.fontsize": 16,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
     "text.usetex": True,
     "figure.subplot.left": 0.05,
     "figure.subplot.right": 0.97,
