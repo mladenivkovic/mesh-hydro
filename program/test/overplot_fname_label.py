@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 
-#------------------------------------------------------------------------------------
-# Create a plot of all output files with the same base name as given file in 
+# ------------------------------------------------------------------------------------
+# Create a plot of all output files with the same base name as given file in
 # this directory. Basename in this case means everything before _XXXX.out
 # If more than one cmdline arg is given, it will instead interpret every arg as an
 # individual file, and only plot those.
@@ -21,12 +21,15 @@
 #   plot_all_results.py file.out     # will find files with same basename
 # or:
 #   plot_all_results.py <file1> <file2> ... <file N> [result image filename]
-#------------------------------------------------------------------------------------
-
+# ------------------------------------------------------------------------------------
 
 
 # first things first: check whether you can import the hydro python modules
-from mesh_hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename, label_to_kwargs
+from mesh_hydro_utils import (
+    get_only_cmdlinearg,
+    get_all_files_with_same_basename,
+    label_to_kwargs,
+)
 from mesh_hydro_io import read_output
 from mesh_hydro_plotting import plot_1D, save_plot
 
@@ -35,7 +38,7 @@ import os
 
 
 if __name__ == "__main__":
-    
+
     label_is_fname = False
     fname_force = None
 
@@ -50,8 +53,6 @@ if __name__ == "__main__":
             filelist = argv[1:-1]
             label_is_fname = True
             fname_force = argv[-1]
-
-
 
     fig = None
     tlist = []
@@ -70,21 +71,22 @@ if __name__ == "__main__":
                 label_is_fname = True
                 labelval = f
                 fig = None
-                i = 0 # restart!
+                i = 0  # restart!
                 continue
         else:
             labelval = f
-
 
         if ndim != 1:
             print("I can't overplot 2D stuff...")
             quit(1)
         else:
-            fig = plot_1D(rho, u, p, draw_legend=True, fig = fig, kwargs = label_to_kwargs(labelval), )
+            fig = plot_1D(
+                rho, u, p, draw_legend=True, fig=fig, kwargs=label_to_kwargs(labelval)
+            )
 
-        i+=1
+        i += 1
 
     if fname_force is None:
         save_plot(fig, f)
     else:
-        save_plot(fig, fname_force = fname_force)
+        save_plot(fig, fname_force=fname_force)

@@ -73,7 +73,7 @@ if __name__ == "__main__":
             quit(1)
         else:
             fig = plot_1D_density_only(
-                rho, draw_legend=True, fig=fig, kwargs=label_to_kwargs(labelval),
+                rho, draw_legend=True, fig=fig, kwargs=label_to_kwargs(labelval)
             )
 
         i += 1

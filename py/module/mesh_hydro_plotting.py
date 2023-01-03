@@ -74,19 +74,13 @@ def plot_1D(rho, u, p, draw_legend=False, fig=None, kwargs={}):
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
-    ax1.plot(
-        x, rho, **kwargs,
-    )
+    ax1.plot(x, rho, **kwargs)
     ax1.set_ylabel("density")
 
-    ax2.plot(
-        x, u, **kwargs,
-    )
+    ax2.plot(x, u, **kwargs)
     ax2.set_ylabel("velocity")
 
-    ax3.plot(
-        x, p, **kwargs,
-    )
+    ax3.plot(x, p, **kwargs)
     ax3.set_ylabel("pressure")
 
     for ax in fig.axes:
@@ -123,9 +117,7 @@ def plot_1D_density_only(rho, draw_legend=False, fig=None, kwargs={}):
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
-    ax1.plot(
-        x, rho, **kwargs,
-    )
+    ax1.plot(x, rho, **kwargs)
     ax1.set_ylabel("density")
 
     ax1.set_xlabel("x")
@@ -158,7 +150,7 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
     nx = rho.shape[0]
 
     ax1 = fig.add_subplot(1, 1, 1)
-    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax1.set_title("density")
 
     ax1.set_xlabel("x")
@@ -203,19 +195,19 @@ def plot_2D(rho, u, p, t=None, kwargs={}):
     nx = rho.shape[0]
 
     ax1 = fig.add_subplot(1, 4, 1)
-    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax1.set_title("density")
 
     ax2 = fig.add_subplot(1, 4, 2)
-    im2 = ax2.imshow(u[:, :, 0], origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im2 = ax2.imshow(u[:, :, 0], origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax2.set_title("velocity in x direction")
 
     ax3 = fig.add_subplot(1, 4, 3)
-    im3 = ax3.imshow(u[:, :, 1], origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im3 = ax3.imshow(u[:, :, 1], origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax3.set_title("velocity in y direction")
 
     ax4 = fig.add_subplot(1, 4, 4)
-    im4 = ax4.imshow(p, origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im4 = ax4.imshow(p, origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax4.set_title("pressure")
 
     for ax in fig.axes:
@@ -262,15 +254,15 @@ def plot_2D_velnorm(rho, u, p, t=None, kwargs={}):
     nx = rho.shape[0]
 
     ax1 = fig.add_subplot(1, 3, 1)
-    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax1.set_title("density")
 
     ax2 = fig.add_subplot(1, 3, 2)
-    im2 = ax2.imshow(u[:, :, 0], origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im2 = ax2.imshow(u[:, :, 0], origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax2.set_title("velocity norm")
 
     ax3 = fig.add_subplot(1, 3, 3)
-    im3 = ax3.imshow(p, origin="lower", extent=(0, 1, 0, 1), **kwargs,)
+    im3 = ax3.imshow(p, origin="lower", extent=(0, 1, 0, 1), **kwargs)
     ax3.set_title("pressure")
 
     for ax in fig.axes:
@@ -319,19 +311,19 @@ def plot_2D_in_3D(rho, u, p, t=None, kwargs={}):
     X, Y = np.meshgrid(X, Y)
 
     ax1 = fig.add_subplot(1, 4, 1, projection="3d")
-    im1 = ax1.plot_surface(X, Y, rho, cmap="viridis", **kwargs,)
+    im1 = ax1.plot_surface(X, Y, rho, cmap="viridis", **kwargs)
     ax1.set_title("density")
 
     ax2 = fig.add_subplot(1, 4, 2, projection="3d")
-    im2 = ax2.plot_surface(X, Y, u[:, :, 0], cmap="viridis", **kwargs,)
+    im2 = ax2.plot_surface(X, Y, u[:, :, 0], cmap="viridis", **kwargs)
     ax2.set_title("velocity in x direction")
 
     ax3 = fig.add_subplot(1, 4, 3, projection="3d")
-    im3 = ax3.plot_surface(X, Y, u[:, :, 1], cmap="viridis", **kwargs,)
+    im3 = ax3.plot_surface(X, Y, u[:, :, 1], cmap="viridis", **kwargs)
     ax3.set_title("velocity in y direction")
 
     ax4 = fig.add_subplot(1, 4, 4, projection="3d")
-    im4 = ax4.plot_surface(X, Y, p, cmap="viridis", **kwargs,)
+    im4 = ax4.plot_surface(X, Y, p, cmap="viridis", **kwargs)
     ax4.set_title("pressure")
 
     for ax in fig.axes:

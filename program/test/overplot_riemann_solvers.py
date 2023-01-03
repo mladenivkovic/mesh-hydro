@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 
-#----------------------------------------------------
+# ----------------------------------------------------
 # Create a plot containing different Riemann solver
 # solutions with appropriate labels.
 #
 # expects 3 cmdline args: the prefix of the IC file,
-# from which the riemann program will generate a 
+# from which the riemann program will generate a
 # file name; and the used solver which appears in
 # the file name, e.g. GODUNOV, and the limiter used,
 # e.g. NO_LIMITER, VAN_LEER, SUPERBEE, etc
-#----------------------------------------------------
-
+# ----------------------------------------------------
 
 
 from mesh_hydro_io import read_ic, read_output, check_file_exists
@@ -21,7 +20,6 @@ from mesh_hydro_plotting import plot_1D, save_plot
 from sys import argv
 import numpy as np
 import os
-
 
 
 def get_all_files_with_same_basename(fname, solver, limiter):
@@ -35,9 +33,8 @@ def get_all_files_with_same_basename(fname, solver, limiter):
     Returns: [filelist], [solvername list]
     """
 
-    
     basedir = os.path.dirname(fname)
-    if basedir == '':
+    if basedir == "":
         basedir = os.getcwd()
 
     allfiles = os.listdir(basedir)
@@ -45,42 +42,38 @@ def get_all_files_with_same_basename(fname, solver, limiter):
     filelist = []
 
     for f in allfiles:
-        if f.startswith(fname+"-"+solver) and f.endswith("0001.out"):
+        if f.startswith(fname + "-" + solver) and f.endswith("0001.out"):
             if not solver.startswith("GODUNOV"):
                 if limiter in f:
                     filelist.append(f)
             else:
                 filelist.append(f)
 
-
-
     filelist.sort()
 
-    start = len(fname)+len(solver) + 2 # +2 for 2 dashes between the solver and what comes after it
+    start = (
+        len(fname) + len(solver) + 2
+    )  # +2 for 2 dashes between the solver and what comes after it
     end = len("-0001.out")
     riemannsolvernamelist = []
     for f in filelist:
-        char = 'a'
+        char = "a"
         i = 0
-        while char != '-':
+        while char != "-":
             i += 1
             char = f[start + i]
-        riemannsolvernamelist.append(f[start:start+i])
+        riemannsolvernamelist.append(f[start : start + i])
         # [:i] means i not included, but i shoud be a dash, so we're good
-
 
     return filelist, riemannsolvernamelist
 
 
-
-
-
 if __name__ == "__main__":
-    
+
     icprefix = argv[1]
     solver = argv[2]
     limiter = argv[3]
-    icfname = os.path.join("IC", icprefix+".dat")
+    icfname = os.path.join("IC", icprefix + ".dat")
 
     filelist, namelist = get_all_files_with_same_basename(icprefix, solver, limiter)
 
@@ -103,16 +96,13 @@ if __name__ == "__main__":
 
             rho = np.mean(rho, axis=0)
             u = np.mean(u[:, :, 0], axis=0)
-            p = np.mean(p, axis = 0)
+            p = np.mean(p, axis=0)
             label = solver + "; mean value along y".format(t)
-            kwargs = {"label":label}
+            kwargs = {"label": label}
             kwargs["linestyle"] = ls
             fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
 
-
     fig.suptitle(r"t = {0:.3f}".format(t))
-
-
 
     # plot exact python solution
     nsim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])
@@ -120,14 +110,24 @@ if __name__ == "__main__":
     if twostate:
 
         rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
-        kwargs = { "linestyle":"-", "color":'k', "zorder":-1}
+        kwargs = {"linestyle": "-", "color": "k", "zorder": -1}
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
-        fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs = kwargs)
+        fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs=kwargs)
 
         if solver.startswith("GODUNOV"):
-            save_plot(fig, fname_force = solver+"-"+icprefix+"-{0:1d}D.png".format(ndim))
+            save_plot(
+                fig, fname_force=solver + "-" + icprefix + "-{0:1d}D.png".format(ndim)
+            )
         else:
-            save_plot(fig, fname_force = solver+"-"+limiter+"-"+icprefix+"-{0:1d}D.png".format(ndim))
+            save_plot(
+                fig,
+                fname_force=solver
+                + "-"
+                + limiter
+                + "-"
+                + icprefix
+                + "-{0:1d}D.png".format(ndim),
+            )
 
     else:
         print("Can't work with non-riemann ICs.")

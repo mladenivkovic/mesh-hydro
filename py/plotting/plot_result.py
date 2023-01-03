@@ -29,6 +29,4 @@ if __name__ == "__main__":
         save_plot(fig, fname)
     elif ndim == 2:
         fig = plot_2D(rho, u, p, t=t)
-        save_plot(
-            fig, fname,
-        )
+        save_plot(fig, fname)

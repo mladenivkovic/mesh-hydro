@@ -53,9 +53,7 @@ if __name__ == "__main__":
         fig = plot_1D(rho, u, p, draw_legend=True, kwargs=kwargs)
 
         rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
-        kwargs = {
-            "linestyle": "--",
-        }
+        kwargs = {"linestyle": "--"}
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs=kwargs)
 

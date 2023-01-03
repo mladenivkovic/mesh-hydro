@@ -71,9 +71,7 @@ def plot_1D_density_only(
     nx = rho.shape[0]
     x = np.linspace(0, 1, nx)
 
-    ax1.plot(
-        x, rho, label="t = {0:7.3f}".format(t),
-    )
+    ax1.plot(x, rho, label="t = {0:7.3f}".format(t))
     if dots:
         ax1.scatter(x, rho)
     ax1.set_ylabel("density")
@@ -122,7 +120,7 @@ def plot_2D_density_only(rho, fname, t=0):
 
     ax1 = fig.add_subplot(1, 1, 1)
     im1 = ax1.imshow(
-        rho, origin="lower", extent=(0, 1, 0, 1), vmin=cbarmin, vmax=cbarmax,
+        rho, origin="lower", extent=(0, 1, 0, 1), vmin=cbarmin, vmax=cbarmax
     )
     ax1.set_ylabel("density")
 

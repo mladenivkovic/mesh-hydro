@@ -70,7 +70,7 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
     nx = rho.shape[0]
 
     ax1 = fig.add_subplot(1, 1, 1)
-    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 0.5), **kwargs,)
+    im1 = ax1.imshow(rho, origin="lower", extent=(0, 1, 0, 0.5), **kwargs)
 
     # turn off axis
     ax1.set_axis_off()

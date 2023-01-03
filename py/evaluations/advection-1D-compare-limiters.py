@@ -71,9 +71,7 @@ def plot_1D_density_only(rho, t=0, label=None, dashed=False, fig=None):
     if dashed:
         ax1.plot(x, rho, "--", label=label, c="k")
     else:
-        ax1.plot(
-            x, rho, label=label,
-        )
+        ax1.plot(x, rho, label=label)
     ax1.set_ylabel("density")
 
     ax1.set_xlabel("x")

@@ -25,8 +25,8 @@ if __name__ == "__main__":
     ndim, twostate, rho, u, p = read_ic(fname)
 
     if ndim == 1:
-        fig = plot_1D(rho, u, p,)
+        fig = plot_1D(rho, u, p)
     elif ndim == 2:
-        fig = plot_2D(rho, u, p,)
+        fig = plot_2D(rho, u, p)
 
     save_plot(fig, fname)
