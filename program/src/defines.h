@@ -88,8 +88,8 @@ static const float GM1HALF = 0.5 * (GAMMA - 1.);
 static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
 
 /* PI */
-#define PI 3.14159265 /* I know there are better ways of doing this. Sue me.   \
-                       */
+/* I know there are better ways of doing this. Sue me. */
+#define PI 3.14159265
 
 /* define solvers as integers */
 #define ADVECTION_PWCONST 11

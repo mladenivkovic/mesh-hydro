@@ -6,8 +6,8 @@
 #ifndef LIMITER_H
 #define LIMITER_H
 
-#include "defines.h"
 #include "cell.h"
+#include "defines.h"
 
 #if LIMITER == NONE
 #include "limiter/no_limiter.h"

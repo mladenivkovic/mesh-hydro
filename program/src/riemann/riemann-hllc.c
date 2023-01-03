@@ -197,7 +197,7 @@ void riemann_hllc_compute_star_cstates(pstate *left, pstate *right, float SL,
                                        float SR, float Sstar, cstate *UstarL,
                                        cstate *UstarR, int dim) {
 
-  /*-----------------------------------------------------------------------------
+  /*----------------------------------------------------------------------------
    * Compute the !conserved! star states of the solution of the riemann problem
    *
    * pstate* left:    left state of Riemann problem
@@ -208,8 +208,7 @@ void riemann_hllc_compute_star_cstates(pstate *left, pstate *right, float SL,
    * cstate* UstarL:  left star conserved state (will be written to)
    * cstate* UstarR:  right star conserved state (will be written to)
    * int dim:         along which dimension are we working
-   *------------------------------------------------------------------------------
-  */
+   *------------------------------------------------------------------------- */
 
   float SLMUL = SL - left->u[dim];
   float SRMUR = SR - right->u[dim];
