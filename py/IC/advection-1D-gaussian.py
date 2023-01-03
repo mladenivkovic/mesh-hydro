@@ -10,7 +10,7 @@ import numpy as np
 from mesh_hydro_io import write_ic
 
 
-nx = 100
+nx = 256
 
 
 rho = np.zeros(nx, dtype=np.float)

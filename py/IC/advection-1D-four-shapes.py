@@ -11,7 +11,7 @@ import numpy as np
 from mesh_hydro_io import write_ic
 
 
-nx = 100
+nx = 256
 
 baseline = 1  # baseline density
 amplitude = 1.5  # initial density peak

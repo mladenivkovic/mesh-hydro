@@ -10,7 +10,7 @@ import numpy as np
 from mesh_hydro_io import write_ic
 
 
-nx = 20000
+nx = 256
 
 
 rho = np.ones(nx, dtype=np.float)
