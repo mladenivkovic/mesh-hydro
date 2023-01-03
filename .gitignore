@@ -11,3 +11,4 @@
 *.pyc
 *.toc
 **/__pycache__
+black_formatting_env/**
