@@ -361,7 +361,7 @@ def save_plot(fig, fname=None, case=None, fname_force=None):
     """
 
     if fname_force is not None:
-        plt.savefig(fname_force, fig=fig)
+        fig.savefig(fname_force)
         print("Saved figure", fname_force)
 
     else:
@@ -382,7 +382,7 @@ def save_plot(fig, fname=None, case=None, fname_force=None):
         else:
             fname = "hydro-plot.png"
 
-        plt.savefig(fname, fig=fig)
+        fig.savefig(fname)
         print("Saved figure", fname)
 
     plt.close()
