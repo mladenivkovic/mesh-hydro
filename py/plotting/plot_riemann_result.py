@@ -30,7 +30,6 @@ import numpy as np
 
 
 if __name__ == "__main__":
-
     fname = argv[1]
     check_file_exists(fname)
     icfname = argv[2]

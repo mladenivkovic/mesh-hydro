@@ -24,7 +24,6 @@ from mesh_hydro_plotting import plot_1D, plot_2D_in_3D, save_plot
 
 
 if __name__ == "__main__":
-
     fname = get_only_cmdlinearg()
     ndim, twostate, rho, u, p = read_ic(fname)
 

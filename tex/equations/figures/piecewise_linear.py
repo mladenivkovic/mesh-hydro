@@ -48,7 +48,6 @@ ax.plot(x, f(x), lw=2, color="k")
 
 x = xmin
 while x < xmax:
-
     Uprev = (integral_f(x) - integral_f(x - dx)) / dx
     Uthis = (integral_f(x + dx) - integral_f(x)) / dx
     Unext = (integral_f(x + 2 * dx) - integral_f(x + dx)) / dx

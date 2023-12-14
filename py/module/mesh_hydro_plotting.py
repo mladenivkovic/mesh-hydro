@@ -357,9 +357,7 @@ def save_plot(fig, fname=None, case=None, fname_force=None):
         print("Saved figure", fname_force)
 
     else:
-
         if fname is not None:
-
             ax = fig.axes[0]
             if len(ax.get_lines()) > 1:
                 # if we have more than one line, this figure is used to overplot things.
@@ -387,11 +385,11 @@ def get_figname(fname, case=None):
     Remove the file suffix, if present, and add a png.
 
     if case is not None, it will add something to the file name
-    so it will be distinguishable. 
+    so it will be distinguishable.
     Accepted cases:
         "density":              for density-only plotting
         "overplotted":          mutliple plots on one axis
-        "density-overplotted":  density only with multiple lines per axis   
+        "density-overplotted":  density only with multiple lines per axis
 
     returns:
         figname:    figure name string

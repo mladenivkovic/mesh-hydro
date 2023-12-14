@@ -83,7 +83,6 @@ def plot_2D_density_only(rho, t=None, kwargs={}):
 
 
 if __name__ == "__main__":
-
     fname = get_only_cmdlinearg()
     ndim, rho, u, p, t, step = read_output(fname)
 

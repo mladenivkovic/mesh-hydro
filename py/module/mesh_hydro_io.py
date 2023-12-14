@@ -209,7 +209,6 @@ def read_arbitrary_ic(fname):
                     p = np.empty((nx, nx), dtype=np.float)
 
         else:
-
             vals = split_columns(clean)
 
             if ndim == 1:
@@ -310,7 +309,6 @@ def read_twostate_ic(fname, nx):
         (uR, "uR"),
         (pR, "pR"),
     ]:
-
         if val is None:
             print("Finished reading file, I got no value for", name)
 

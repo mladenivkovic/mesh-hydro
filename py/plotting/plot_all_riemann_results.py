@@ -28,7 +28,6 @@ import numpy as np
 
 
 if __name__ == "__main__":
-
     # last file needs to be IC file
     nfiles = len(argv) - 2
     icfname = argv[-1]

@@ -118,12 +118,10 @@ def analytical_solution(shape, x):
 
 
 if __name__ == "__main__":
-
     fig = plt.figure(figsize=(7, 5))
     ax = fig.add_subplot(111)
 
     for f in range(len(file_prefixes)):
-
         accuracy = np.zeros(len(dx))
 
         for i, c in enumerate(nx):

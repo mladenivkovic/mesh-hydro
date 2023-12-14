@@ -38,7 +38,6 @@ import os
 
 
 if __name__ == "__main__":
-
     label_is_fname = False
     fname_force = None
 

@@ -28,7 +28,6 @@ p = np.ones((nx, nx), dtype=np.float) * P
 
 
 for i in range(nx):
-
     x = (i + 0.5) * dx
     u[i, :, 1] = v0 * np.sin(4 * np.pi * x)
 

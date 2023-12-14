@@ -146,7 +146,6 @@ def plot_2D_density_only(rho, fname, t=0):
 
 
 if __name__ == "__main__":
-
     if len(argv) == 2:
         fname = get_only_cmdlinearg()
         filelist = get_all_files_with_same_basename(fname)
@@ -154,7 +153,6 @@ if __name__ == "__main__":
         filelist = argv[1:]
 
     for fname in filelist:
-
         ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:

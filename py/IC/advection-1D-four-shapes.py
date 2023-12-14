@@ -37,7 +37,6 @@ region = 0
 width = nx // 8
 
 for i in range(nx):
-
     if i - region * width >= width:
         region += 1
 

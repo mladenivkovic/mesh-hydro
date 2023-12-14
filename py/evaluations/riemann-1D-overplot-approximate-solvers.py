@@ -32,7 +32,6 @@ linestyles = ["-", "--", ":"]
 
 
 if __name__ == "__main__":
-
     fig = None
     for i, f in enumerate(filelist):
         ndim, rho, u, p, t, step = read_output(f)

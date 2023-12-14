@@ -66,7 +66,6 @@ def x_for_y(y, a):
 for origin, zaehler, sign in zip(
     [0, -(xmax - xmin) / 4, (xmax - xmin) / 4], [1, 1, 3], ["+", "-", "+"]
 ):
-
     # characteristics
     ax.plot([origin, origin + x_for_ymax(-4)], [0, ymax], "k", lw=1)
     ax.plot([origin, origin + x_for_ymax(6)], [0, ymax], "k", lw=1)

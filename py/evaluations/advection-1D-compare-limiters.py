@@ -88,7 +88,6 @@ limiters = ["NO_LIMITER", "MINMOD", "MC", "VAN_LEER", "SUPERBEE"]
 limiter_names = ["no limiter", "minmod", "MC", "van Leer", "superbee"]
 
 if __name__ == "__main__":
-
     filelist = []
     for limiter in limiters:
         filelist.append(
@@ -97,7 +96,6 @@ if __name__ == "__main__":
 
     fig = None
     for i, f in enumerate(filelist):
-
         ndim, rho, u, p, t, nsteps = read_output(f)
 
         if ndim != 1:

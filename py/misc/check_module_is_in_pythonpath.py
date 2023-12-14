@@ -19,7 +19,6 @@ def try_to_import():
         import mesh_hydro_utils
 
     except ImportError:
-
         import os
 
         cwd = os.getcwd()

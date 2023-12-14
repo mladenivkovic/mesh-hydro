@@ -34,7 +34,6 @@ matplotlib.rcParams.update(params)
 
 
 def superbee_xi(r, omega):
-
     xi = np.zeros(r.shape)
     xi[r > 0] = 2 * r[r > 0]
     xi[r > 0.5] = 1.0
@@ -49,7 +48,6 @@ def superbee_xi(r, omega):
 
 
 def superbee_phi(r):
-
     n = r.shape[0]
 
     phi = np.maximum(0, np.minimum(np.ones(n), 2.0 * r))

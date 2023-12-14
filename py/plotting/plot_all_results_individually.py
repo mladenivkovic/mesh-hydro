@@ -28,11 +28,9 @@ from sys import argv
 
 
 if __name__ == "__main__":
-
     filelist = argv[1:]
 
     for fname in filelist:
-
         ndim, rho, u, p, t, step = read_output(fname)
 
         if ndim == 1:

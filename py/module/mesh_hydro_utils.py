@@ -56,7 +56,7 @@ def label_to_kwargs(t, kwargs={}):
         - a string t: just pass it on as the label string
         - a float t:  format it first: "t = {0:.3f}".format(t)
     and add it to the kwargs dictionnary
-    
+
     returns:
         kwargs dictionnary
     """

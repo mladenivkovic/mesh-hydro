@@ -25,7 +25,6 @@ from matplotlib import pyplot as plt
 
 
 if __name__ == "__main__":
-
     fname = argv[1]
     check_file_exists(fname)
     t = float(argv[2])

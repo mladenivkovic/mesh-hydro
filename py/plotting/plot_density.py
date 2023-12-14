@@ -21,7 +21,6 @@ from mesh_hydro_plotting import plot_1D_density_only, plot_2D_density_only, save
 
 
 if __name__ == "__main__":
-
     fname = get_only_cmdlinearg()
     ndim, rho, u, p, t, step = read_output(fname)
 

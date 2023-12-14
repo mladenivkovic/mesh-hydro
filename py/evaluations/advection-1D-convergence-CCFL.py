@@ -110,12 +110,10 @@ ccfllog = np.log(np.array(ccfl))
 
 
 if __name__ == "__main__":
-
     fig = plt.figure(figsize=(7, 5))
     ax = fig.add_subplot(111)
 
     for f in range(len(file_prefixes)):
-
         accuracy = np.zeros(len(ccfl))
 
         for i, c in enumerate(ccfl):

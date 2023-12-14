@@ -38,14 +38,12 @@ width = nx // 8
 
 region_i = 0
 for i in range(nx):
-
     if i - region_i * width >= width:
         region_i += 1
 
     region_j = 0
 
     for j in range(nx):
-
         if j - region_j * width >= width:
             region_j += 1
 

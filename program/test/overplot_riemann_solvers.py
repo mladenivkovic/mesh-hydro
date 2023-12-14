@@ -29,7 +29,7 @@ def get_all_files_with_same_basename(fname, solver, limiter):
     format of the riemann output files.
     also get a list of which RIEMANN solvers are used, (not hydro solvers! that should be the second arg)
     which is stored in ABCD of the filename format described above.
-    
+
     Returns: [filelist], [solvername list]
     """
 
@@ -69,7 +69,6 @@ def get_all_files_with_same_basename(fname, solver, limiter):
 
 
 if __name__ == "__main__":
-
     icprefix = argv[1]
     solver = argv[2]
     limiter = argv[3]
@@ -93,7 +92,6 @@ if __name__ == "__main__":
             kwargs["linestyle"] = ls
             fig = plot_1D(rho, u, p, draw_legend=True, fig=fig, kwargs=kwargs)
         elif ndim == 2:
-
             rho = np.mean(rho, axis=0)
             u = np.mean(u[:, :, 0], axis=0)
             p = np.mean(p, axis=0)
@@ -108,7 +106,6 @@ if __name__ == "__main__":
     nsim, twostate, rhoIC, uIC, pIC = read_ic(icfname, nx=rho.shape[0])
 
     if twostate:
-
         rho_sol, u_sol, p_sol = riemann_solver(rhoIC, uIC, pIC, t)
         kwargs = {"linestyle": "-", "color": "k", "zorder": -1}
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)

@@ -22,7 +22,7 @@ def riemann_solver(rho, u, p, t):
     """
     Solve the riemann problem for ideal gases
     and sample the solution at time t.
-    Assumes box size is = 1, 
+    Assumes box size is = 1,
     and that the left and right state are separated
     at index nx/2, where nx = rho.shape[0]
 
@@ -140,7 +140,7 @@ def sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt):
                     fact = (2 / GP1 + GM1OGP1 / aL * (uL - xt)) ** (2.0 / GM1)
                     rho = rhoL * fact
                     u = 2 / GP1 * (GM1HALF * uL + aL + xt)
-                    p = pL * fact ** gamma
+                    p = pL * fact**gamma
 
     else:
         # we are in the right region
@@ -169,7 +169,7 @@ def sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt):
                 u = uR
                 p = pR
             else:
-                astarR = aR * psopR ** alpha
+                astarR = aR * psopR**alpha
                 STR = ustar + astarR
                 if xt < STR:
                     # in central region outside fan
@@ -181,7 +181,7 @@ def sample_solution(rhoL, rhoR, uL, uR, ustar, pL, pR, pstar, xt):
                     fact = (2 / GP1 - GM1OGP1 / aR * (uR - xt)) ** (2 / GM1)
                     rho = rhoR * fact
                     u = 2 / GP1 * (GM1HALF * uR - aR + xt)
-                    p = pR * fact ** gamma
+                    p = pR * fact**gamma
 
     return rho, u, p
 
@@ -212,7 +212,6 @@ def find_star_state(rhoL, uL, pL, rhoR, uR, pR):
     diff = 1
     i = 0
     while diff > epsilon:
-
         f = f_K(pstar, pL, AL, BL, aL) + f_K(pstar, pR, AR, BR, aR) + uR - uL
         dfdp = df_Kdp(pstar, rhoL, pL, AL, BL, aL) + df_Kdp(pstar, rhoR, pR, AR, BR, aR)
         pstar_new = pstar - f / dfdp
@@ -315,7 +314,7 @@ def sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt):
             fact = (2 / GP1 - GM1OGP1 / aR * (uR - xt)) ** (2 / GM1)
             rho = rhoR * fact
             u = 2 / GP1 * (GM1HALF * uR - aR + xt)
-            p = pR * fact ** gamma
+            p = pR * fact**gamma
         else:
             # in right state
             rho = rhoR
@@ -336,7 +335,7 @@ def sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt):
             fact = (2 / GP1 + GM1OGP1 / aL * (uL - xt)) ** (2 / GM1)
             rho = rhoL * fact
             u = 2 / GP1 * (GM1HALF * uL + aL + xt)
-            p = pL * fact ** gamma
+            p = pL * fact**gamma
         else:
             rho = rhoL
             u = uL
@@ -360,7 +359,7 @@ def sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt):
             fact = (2 / GP1 + GM1OGP1 / aL * (uL - xt)) ** (2 / GM1)
             rho = rhoL * fact
             u = 2 / GP1 * (GM1HALF * uL + aL + xt)
-            p = pL * fact ** gamma
+            p = pL * fact**gamma
         elif xt < SR:
             # vacuum region
             rho = 0
@@ -371,7 +370,7 @@ def sample_vacuum_solution(rhoL, rhoR, uL, uR, pL, pR, xt):
             fact = (2 / GP1 - GM1OGP1 / aR * (uR - xt)) ** (2 / GM1)
             rho = rhoR * fact
             u = 2 / GP1 * (GM1HALF * uR - aR + xt)
-            p = pR * fact ** gamma
+            p = pR * fact**gamma
         else:
             # right original state
             rho = rhoR
