@@ -17,7 +17,7 @@ try_to_import()
 
 from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 from mesh_hydro_io import read_output
-from mesh_hydro_plotting import plot_1D_density_only, plot_2D_density_only, save_plot
+from mesh_hydro_plotting import plot_1D_density_only, plot_2D_density_only, plot_savefig
 
 
 if __name__ == "__main__":
@@ -29,4 +29,4 @@ if __name__ == "__main__":
     elif ndim == 2:
         fig = plot_2D_density_only(rho, t=t)
 
-    save_plot(fig, fname, case="density")
+    plot_savefig(fig, fname, case="density")

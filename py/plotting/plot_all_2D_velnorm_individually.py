@@ -23,7 +23,7 @@ from mesh_hydro_utils import (
     label_to_kwargs,
 )
 from mesh_hydro_io import read_output
-from mesh_hydro_plotting import plot_1D, plot_2D_velnorm, save_plot
+from mesh_hydro_plotting import plot_1D, plot_2D_velnorm, plot_savefig
 
 from sys import argv
 import numpy as np
@@ -40,4 +40,4 @@ if __name__ == "__main__":
         elif ndim == 2:
             fig = plot_2D_velnorm(rho, u, p, t=t)
 
-        save_plot(fig, fname)
+        plot_savefig(fig, fname)

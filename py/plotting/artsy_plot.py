@@ -25,7 +25,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 import numpy as np
 
-from mesh_hydro_plotting import plot_1D_density_only, save_plot
+from mesh_hydro_plotting import plot_1D_density_only, plot_savefig
 from mesh_hydro_io import read_output
 from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 
@@ -93,4 +93,4 @@ if __name__ == "__main__":
         # remember imshow takex array[y, x]
         #  fig = plot_2D_density_only(rho[128:256, :], t=t)
 
-        save_plot(fig, fname, case="artsy")
+        plot_savefig(fig, fname, case="artsy")

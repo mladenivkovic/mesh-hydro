@@ -32,7 +32,7 @@ from mesh_hydro_utils import (
     label_to_kwargs,
 )
 from mesh_hydro_io import read_output
-from mesh_hydro_plotting import plot_1D_density_only, save_plot
+from mesh_hydro_plotting import plot_1D_density_only, plot_savefig
 
 from sys import argv
 
@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
         i += 1
 
-    save_plot(fig, f, case="density-overplotted")
+    plot_savefig(fig, f, case="density-overplotted")

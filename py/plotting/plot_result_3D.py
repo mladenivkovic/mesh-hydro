@@ -20,7 +20,7 @@ try_to_import()
 
 from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 from mesh_hydro_io import read_output
-from mesh_hydro_plotting import plot_1D, plot_2D_in_3D, save_plot
+from mesh_hydro_plotting import plot_1D, plot_2D_in_3D, plot_savefig
 
 if __name__ == "__main__":
     fname = get_only_cmdlinearg()
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     if ndim == 1:
         fig = plot_1D(rho, u, p)
-        save_plot(fig, fname)
+        plot_savefig(fig, fname)
     elif ndim == 2:
         fig = plot_2D_in_3D(rho, u, p, t=t)
-        save_plot(fig, fname, case="3D")
+        plot_savefig(fig, fname, case="3D")

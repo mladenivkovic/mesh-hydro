@@ -24,7 +24,7 @@ try_to_import()
 from mesh_hydro_io import read_ic, read_output, check_file_exists
 from mesh_hydro_utils import label_to_kwargs
 from mesh_hydro_riemann import riemann_solver
-from mesh_hydro_plotting import plot_1D, save_plot
+from mesh_hydro_plotting import plot_1D, plot_savefig
 from sys import argv
 import numpy as np
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         kwargs = label_to_kwargs(t="python solver", kwargs=kwargs)
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs=kwargs)
 
-        save_plot(fig, fname, case="not-overplotted")
+        plot_savefig(fig, fname, case="not-overplotted")
 
     else:
         print("Can't work with non-riemann ICs.")

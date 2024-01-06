@@ -16,7 +16,7 @@ try_to_import()
 
 from mesh_hydro_utils import get_only_cmdlinearg, label_to_kwargs
 from mesh_hydro_io import read_ic
-from mesh_hydro_plotting import plot_1D, plot_2D, save_plot
+from mesh_hydro_plotting import plot_1D, plot_2D, plot_savefig
 
 
 if __name__ == "__main__":
@@ -28,4 +28,4 @@ if __name__ == "__main__":
     elif ndim == 2:
         fig = plot_2D(rho, u, p)
 
-    save_plot(fig, fname)
+    plot_savefig(fig, fname)
