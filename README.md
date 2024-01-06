@@ -167,8 +167,6 @@ Things to keep in mind
 ----------------------------
 
 - General:
-    - If you want to use the included python modules and scripts, you need to add `/py/module/` to
-      your `PYTHONPATH`.
     - You can only solve for one hyperbolic conservatio law at a time: You need to decide whether
       you're doing hydro or advection, and which solver you want to use.
     - All macros are in `defines.h`
