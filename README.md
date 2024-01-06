@@ -64,20 +64,68 @@ Contents
 - `./scripts` A collection of scripts; both for `python` and `bash`. Mainly intended to run a set of
   simulations in a coordinated fashion, produce comparisons etc. For plotting scripts, have a look
   at the scripts in the `mesh_hydro_utils` subdirectory/git submodule.
+- `./python_module`: A git submodule containing the [mesh_hydro_utils](https://github.com/mladenivkovic/mesh_hydro_utils)
+  python module. It contains convenience functions to generate initial conditions, plot ICs and
+  outputs, and a Riemann solver. Note that you need to install it first for it to work. Instructions
+  are given [below](#Getting-And-Installing-The-Python-Module)
 - `./tex`: TeX documents containing every equations that is used, some implementation details, etc.,
   some results and conclusions.
 
 
 
-
-
-Requirements
+Installation
 ----------------------
+
+### Requirements
 
 - A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though.
 - GNU make to compile without much hassle. The Makefile is set up for GCC.
 - `python 3` with `numpy` and `matplotlib` for plotting.
 - LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts. It doesn't require any fancy LaTeX packages.
+
+
+### Getting The Code
+
+You can get the code from the github repository:
+
+```
+$ git clone https://github.com/mladenivkovic/mesh-hydro.git
+```
+
+or
+
+```
+$ git clone git@github.com:mladenivkovic/mesh-hydro.git
+```
+
+
+### Getting And Installing The Python Module
+
+The entire python module is stored within this repository as a git submodule of its
+[own repository](https://github.com/mladenivkovic/mesh_hydro_utils)
+
+Once you've cloned the mesh-hydro repository, you'll also need to tell git to grab
+the submodules using
+
+```
+$ git submodule init
+$ git submodule update
+```
+
+When completed successfully, the directory `./python_module` should now contain some files. We now
+need to install this python module.
+
+The easiest way is to navigate into the directory and install it locally using e.g. `pip`:
+
+```
+$ cd python_module
+$ pip install -e .
+```
+
+Alternatively (*albeit very discouraged*), you can add the directory
+`./python_module/mesh_hydro_utils` to your `$PYTHONPATH`.
+
+
 
 
 
@@ -104,7 +152,9 @@ cd program/bin/
 make -f Makefile-Riemann
 ./riemann paramfile ic-file
 ```
-in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters are ignored.
+
+in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters
+are ignored.
 
 
 
