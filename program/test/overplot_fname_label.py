@@ -29,9 +29,8 @@ from mesh_hydro_utils import (
     get_only_cmdlinearg,
     get_all_files_with_same_basename,
     label_to_kwargs,
+    read_output, plot_1D, plot_savefig
 )
-from mesh_hydro_io import read_output
-from mesh_hydro_plotting import plot_1D, save_plot
 
 from sys import argv
 import os
@@ -86,6 +85,6 @@ if __name__ == "__main__":
         i += 1
 
     if fname_force is None:
-        save_plot(fig, f)
+        plot_savefig(fig, f)
     else:
-        save_plot(fig, fname_force=fname_force)
+        plot_savefig(fig, fname_force=fname_force)

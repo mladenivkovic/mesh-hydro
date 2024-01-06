@@ -193,7 +193,7 @@ generate_tex(){
 }
 
 
-plotdir=../../py/plotting
+plotdir=../../python_module/scripts/plotting
 
 
 # cleanup first

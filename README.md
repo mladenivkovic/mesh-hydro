@@ -6,22 +6,21 @@ Description
 -----------------------
 
 A program to learn about and play with mesh/cell/grid based hydrodynamics and advection solvers.
-Currently, only finite volume methods are implemented.
-You can pick between:
+Currently, only finite volume methods are implemented. You can pick between:
 
 - Advection solvers:
     - piecewise constant advection
     - piecewise linear advection
     - weighted average flux (WAF) advection
 - Hydro solvers:
-	- Godunov (upwind)
+    - Godunov (upwind)
     - Weighted Average Flux (WAF)
     - MUSCL-Hancock
 - Riemann solvers:
-	- Exact	(exact iterative solver)
-	- HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
-	- TRRS	(Two Rarefaction approximate Riemann Solver)
-	- TSRS	(Two Shock approximate Riemann Solver)
+    - Exact	(exact iterative solver)
+    - HLLC	(Harten, Lax, van Leer approximate solver with contact wave)
+    - TRRS	(Two Rarefaction approximate Riemann Solver)
+    - TSRS	(Two Shock approximate Riemann Solver)
 - Limiters:
     - no limiter
     - minmod
@@ -29,7 +28,7 @@ You can pick between:
     - monotonized centered difference (MC)
     - van Leer
 - Number of dimensions:
-	- 1 or 2
+    - 1 or 2
 - Source terms:
     - constant cartesian
     - constant radial w.r.t. box center
@@ -39,15 +38,18 @@ You can pick between:
 
 at compile time by setting the corresponding values in the Makefile.
 
-To see what the code is able to do, you can for example run the test script in `./program/test` and have a look at the resulting `./program/test/test_results.pdf`
-(You'll need to add add `/py/module/` to your `PYTHONPATH` to be able to run the python plotting scripts.)
-Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz instability simulation.
+To see what the code is able to do, you can for example run the test script in `./program/test` and
+have a look at the resulting `./program/test/test_results.pdf` (You will need to install the
+accompanying `mesh_hydro_utils` python package for this to work. See the instructions below.)
+Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz instability
+simulation.
 
 You can read up how the code does that with the tex and pdf files in `tex/`.
 
-The purpose of this project is to learn about, play with, and eventually teach the basics of (finite volume) fluid dynamics.
-With that in mind, the project is deliberately written to be easy to read, and well documented (check out `/tex/equations/equations_and_implementation_details.pdf` !)
-So things are kept simple and non-optimized.
+The purpose of this project is to learn about, play with, and eventually teach the basics of (finite
+volume) fluid dynamics. With that in mind, the project is deliberately written to be easy to read,
+and well documented (check out `/tex/equations/equations_and_implementation_details.pdf` !) So
+things are kept simple and non-optimized.
 
 
 
@@ -57,22 +59,73 @@ Contents
 ----------------------------
 
 - `./IC`: A collection of default initial condition files.
-- `./program`: contains the actual software. The source code is in `./program/src`, the Makefile in `./program/bin` 
-- `./py`: python scripts for visualisation, generating ICs, etc.
-- `./sh`: some bash scripts to run multiple jobs in a coordinated fashion, produce comparisons etc.
-- `./tex`: TeX documents containing every equations that is used, some implementation details, etc., some results and conclusions.
+- `./program`: contains the actual software. The source code is in `./program/src`, the Makefile in
+  `./program/bin`
+- `./scripts` A collection of scripts; both for `python` and `bash`. Mainly intended to run a set of
+  simulations in a coordinated fashion, produce comparisons etc. For plotting scripts, have a look
+  at the scripts in the `mesh_hydro_utils` subdirectory/git submodule.
+- `./python_module`: A git submodule containing the [mesh_hydro_utils](https://github.com/mladenivkovic/mesh_hydro_utils)
+  python module. It contains convenience functions to generate initial conditions, plot ICs and
+  outputs, and a Riemann solver. Note that you need to install it first for it to work. Instructions
+  are given [below](#Getting-And-Installing-The-Python-Module).
+- `./tex`: TeX documents containing every equations that is used, some implementation details, etc.,
+  some results and conclusions.
 
 
 
-
-
-Requirements
+Installation
 ----------------------
 
-- A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though. 
+### Requirements
+
+- A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though.
 - GNU make to compile without much hassle. The Makefile is set up for GCC.
-- python 3 with numpy and matplotlib for plotting. 
+- `python 3` with `numpy` and `matplotlib` for plotting.
 - LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts. It doesn't require any fancy LaTeX packages.
+
+
+### Getting The Code
+
+You can get the code from the github repository:
+
+```
+$ git clone https://github.com/mladenivkovic/mesh-hydro.git
+```
+
+or
+
+```
+$ git clone git@github.com:mladenivkovic/mesh-hydro.git
+```
+
+
+### Getting And Installing The Python Module
+
+The entire python module is stored within this repository as a git submodule of its
+[own repository](https://github.com/mladenivkovic/mesh_hydro_utils).
+
+Once you've cloned the mesh-hydro repository, you'll also need to tell git to grab
+the submodules using
+
+```
+$ git submodule init
+$ git submodule update
+```
+
+When completed successfully, the directory `./python_module` should now contain some files. We now
+need to install this python module.
+
+The easiest way is to navigate into the directory and install it locally using e.g. `pip`:
+
+```
+$ cd python_module
+$ pip install -e .
+```
+
+Alternatively (*albeit very discouraged*), you can add the directory
+`./python_module/mesh_hydro_utils` to your `$PYTHONPATH`.
+
+
 
 
 
@@ -99,7 +152,9 @@ cd program/bin/
 make -f Makefile-Riemann
 ./riemann paramfile ic-file
 ```
-in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters are ignored.
+
+in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters
+are ignored.
 
 
 
@@ -112,28 +167,44 @@ Things to keep in mind
 ----------------------------
 
 - General:
-    - If you want to use the included python modules and scripts, you need to add `/py/module/` to your `PYTHONPATH`.
-    - You can only solve for one hyperbolic conservatio law at a time: You need to decide whether you're doing hydro or advection, and which solver you want to use.
+    - If you want to use the included python modules and scripts, you need to add `/py/module/` to
+      your `PYTHONPATH`.
+    - You can only solve for one hyperbolic conservatio law at a time: You need to decide whether
+      you're doing hydro or advection, and which solver you want to use.
     - All macros are in `defines.h`
-    - Boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in `defines.h` though.
+    - Boxsize is always assumed to be 1 (in any dimension), and starts at zero. Can be changed in
+      `defines.h` though.
     - There is only a uniform grid. If you want AMR or non-Cartesian geometries, do it yourself.
 - Advection:
     - No advection solver uses a Riemann solver.
     - Piecewise constant advection can't apply limiters.
-    - Reflective boundary conditions make no sense for any advection scheme. Transmissive ones aren't really useful either, so you probably should always go with periodic ones when dealing with advection.
+    - Reflective boundary conditions make no sense for any advection scheme. Transmissive ones
+      aren't really useful either, so you probably should always go with periodic ones when dealing
+      with advection.
 - Hydrodynamics related:
-    - This code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want something different, change it in `defines.h`
-    - If you change the adiabatic index in the definitions, and want to overplot exact Riemann solutions using the python scripts, don't forget to change gamma in `py/module/hydro_riemann.py` as well!
-    - WAF methods (advection and hydro) without the use of flux limiters introduces strong unphysical oscillations (as it is expected to). You probably won't be able to run the code over a long time interval. In fact, most vacuum examples can't even pass the tests.
-    - The MUSCL-Hancock method doesn't work well with the TRRS solver. Like the WAF methods, oscillations occur if no limiter is used, and the code may crash and/or produce NANs.
-    - The MUSCL-Hancock method doesn't handle vacuum very well with this interpretation. Best to avoid it.
-    - There is no MC limiter implemented that works with the MUSCL-Hancock method. The code will throw an error if you try to run with it.
+    - This code is written assuming ideal gasses with adiabatic index gamma = 5/3. If you want
+      something different, change it in `defines.h`
+    - If you change the adiabatic index in the definitions, and want to overplot exact Riemann
+      solutions using the python scripts, don't forget to change gamma in
+      `py/module/hydro_riemann.py` as well!
+    - WAF methods (advection and hydro) without the use of flux limiters introduces strong
+      unphysical oscillations (as it is expected to). You probably won't be able to run the code
+      over a long time interval. In fact, most vacuum examples can't even pass the tests.
+    - The MUSCL-Hancock method doesn't work well with the TRRS solver. Like the WAF methods,
+      oscillations occur if no limiter is used, and the code may crash and/or produce NANs.
+    - The MUSCL-Hancock method doesn't handle vacuum very well with this interpretation. Best to
+      avoid it.
+    - There is no MC limiter implemented that works with the MUSCL-Hancock method. The code will
+      throw an error if you try to run with it.
 - Riemann related:
-    - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile in `/program/bin/`
-    - ~~You can't use the HLLC solver as an individual solver to just solve a Riemann problem.~~ Now you can :)
+    - You can use the code as a Riemann solver only. To do that, use the `Makefile-Riemann` makefile
+      in `/program/bin/`
+    - ~~You can't use the HLLC solver as an individual solver to just solve a Riemann problem.~~ Now
+      you can :)
     - The TRRS solver doesn't do well with the MUSCL method. Best to avoid it.
 - Source terms:
-    - Source terms have only been implemented for hydro applications. It should be straightforward to add them to advection though.
+    - Source terms have only been implemented for hydro applications. It should be straightforward
+      to add them to advection though.
 - Integrators:
     - Integrators are only employed if there are source terms to add to the Euler equations.
 
@@ -230,8 +301,14 @@ Initial Conditions
 
 - The program reads two types of IC files.
 - In any case, they're expected to be formatted text.
-- In both IC file types, lines starting with `//` or `/*` will be recognized as comments and skipped. Empty lines are skipped as well.
-- Some example python scripts that generate initial conditions are given in `./py/IC`
+- In both IC file types, lines starting with `//` or `/*` will be recognized as comments and
+  skipped. Empty lines are skipped as well.
+- Some example python scripts that generate initial conditions are given in
+  `./python_module/scripts/IC`. Note that for the directory `./python_module/` to contain any files,
+  you first need to initialize the submodule. See the instructions
+  [above](#Getting-And-Installing-The-Python-Module).
+
+
 
 
 ### Two-state ICs
@@ -248,12 +325,12 @@ u_R     = <float>
 p_R     = <float>
 ```
 
-The line 
+The line
 ```
 filetype = two-state
 ```
 
-**must** be the first non-comment non-empty line. The order of the other parameters is 
+**must** be the first non-comment non-empty line. The order of the other parameters is
 arbitrary, but they must be named `rho_L`, `u_L`, `p_L`, `rho_R`, `u_R`, `p_R`.
 
 The discontinuity between the changes will be in the middle along the x axis. The coordinates will be printed to screen.
@@ -415,7 +492,10 @@ The output files are written in formatted text, and their content should be self
 Visualisation
 -----------------------------------
 
-Some basic scripts to visualize ICs and outputs are given in the `./py/plotting` directory. See the `README.md` in the `./py` directory for more details.
+Some basic scripts to visualize ICs and outputs are given in the `./python_module/scripts/plotting`
+directory. See the `README.md` in the `./python_module/scripts` directory for more details. Note
+that for the directory `./python_module/` to contain any files, you first need to initialize the
+submodule. See the instructions [above](#Getting-And-Installing-The-Python-Module).
 
 
 
@@ -423,11 +503,13 @@ Some basic scripts to visualize ICs and outputs are given in the `./py/plotting`
 Tinkering with the Code
 ----------------------------------
 
-I tried keeping the code as modular as possible, so adding/removing stuff should work fine. If you want to do that, here's a list of functions that could be useful:
+I tried keeping the code as modular as possible, so adding/removing stuff should work fine. If you
+want to do that, here's a list of functions that could be useful:
 
 ### in `utils.h`:
 
-- `log_extra()`, `debugmessage()`, `throw_error()`: Functions that will print to stdout depending on the level of verbosity you set in the paramfile.
+- `log_extra()`, `debugmessage()`, `throw_error()`: Functions that will print to stdout depending on
+  the level of verbosity you set in the paramfile.
 - `printbool()`: print boolean as true or false to stdout.
 
 
@@ -435,8 +517,10 @@ I tried keeping the code as modular as possible, so adding/removing stuff should
 
 ### in `cell.h`:
 
-- `cell_print_grid()`: prints out chosen grid quantity for the entire grid to stdout. Works independently of dimension of the code, so you can always call it.
-- `cell_print_grid_part()`: prints out chosen grid quantity for chosen cell intervals, i.e. give it xmin and xmax etc. 
+- `cell_print_grid()`: prints out chosen grid quantity for the entire grid to stdout. Works
+  independently of dimension of the code, so you can always call it.
+- `cell_print_grid_part()`: prints out chosen grid quantity for chosen cell intervals, i.e. give it
+  xmin and xmax etc.
 
 
 

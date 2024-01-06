@@ -13,10 +13,7 @@
 # ----------------------------------------------------
 
 
-from mesh_hydro_io import read_ic, read_output, check_file_exists
-from mesh_hydro_utils import label_to_kwargs
-from mesh_hydro_riemann import riemann_solver
-from mesh_hydro_plotting import plot_1D, save_plot
+from mesh_hydro_utils import label_to_kwargs, read_ic, read_output, check_file_exists, riemann_solver, plot_1D, plot_savefig
 from sys import argv
 import numpy as np
 import os
@@ -112,11 +109,11 @@ if __name__ == "__main__":
         fig = plot_1D(rho_sol, u_sol, p_sol, draw_legend=True, fig=fig, kwargs=kwargs)
 
         if solver.startswith("GODUNOV"):
-            save_plot(
+            plot_savefig(
                 fig, fname_force=solver + "-" + icprefix + "-{0:1d}D.png".format(ndim)
             )
         else:
-            save_plot(
+            plot_savefig(
                 fig,
                 fname_force=solver
                 + "-"
