@@ -24,7 +24,7 @@ try_to_import()
 
 from mesh_hydro_utils import get_only_cmdlinearg, get_all_files_with_same_basename
 from mesh_hydro_io import read_output
-from mesh_hydro_plotting import get_figname
+from mesh_hydro_plotting import plot_get_figname
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 from sys import argv
@@ -96,7 +96,7 @@ def plot_1D_density_only(
             threshold += 1
         if len(ax1.get_lines()) > threshold:
             case = "density"
-        figname = get_figname(fname, case=case)
+        figname = plot_get_figname(fname, case=case)
 
         plt.savefig(figname, format=file_format)
         print("Saved figure", figname)
@@ -135,7 +135,7 @@ def plot_2D_density_only(rho, fname, t=0):
 
     plt.figtext(0.5, 0.95, "t = {0:7.3f}".format(t))
 
-    figname = get_figname(fname, case="density")
+    figname = plot_get_figname(fname, case="density")
 
     plt.savefig(figname, format=file_format)
     print("Saved figure", figname)
