@@ -60,7 +60,7 @@ if [ $? -eq 0 ]; then # only continue if no error happened
     # $CMD paramfile.txt ../../IC/1D/uniform-1D-100.dat
     # $CMD paramfile.txt ../../IC/2D/uniform-2D-100.dat
     $CMD paramfile.txt testing-IC-1D.dat
-    python ../../py/plotting/plot_all_results_individually.py *out
+    python ../../python_module/scripts/plotting/plot_all_results_individually.py *out
 
 
 
@@ -73,8 +73,8 @@ if [ $? -eq 0 ]; then # only continue if no error happened
     # icfile=../../IC/two-state/sod_test.dat
     # icfile=../../IC/two-state/sod_test_modified.dat
     # $CMD paramfile.txt $icfile | tee output.log
-    # python3 ../../py/plotting/plot_all_riemann_results.py *-0001.out $icfile
-    # python3 ../../py/plotting/plot_riemann_result.py *-0001.out $icfile
+    # python3 ../../python_module/scripts/plotting/plot_all_riemann_results.py *-0001.out $icfile
+    # python3 ../../python_module/scripts/plotting/plot_riemann_result.py *-0001.out $icfile
 
 
 
@@ -82,11 +82,11 @@ if [ $? -eq 0 ]; then # only continue if no error happened
     # PLOTTING
     #----------------------
 
-    # python3 ../../py/plotting/plot_density.py *0001.out
-    # python3 ../../py/plotting/plot_result.py *0001.out
+    # python3 ../../python_module/scripts/plotting/plot_density.py *0001.out
+    # python3 ../../python_module/scripts/plotting/plot_result.py *0001.out
     # python3 ../../py/plotting/plot_all_results_individually.py *.out
-    # python3 ../../py/plotting/plot_all_density.py *.out
-    # python3 ../../py/plotting/plot_all_density_individually.py *.out
+    # python3 ../../python_module/scripts/plotting/plot_all_density.py *.out
+    # python3 ../../python_module/scripts/plotting/plot_all_density_individually.py *.out
 
 
 fi
