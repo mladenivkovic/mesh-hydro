@@ -77,16 +77,33 @@ include processing.mk
 # COMPILER OPTIONS AND DIRECTIVES
 #==================================
 
+# Compiler to use
 
-#Compiler to use
+# ---------------------------------------------------------------------
+#  USING GCC
+
 CC=gcc -I$(IDIR) #-static
 
+# flags for gcc compiler
+CFLAGS= -g -O0 -pedantic -std=c11 \
+		-fsignaling-nans -ffinite-math-only -fno-signed-zeros \
+		-Wall -Wextra -Werror -Warray-bounds -Wno-unused-parameter
+# CFLAGS= -O3
+
+
+# ---------------------------------------------------------------------
+#  USING INTEL ONEAPI
+
+# CC=icx -I$(IDIR) #-static
 
 # flags for gcc compiler
 # CFLAGS= -g -O0 -pedantic -std=c11 \
-#         -fsignaling-nans -ffinite-math-only -fno-signed-zeros \
-#         -Wall -Wextra -Werror -Warray-bounds -Wno-unused-parameter
-CFLAGS= -O3
+#         -Wall -Wextra -Werror -Wno-unused-parameter
+# CFLAGS= -O3
+
+
+# ---------------------------------------------------------------------
+
 
 CFLAGS += $(DEFINES)
 
