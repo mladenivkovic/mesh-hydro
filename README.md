@@ -5,8 +5,9 @@ Mesh-based Hydro Solvers
 Description
 -----------------------
 
-A program to learn about and play with mesh/cell/grid based hydrodynamics and advection solvers.
-Currently, only finite volume methods are implemented. You can pick between:
+A program to learn about and play with mesh/cell/grid based hydrodynamics and
+advection solvers. Currently, only finite volume methods are implemented. You
+can pick between:
 
 - Advection solvers:
     - piecewise constant advection
@@ -38,18 +39,20 @@ Currently, only finite volume methods are implemented. You can pick between:
 
 at compile time by setting the corresponding values in the Makefile.
 
-To see what the code is able to do, you can for example run the test script in `./program/test` and
-have a look at the resulting `./program/test/test_results.pdf` (You will need to install the
-accompanying `mesh_hydro_utils` python package for this to work. See the instructions below.)
-Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz instability
-simulation.
+To see what the code is able to do, you can for example run the test script in
+`./program/test` and have a look at the resulting
+`./program/test/test_results.pdf` (You will need to install the accompanying
+`mesh_hydro_utils` python package for this to work. See the instructions below.)
+Another option is to just run `./program/bin/run.sh` to run a Kelvin-Helmholtz
+instability simulation.
 
 You can read up how the code does that with the tex and pdf files in `tex/`.
 
-The purpose of this project is to learn about, play with, and eventually teach the basics of (finite
-volume) fluid dynamics. With that in mind, the project is deliberately written to be easy to read,
-and well documented (check out `/tex/equations/equations_and_implementation_details.pdf` !) So
-things are kept simple and non-optimized.
+The purpose of this project is to learn about, play with, and eventually teach
+the basics of (finite volume) fluid dynamics. With that in mind, the project is
+deliberately written to be easy to read, and well documented (check out
+`/tex/equations/equations_and_implementation_details.pdf` !) So things are kept
+simple and non-optimized.
 
 
 
@@ -59,17 +62,20 @@ Contents
 ----------------------------
 
 - `./IC`: A collection of default initial condition files.
-- `./program`: contains the actual software. The source code is in `./program/src`, the Makefile in
-  `./program/bin`
-- `./scripts` A collection of scripts; both for `python` and `bash`. Mainly intended to run a set of
-  simulations in a coordinated fashion, produce comparisons etc. For plotting scripts, have a look
-  at the scripts in the `mesh_hydro_utils` subdirectory/git submodule.
-- `./python_module`: A git submodule containing the [mesh_hydro_utils](https://github.com/mladenivkovic/mesh_hydro_utils)
-  python module. It contains convenience functions to generate initial conditions, plot ICs and
-  outputs, and a Riemann solver. Note that you need to install it first for it to work. Instructions
-  are given [below](#Getting-And-Installing-The-Python-Module).
-- `./tex`: TeX documents containing every equations that is used, some implementation details, etc.,
-  some results and conclusions.
+- `./program`: contains the actual software. The source code is in
+  `./program/src`, the Makefile in `./program/bin`
+- `./scripts` A collection of scripts; both for `python` and `bash`. Mainly
+  intended to run a set of simulations in a coordinated fashion, produce
+  comparisons etc. For plotting scripts, have a look at the scripts in the
+  `mesh_hydro_utils` subdirectory/git submodule.
+- `./python_module`: A git submodule containing the
+  [mesh_hydro_utils](https://github.com/mladenivkovic/mesh_hydro_utils) python
+  module. It contains convenience functions to generate initial conditions, plot
+  ICs and outputs, and a Riemann solver. Note that you need to install it first
+  for it to work. Instructions are given
+  [below](#Getting-And-Installing-The-Python-Module).
+- `./tex`: TeX documents containing every equations that is used, some
+  implementation details, etc., some results and conclusions.
 
 
 
@@ -78,10 +84,13 @@ Installation
 
 ### Requirements
 
-- A good old C compiler. Code is written in C11 standard. I only tested it with `gcc 8.3.0` though.
-- GNU make to compile without much hassle. The Makefile is set up for GCC.
+- A good old C compiler. Code is written in C11 standard. I tested it with `gcc
+  14.1.0` and `oneapi 2024`.
+- GNU make to compile without much hassle. The Makefile is set up for GCC, but
+  options for OneAPI is available.
 - `python 3` with `numpy` and `matplotlib` for plotting.
-- LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the scripts. It doesn't require any fancy LaTeX packages.
+- LaTeX to create the TeX files. I hardcoded the `pdflatex` command in the
+  scripts. It doesn't require any fancy LaTeX packages.
 
 
 ### Getting The Code
@@ -101,28 +110,29 @@ $ git clone git@github.com:mladenivkovic/mesh-hydro.git
 
 ### Getting And Installing The Python Module
 
-The entire python module is stored within this repository as a git submodule of its
-[own repository](https://github.com/mladenivkovic/mesh_hydro_utils).
+The entire python module is stored within this repository as a git submodule of
+its [own repository](https://github.com/mladenivkovic/mesh_hydro_utils).
 
-Once you've cloned the mesh-hydro repository, you'll also need to tell git to grab
-the submodules using
+Once you've cloned the mesh-hydro repository, you'll also need to tell git to
+grab the submodules using
 
 ```
 $ git submodule init
 $ git submodule update
 ```
 
-When completed successfully, the directory `./python_module` should now contain some files. We now
-need to install this python module.
+When completed successfully, the directory `./python_module` should now contain
+some files. We now need to install this python module.
 
-The easiest way is to navigate into the directory and install it locally using e.g. `pip`:
+The easiest way is to navigate into the directory and install it locally using
+e.g. `pip`:
 
 ```
 $ cd python_module
 $ pip install -e .
 ```
 
-Alternatively (*albeit very discouraged*), you can add the directory
+Alternatively (***albeit very discouraged***), you can add the directory
 `./python_module/mesh_hydro_utils` to your `$PYTHONPATH`.
 
 
@@ -153,8 +163,8 @@ make -f Makefile-Riemann
 ./riemann paramfile ic-file
 ```
 
-in the parameter file, you need to specify `nx` and `tmax` only, pretty much all other parameters
-are ignored.
+in the parameter file, you need to specify `nx` and `tmax` only, pretty much all
+other parameters are ignored.
 
 
 
@@ -201,10 +211,11 @@ Things to keep in mind
       you can :)
     - The TRRS solver doesn't do well with the MUSCL method. Best to avoid it.
 - Source terms:
-    - Source terms have only been implemented for hydro applications. It should be straightforward
-      to add them to advection though.
+    - Source terms have only been implemented for hydro applications. It should
+      be straightforward to add them to advection though.
 - Integrators:
-    - Integrators are only employed if there are source terms to add to the Euler equations.
+    - Integrators are only employed if there are source terms to add to the
+      Euler equations.
 
 
 
@@ -299,12 +310,12 @@ Initial Conditions
 
 - The program reads two types of IC files.
 - In any case, they're expected to be formatted text.
-- In both IC file types, lines starting with `//` or `/*` will be recognized as comments and
-  skipped. Empty lines are skipped as well.
+- In both IC file types, lines starting with `//` or `/*` will be recognized as
+  comments and skipped. Empty lines are skipped as well.
 - Some example python scripts that generate initial conditions are given in
-  `./python_module/scripts/IC`. Note that for the directory `./python_module/` to contain any files,
-  you first need to initialize the submodule. See the instructions
-  [above](#Getting-And-Installing-The-Python-Module).
+  `./python_module/scripts/IC`. Note that for the directory `./python_module/`
+  to contain any files, you first need to initialize the submodule. See the
+  instructions [above](#Getting-And-Installing-The-Python-Module).
 
 
 
@@ -328,18 +339,23 @@ The line
 filetype = two-state
 ```
 
-**must** be the first non-comment non-empty line. The order of the other parameters is
-arbitrary, but they must be named `rho_L`, `u_L`, `p_L`, `rho_R`, `u_R`, `p_R`.
+**must** be the first non-comment non-empty line. The order of the other
+parameters is arbitrary, but they must be named `rho_L`, `u_L`, `p_L`, `rho_R`,
+`u_R`, `p_R`.
 
-The discontinuity between the changes will be in the middle along the x axis. The coordinates will be printed to screen.
+The discontinuity between the changes will be in the middle along the x axis.
+The coordinates will be printed to screen.
 
-If the code is supposed to run in 2D, then the split will be along the x axis as well, and just copied along the y axis. Fluid velocity in y direction will be set to zero, `u_L` and `u_R` will be set as `u_x`.
+If the code is supposed to run in 2D, then the split will be along the x axis as
+well, and just copied along the y axis. Fluid velocity in y direction will be
+set to zero, `u_L` and `u_R` will be set as `u_x`.
 
 
 
 ### Arbitrary ICs
 
-You can provide an individual value for density, velocity, and pressure for each cell. The IC file format is:
+You can provide an individual value for density, velocity, and pressure for each
+cell. The IC file format is:
 
 The lines
 ```
@@ -364,8 +380,8 @@ ndim = 1
 <density in cell nx-1> <velocity cell nx-1> <pressure in cell nx-1>
 ```
 
-`cell 0` is the leftmost cell. All values for density, velocity, and pressure must be floats.
-You can put comments and empy lines wherever you feel like it.
+`cell 0` is the leftmost cell. All values for density, velocity, and pressure
+must be floats. You can put comments and empy lines wherever you feel like it.
 
 
 
@@ -417,7 +433,8 @@ Output
 ---------------------
 
 
-If no `basename` is given in the parameter file, the output file name will be generated as follows:
+If no `basename` is given in the parameter file, the output file name will be
+generated as follows:
 
 `<ICfile-without-suffix>-<SOLVER>-<RIEMANN-SOLVER>-<LIMITER>-<NDIM>D-<snapshot nr>.out`
 
@@ -425,7 +442,8 @@ e.g.
 
 `run-ADVECTION-NO_LIMITER-2D-0001.out`
 
-The output files are written in formatted text, and their content should be self-explainatory:
+The output files are written in formatted text, and their content should be
+self-explainatory:
 
 
 
@@ -490,10 +508,11 @@ The output files are written in formatted text, and their content should be self
 Visualisation
 -----------------------------------
 
-Some basic scripts to visualize ICs and outputs are given in the `./python_module/scripts/plotting`
-directory. See the `README.md` in the `./python_module/scripts` directory for more details. Note
-that for the directory `./python_module/` to contain any files, you first need to initialize the
-submodule. See the instructions [above](#Getting-And-Installing-The-Python-Module).
+Some basic scripts to visualize ICs and outputs are given in the
+`./python_module/scripts/plotting` directory. See the `README.md` in the
+`./python_module/scripts` directory for more details. Note that for the
+directory `./python_module/` to contain any files, you first need to initialize
+the submodule. See the instructions [above](#Getting-And-Installing-The-Python-Module).
 
 
 
@@ -501,13 +520,14 @@ submodule. See the instructions [above](#Getting-And-Installing-The-Python-Modul
 Tinkering with the Code
 ----------------------------------
 
-I tried keeping the code as modular as possible, so adding/removing stuff should work fine. If you
-want to do that, here's a list of functions that could be useful:
+I tried keeping the code as modular as possible, so adding/removing stuff should
+work fine. If you want to do that, here's a list of functions that could be
+useful:
 
 ### in `utils.h`:
 
-- `log_extra()`, `debugmessage()`, `throw_error()`: Functions that will print to stdout depending on
-  the level of verbosity you set in the paramfile.
+- `log_extra()`, `debugmessage()`, `throw_error()`: Functions that will print to
+  stdout depending on the level of verbosity you set in the paramfile.
 - `printbool()`: print boolean as true or false to stdout.
 
 
@@ -515,10 +535,11 @@ want to do that, here's a list of functions that could be useful:
 
 ### in `cell.h`:
 
-- `cell_print_grid()`: prints out chosen grid quantity for the entire grid to stdout. Works
-  independently of dimension of the code, so you can always call it.
-- `cell_print_grid_part()`: prints out chosen grid quantity for chosen cell intervals, i.e. give it
-  xmin and xmax etc.
+- `cell_print_grid()`: prints out chosen grid quantity for the entire grid to
+  stdout. Works independently of dimension of the code, so you can always call
+  it.
+- `cell_print_grid_part()`: prints out chosen grid quantity for chosen cell
+  intervals, i.e. give it xmin and xmax etc.
 
 
 
