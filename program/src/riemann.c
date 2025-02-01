@@ -5,13 +5,11 @@
 
 #include <math.h>
 #include <stddef.h>
-#include <stdio.h>
 
 #include "defines.h"
 #include "gas.h"
 #include "params.h"
 #include "riemann.h"
-#include "utils.h"
 
 extern params pars;
 
@@ -61,9 +59,9 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
 
   if (delta_u < u_crit) {
     return (0);
-  } else {
-    return (1);
   }
+  return (1);
+
 }
 
 void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
@@ -212,7 +210,6 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
     }
   }
 
-  return;
 }
 
 void riemann_sample_solution(pstate *left, pstate *right, float pstar,
@@ -351,7 +348,6 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
     }
   }
 
-  return;
 }
 
 void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
@@ -394,7 +390,7 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
   float pstaroverpL = pstar / left->p;
   if (pstar <= left->p) {
     /* rarefaction star state */
-    star_left.rho = left->rho * pow(pstaroverpL, ONEOVERGAMMA);
+    star_left.rho = left->rho * powf(pstaroverpL, ONEOVERGAMMA);
   } else {
     /* shock star state */
     star_left.rho =
@@ -409,7 +405,7 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
   float pstaroverpR = pstar / right->p;
   if (pstar <= right->p) {
     /* rarefaction star state */
-    star_right.rho = right->rho * pow(pstaroverpR, ONEOVERGAMMA);
+    star_right.rho = right->rho * powf(pstaroverpR, ONEOVERGAMMA);
   } else {
     /* shock star state */
     star_right.rho =
@@ -499,8 +495,8 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
 }
 
 void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
-                                              float S[3], cstate *fluxes,
-                                              float *delta_q, int dim) {
+                                              float S[3], cstate fluxes[4],
+                                              float delta_q[3], int dim) {
   /*-------------------------------------------------------------------------------------------
    * Compute (and "return") the full solution of the Riemann problem: Get all
    * wave speeds, the fluxes of all four states U_L, U*_L, U*_R, U_R, and the
@@ -512,7 +508,8 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
    * pstate* right:     right primitive state of Riemann problem
    * float S[3]:        where wave speeds will be written to
    * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L,
-   * F*_R, F_R float delta_q[3]:  differences in densities over all four waves:
+   *                    F*_R, F_R
+   * float delta_q[3]:  differences in densities over all four waves:
    *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
    * int dim:           which fluid velocity direction to use. 0: x, 1: y
    * ------------------------------------------------------------------------------------------
@@ -722,5 +719,4 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     delta_q[2] = right->rho - star_right.rho;
   }
 
-  return;
 }

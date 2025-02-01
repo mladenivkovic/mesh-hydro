@@ -7,6 +7,7 @@
 #define RIEMANN_H
 
 #include "defines.h"
+#include "gas.h"
 
 #if RIEMANN == EXACT
 #include "riemann/riemann-exact.h"
