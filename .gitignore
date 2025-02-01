@@ -12,4 +12,6 @@
 *.toc
 **/__pycache__
 black_formatting_env/**
+.black_formatting_env/**
 compile_commands.json
+**/.cache
