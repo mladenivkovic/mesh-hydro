@@ -11,6 +11,10 @@
 #include "params.h"
 #include "riemann.h"
 
+#if RIEMANN == HLLC
+#include "utils.h"
+#endif
+
 extern params pars;
 
 void riemann_solve(pstate *left, pstate *right, pstate *sol, float xovert,

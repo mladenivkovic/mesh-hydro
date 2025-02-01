@@ -4,13 +4,11 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "gas.h"
-#include "params.h"
+#include "riemann-hllc.h"
 #include "riemann.h"
 #include "utils.h"
 
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 void riemann_solve_hllc(pstate *left, pstate *right, cstate *sol, float xovert,
                         int dimension) {
@@ -94,9 +92,6 @@ void riemann_compute_wave_speed_estimates(pstate *left, pstate *right,
   /* Start by computint the simple primitive variable speed estimate */
   /* --------------------------------------------------------------- */
 
-  float pstar;
-  float ustar;
-
   float aL = gas_soundspeed(left);
   float aR = gas_soundspeed(right);
 
@@ -104,10 +99,12 @@ void riemann_compute_wave_speed_estimates(pstate *left, pstate *right,
   float PPV =
       0.5 * (left->p + right->p) + 0.5 * (left->u[dim] - right->u[dim]) * temp;
 
-  if (PPV < 0)
+  if (PPV < 0) {
     PPV = SMALLP;
-  pstar = PPV;
-  ustar =
+  }
+
+  float pstar = PPV;
+  float ustar =
       0.5 * (left->u[dim] + right->u[dim]) + 0.5 * (left->p - right->p) / temp;
 
 #ifdef HLLC_USE_ADAPTIVE_SPEED_ESTIMATE
@@ -117,11 +114,13 @@ void riemann_compute_wave_speed_estimates(pstate *left, pstate *right,
 
   /* find ratio Q = pmax/pmin, where pmax, pmin are pL and pR */
   float pmin = left->p;
-  if (pmin > right->p)
+  if (pmin > right->p) {
     pmin = right->p;
+  }
   float pmax = left->p;
-  if (pmax < right->p)
+  if (pmax < right->p) {
     pmax = right->p;
+  }
   float qmax = pmax / pmin;
 
   /* if the ratio pmax/pmin isn't too big, and the primitive variable pressure
@@ -187,10 +186,9 @@ float qLR(float pstar, float pLR) {
   if (pstar > pLR) {
     /* shock relation */
     return (sqrtf(1. + 0.5 * (GAMMA + 1.) / GAMMA * (pstar / pLR - 1.)));
-  } else {
-    /* rarefaction relation */
-    return (1.);
   }
+  /* Else: rarefaction relation */
+  return (1.);
 }
 
 void riemann_hllc_compute_star_cstates(pstate *left, pstate *right, float SL,
@@ -339,7 +337,6 @@ void riemann_sample_hllc_solution(pstate *left, pstate *right, float SL,
     sol->E = FR.E;
   }
 
-  return;
 }
 
 void riemann_sample_hllc_solution_state(pstate *left, pstate *right, float SL,
@@ -411,7 +408,6 @@ void riemann_sample_hllc_solution_state(pstate *left, pstate *right, float SL,
     sol->p = right->p;
   }
 
-  return;
 }
 
 void riemann_get_hllc_full_solution_for_WAF(pstate *left, pstate *right,
@@ -511,7 +507,6 @@ void riemann_get_hllc_full_solution_for_WAF(pstate *left, pstate *right,
   fluxes[2] = FstarR;
   fluxes[3] = FR;
 
-  return;
 }
 
 void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,

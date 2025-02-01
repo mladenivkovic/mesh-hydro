@@ -33,7 +33,7 @@ void riemann_sample_hllc_solution_state(pstate *left, pstate *right, float SL,
                                         float xovert, int dim);
 
 void riemann_get_hllc_full_solution_for_WAF(pstate *left, pstate *right,
-                                            float *S, cstate *fluxes,
-                                            float *delta_q, int dim);
+                                            float S[3], cstate fluxes[4],
+                                            float delta_q[3], int dim);
 
 #endif
