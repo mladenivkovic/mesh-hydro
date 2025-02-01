@@ -5,8 +5,9 @@
 /* Written by Mladen Ivkovic, APR 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include <math.h>
+
 #include "cell.h"
-#include "defines.h"
 #include "params.h"
 
 extern params pars;
@@ -52,13 +53,14 @@ void sources_get_acceleration(void) {
       float y = c->y;
       float dx = x - cx;
       float dy = y - cy;
-      float alpha = atan(dy / dx);
+      float alpha = atanf(dy / dx);
       float s = 1;
-      if (dx < 0)
+      if (dx < 0) {
         s = -1.f;
+      }
 
-      c->acc[0] = cos(alpha) * pars.src_const_acc_r * s;
-      c->acc[1] = sin(alpha) * pars.src_const_acc_r * s;
+      c->acc[0] = cosf(alpha) * pars.src_const_acc_r * s;
+      c->acc[1] = sinf(alpha) * pars.src_const_acc_r * s;
     }
   }
 #endif
