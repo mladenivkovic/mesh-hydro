@@ -10,15 +10,15 @@ then
 fi
 
 # Check if the virtual environment with black exists
-if [ ! -d black_formatting_env ]
+if [ ! -d .black_formatting_env ]
 then
   echo "Formatting environment not found, installing it..."
-  python3 -m venv black_formatting_env
-  ./black_formatting_env/bin/python3 -m pip install black=="23.3.0"
+  python3 -m venv .black_formatting_env
+  ./.black_formatting_env/bin/python3 -m pip install black=="23.3.0"
 
 fi
 # Now we know exactly which black to use
-black="./black_formatting_env/bin/python3 -m black"
+black="./.black_formatting_env/bin/python3 -m black"
 
 # Formatting command
 cmd="$black -t py38 $(git ls-files | grep '\.py$')"
