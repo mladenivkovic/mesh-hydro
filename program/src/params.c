@@ -238,7 +238,6 @@ void params_print_log(void) {
               "-------------------------\n");
 }
 
-
 void params_check(void) {
   /* ----------------------------------------------- */
   /* Check whether we can work with these parameters */

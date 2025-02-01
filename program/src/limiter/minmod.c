@@ -3,8 +3,8 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include "limiter.h"
 #include "minmod.h"
+#include "limiter.h"
 #include "params.h"
 
 #include <math.h>
@@ -55,5 +55,4 @@ float minmod(float a, float b) {
     return (a);
   }
   return (b);
-
 }

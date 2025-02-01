@@ -238,7 +238,6 @@ void cell_reset_fluxes(void) {
 #endif
 }
 
-
 void cell_get_pstates_from_cstates(void) {
   /* ---------------------------------------------
    * Computes the primitive state from conserved
@@ -259,7 +258,6 @@ void cell_get_pstates_from_cstates(void) {
   }
 #endif
 }
-
 
 void cell_get_cstates_from_pstates(void) {
   /* ---------------------------------------------

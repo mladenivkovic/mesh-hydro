@@ -299,5 +299,4 @@ float limiter_r(float topleft, float topright, float bottomleft) {
     return ((topleft - topright) * 1e6);
   }
   return ((topleft - topright) / (bottomleft - topleft));
-
 }

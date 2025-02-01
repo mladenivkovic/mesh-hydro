@@ -3,8 +3,8 @@
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include "gas.h"
 #include "riemann-hllc.h"
+#include "gas.h"
 #include "riemann.h"
 #include "utils.h"
 
@@ -336,7 +336,6 @@ void riemann_sample_hllc_solution(pstate *left, pstate *right, float SL,
     sol->rhou[1] = FR.rhou[1];
     sol->E = FR.E;
   }
-
 }
 
 void riemann_sample_hllc_solution_state(pstate *left, pstate *right, float SL,
@@ -407,7 +406,6 @@ void riemann_sample_hllc_solution_state(pstate *left, pstate *right, float SL,
     sol->u[1] = right->u[1];
     sol->p = right->p;
   }
-
 }
 
 void riemann_get_hllc_full_solution_for_WAF(pstate *left, pstate *right,
@@ -506,7 +504,6 @@ void riemann_get_hllc_full_solution_for_WAF(pstate *left, pstate *right,
   fluxes[1] = FstarL;
   fluxes[2] = FstarR;
   fluxes[3] = FR;
-
 }
 
 void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,

@@ -9,7 +9,6 @@
 #include "solver.h"
 #include "utils.h"
 
-
 extern params pars;
 
 void solver_advection_check_global_velocity(void) {

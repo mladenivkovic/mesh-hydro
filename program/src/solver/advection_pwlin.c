@@ -118,7 +118,8 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #endif /* ndim */
 }
 
-void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, const float *dt, int dim) {
+void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, const float *dt,
+                                   int dim) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with

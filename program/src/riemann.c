@@ -65,7 +65,6 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
     return (0);
   }
   return (1);
-
 }
 
 void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
@@ -213,7 +212,6 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
       sol->p = right->p;
     }
   }
-
 }
 
 void riemann_sample_solution(pstate *left, pstate *right, float pstar,
@@ -351,7 +349,6 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
       }
     }
   }
-
 }
 
 void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
@@ -722,5 +719,4 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     delta_q[1] = star_right.rho - star_left.rho;
     delta_q[2] = right->rho - star_right.rho;
   }
-
 }

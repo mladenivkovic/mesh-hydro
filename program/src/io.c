@@ -225,7 +225,7 @@ void io_read_ic_twostate(const int skip_lines) {
     throw_error("u right is not given in IC file");
   }
 
-    /* Now write the data in the actual grid */
+  /* Now write the data in the actual grid */
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx / 2 + BC; i++) {
@@ -685,7 +685,6 @@ int line_is_comment(const char *line) {
     return (1);
   }
   return (0);
-
 }
 
 void remove_whitespace(char *line) {
@@ -717,7 +716,6 @@ void remove_whitespace(char *line) {
   newline[stop - start + 1] = '\0';
   strcpy(line, newline);
 }
-
 
 void remove_trailing_comments(char *line) {
   /*---------------------------------------------------------

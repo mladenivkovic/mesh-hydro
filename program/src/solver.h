@@ -6,8 +6,8 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
-#include "defines.h"
 #include "cell.h"
+#include "defines.h"
 
 #if SOLVER == GODUNOV
 #include "solver/godunov.h"
@@ -22,7 +22,6 @@
 #elif SOLVER == ADVECTION_WAF
 #include "solver/advection_waf.h"
 #endif
-
 
 void solver_step(const float *t, float *dt, int step, int *write_output);
 

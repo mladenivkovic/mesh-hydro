@@ -12,6 +12,7 @@
 
 void solver_init_step(void);
 void solver_compute_fluxes(float *dt, int dimension);
-void solver_compute_cell_pair_flux(cell *left, cell *right, const float *dt, int dim);
+void solver_compute_cell_pair_flux(cell *left, cell *right, const float *dt,
+                                   int dim);
 
 #endif

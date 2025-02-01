@@ -76,7 +76,6 @@ void solver_step(const float *t, float *dt, int step, int *write_output) {
 #endif
 }
 
-
 void solver_init_step(void) {
   /* ---------------------------------------------
    * Do everything that needs to be done before

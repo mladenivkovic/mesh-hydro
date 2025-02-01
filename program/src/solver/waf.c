@@ -198,7 +198,6 @@ void solver_prepare_flux_computation(cell *left, cell *right, int dim) {
   }
 }
 
-
 void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
                                    int dim) {
   /* --------------------------------------------------------------------
