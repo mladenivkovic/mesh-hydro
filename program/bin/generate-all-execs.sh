@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 
 #-----------------------------------------------
 # This script generates all possible
@@ -8,8 +9,8 @@
 #-----------------------------------------------
 
 genmakefile(){
-    # generate makefile "header" which 
-    # will be included into the actual 
+    # generate makefile "header" which
+    # will be included into the actual
     # Makefile.
     # $1: ndim
     # $2: solver
