@@ -113,8 +113,8 @@ genparamfile_sources() {
 #==========================
 genmakefile(){
 #==========================
-    # generate makefile "header" which 
-    # will be included into the actual 
+    # generate makefile "header" which
+    # will be included into the actual
     # Makefile.
     # $1: ndim
     # $2: solver
@@ -139,8 +139,8 @@ genmakefile(){
 #==========================
 genmakefile_sources(){
 #==========================
-    # generate makefile "header" which 
-    # will be included into the actual 
+    # generate makefile "header" which
+    # will be included into the actual
     # Makefile.
     # $1: ndim
     # $2: solver
@@ -577,7 +577,7 @@ riemann_vacuum(){
         errexit $?
         $plotdir/plot_riemann_result.py riemann-left-vacuum-*0001.out ./IC/riemann-left-vacuum.dat
         errexit $?
-        
+
         genparamfile 0 0.01 0 0 "NO_BASENAME" 1
         ./riemann paramfile.txt ./IC/riemann-right-vacuum.dat
         errexit $?
@@ -758,7 +758,7 @@ function waf_1D() {
         done
 
         # vacuum
-        
+
         # !!!!!!!!!!!! WAF without limiters introduces strong oscillations, and the code can't finish.
 
         # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
@@ -902,7 +902,7 @@ function muscl_1D(){
         done
 
         # vacuum
-        
+
         # !!!!!!!!!!!! MUSCL without limiters introduces strong oscillations, and the code can't finish.
 
         # for icprefix in riemann-left-vacuum riemann-right-vacuum riemann-vacuum-generating; do
