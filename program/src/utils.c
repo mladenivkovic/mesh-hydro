@@ -110,25 +110,26 @@ void log_message(const char *format, ...) {
    * just prepends [LOG] to printing. Use like printf()
    *------------------------------------------------------*/
 
-  if (pars.verbose < 1)
+  if (pars.verbose < 1) {
     return;
+  }
 
   printf("%-12s", "[LOG] ");
 
   va_list arg; /* from stdarg.h; va_list type defined in stdarg.h */
-  int done;
 
   va_start(arg, format); /* initialises arg variable, starting with "format" */
                          /* variable given as an argument to print() */
 
-  done = vfprintf(stdout, format, arg); /* call the formatting and printing */
-                                        /* function that printf also uses */
+  int done = vfprintf(stdout, format, arg); /* call the formatting and printing
+                                             * function that printf also uses */
 
   va_end(arg); /* do whatever cleanup is necessary */
 
-  if (done < 0)
+  if (done < 0) {
     throw_error("My own log_message() function exited with error code %d",
                 done);
+  }
 }
 
 void debugmessage(const char *format, ...) {
@@ -138,27 +139,28 @@ void debugmessage(const char *format, ...) {
    * will add a newline by itself :)
    *---------------------------------------------------------------*/
 
-  if (pars.verbose < 3)
+  if (pars.verbose < 3) {
     return;
+  }
 
   printf("%-12s", "[DEBUGGING] ");
 
   va_list arg; /* from stdarg.h; va_list type defined in stdarg.h */
-  int done;
 
   va_start(arg, format); /* initialises arg variable, starting with "format" */
                          /* variable given as an argument to print() */
 
-  done = vfprintf(stdout, format, arg); /* call the formatting and printing */
-                                        /* function that printf also uses */
+  int done = vfprintf(stdout, format, arg); /* call the formatting and printing
+                                             * function that printf also uses */
 
   va_end(arg); /* do whatever cleanup is necessary */
 
   printf("\n");
 
-  if (done < 0)
+  if (done < 0) {
     throw_error("My own debugmessage() function exited with error code %d",
                 done);
+  }
 }
 
 void log_extra(const char *format, ...) {
@@ -169,26 +171,27 @@ void log_extra(const char *format, ...) {
    * newline by itself :) .
    *-----------------------------------------------*/
 
-  if (pars.verbose < 2)
+  if (pars.verbose < 2) {
     return;
+  }
 
   printf("%-12s", "[EXTRA] ");
 
   va_list arg; /* from stdarg.h; va_list type defined in stdarg.h */
-  int done;
 
   va_start(arg, format); /* initialises arg variable, starting with "format" */
                          /* variable given as an argument to print() */
 
-  done = vfprintf(stdout, format, arg); /* call the formatting and printing */
-                                        /* function that printf also uses */
+  int done = vfprintf(stdout, format, arg); /* call the formatting and printing
+                                             * function that printf also uses */
 
   va_end(arg); /* do whatever cleanup is necessary */
 
   printf("\n");
 
-  if (done < 0)
+  if (done < 0) {
     throw_error("My own log_extra() function exited with error code %d", done);
+  }
 }
 
 void throw_error(const char *format, ...) {
@@ -202,22 +205,20 @@ void throw_error(const char *format, ...) {
   printf("%-12s", "[ERROR]");
 
   va_list arg; /* from stdarg.h; va_list type defined in stdarg.h */
-  int done;
 
   va_start(arg, format); /* initialises arg variable, starting with "format" */
                          /* variable given as an argument to print() */
 
-  done = vfprintf(stdout, format, arg); /* call the formatting and printing */
-                                        /* function that printf also uses */
+  int done = vfprintf(stdout, format, arg); /* call the formatting and printing
+                                             * function that printf also uses */
 
   va_end(arg); /* do whatever cleanup is necessary */
 
   printf("\n"); /* always end with a newline! :) */
 
-  if (done < 0)
-    throw_error(
-        "ERROR: your errormessage() function exited with error code %d\n",
-        done);
+  if (done < 0) {
+    printf("ERROR: throw_error() function exited with error code %d\n", done);
+  }
 
   printf("GG yall, I'm out\n");
   exit(1);
