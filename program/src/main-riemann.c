@@ -99,8 +99,8 @@ int main(int argc, char *argv[]) {
   log_message("  u_L %12.6f;   u_R %12.6f\n", left.u[0], right.u[0]);
   log_message("  p_L %12.6f;   p_R %12.6f\n", left.p, right.p);
 
-  float center = (pars.nx / 2) *
-                 pars.dx; /* where the initial separation of the states is.*/
+  /* center: where the initial separation of the states is.*/
+  float center = (pars.nx / 2) * pars.dx;
   for (int i = BC; i < BC + pars.nx; i++) {
     float x = (i - BC + 0.5) * pars.dx - center;
     float xovert = x / pars.tmax;

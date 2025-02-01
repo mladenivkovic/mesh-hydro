@@ -9,15 +9,9 @@
 #include "integrate.h"
 #include "params.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
-void sources_get_source_vector(cstate *s, float acc[2], cstate *cons) {
+void sources_get_source_vector(cstate *s, const float acc[2], cstate *cons) {
   /* ------------------------------------------------
    * Compute the source vector S for a given cell
    * we assume that the CONSERVED quantities are

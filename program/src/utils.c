@@ -13,7 +13,7 @@
 
 extern params pars;
 
-void print_header() {
+void print_header(void) {
   /*----------------------*/
   /* Print a nice header  */
   /*----------------------*/
@@ -31,7 +31,7 @@ void print_header() {
   printf("===============================================================\n");
 }
 
-void print_compile_defines() {
+void print_compile_defines(void) {
   /* ----------------------------------- */
   /* print compile time definitions      */
   /* ----------------------------------- */

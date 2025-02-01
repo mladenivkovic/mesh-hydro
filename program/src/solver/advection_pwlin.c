@@ -4,9 +4,6 @@
  * mladen.ivkovic@hotmail.com           */
 /* -------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-
 #include "cell.h"
 #include "defines.h"
 #include "io.h"
@@ -15,15 +12,9 @@
 #include "solver.h"
 #include "utils.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
-void solver_step(float *t, float *dt, int step, int *write_output) {
+void solver_step(const float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -52,7 +43,7 @@ void solver_step(float *t, float *dt, int step, int *write_output) {
 #endif
 }
 
-void solver_init_step() {
+void solver_init_step(void) {
   /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
@@ -127,8 +118,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #endif /* ndim */
 }
 
-void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, float *dt,
-                                   int dim) {
+void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, const float *dt, int dim) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with

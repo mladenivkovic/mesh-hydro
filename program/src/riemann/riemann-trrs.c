@@ -9,8 +9,6 @@
 #include "utils.h"
 
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 extern params pars;
 
@@ -32,7 +30,7 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
   float aR = gas_soundspeed(right);
   float aRinv = 1. / aR;
 
-  float pLRbeta = pow(left->p / right->p, BETA);
+  float pLRbeta = powf(left->p / right->p, BETA);
 
   *ustar = ((pLRbeta - 1.) / GM1HALF + left->u[dim] * aLinv * pLRbeta +
             right->u[dim] * aRinv) /
@@ -44,8 +42,9 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
              left->p * pow((1. + aLinv * GM1HALF * (left->u[dim] - *ustar)),
                            1. / BETA));
 
-  if (*pstar < SMALLP)
+  if (*pstar < SMALLP) {
     *pstar = SMALLP;
+  }
 
   debugmessage("Got pstar = %12.8f, ustar = %12.8f", *pstar, *ustar);
 }

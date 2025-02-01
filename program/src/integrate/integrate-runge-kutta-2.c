@@ -3,10 +3,8 @@
 /* Written by Mladen Ivkovic, APR 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include "cell.h"
 #include "gas.h"
 #include "integrate.h"
-#include "params.h"
 #include "sources.h"
 
 void integrate(cstate *U, float acc[2], float dt, cstate *Unew) {

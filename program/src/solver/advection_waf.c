@@ -5,7 +5,6 @@
 /* -------------------------------------*/
 
 #include <math.h>
-#include <stdio.h>
 
 #include "cell.h"
 #include "defines.h"
@@ -15,15 +14,9 @@
 #include "solver.h"
 #include "utils.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
-void solver_step(float *t, float *dt, int step, int *write_output) {
+void solver_step(const float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -52,7 +45,7 @@ void solver_step(float *t, float *dt, int step, int *write_output) {
 #endif
 }
 
-void solver_init_step() {
+void solver_init_step(void) {
   /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
@@ -85,7 +78,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
   for (int i = BC - 1; i < pars.nx + BC; i++) {
     c = &grid[i];
     n = &grid[i + 1];
-    solver_compute_cell_pair_flux(c, n, dt, /*dimension=*/0);
+    solver_compute_cell_pair_flux(c, n, dt, /*dim=*/0);
   }
 
 #elif NDIM == 2
@@ -114,7 +107,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #endif /* ndim */
 }
 
-void solver_compute_cell_pair_flux(cell *c, cell *n, float *dt, int dim) {
+void solver_compute_cell_pair_flux(cell *c, cell *n, const float *dt, int dim) {
   /* --------------------------------------------------------------------
    * Compute F_{i+1/2} where cell* c is cell with index i.
    * Then subtract the flux from the net flux of cell c, and add it to the
@@ -131,7 +124,7 @@ void solver_compute_cell_pair_flux(cell *c, cell *n, float *dt, int dim) {
   limiter_get_phi(c, &phi, dim);
 
   float vel = c->prim.u[dim];
-  float abscfl = (*dt) / pars.dx * fabs(vel);
+  float abscfl = (*dt) / pars.dx * fabsf(vel);
 
   pstate psi;
   gas_init_pstate(&psi);
@@ -141,8 +134,9 @@ void solver_compute_cell_pair_flux(cell *c, cell *n, float *dt, int dim) {
   psi.p = 1. - (1. - abscfl) * phi.p;
 
   float s = 1.; /* sign(velocity) */
-  if (vel <= 0)
+  if (vel <= 0) {
     s = -1.;
+  }
 
   float flux = 0.;
 
@@ -152,7 +146,7 @@ void solver_compute_cell_pair_flux(cell *c, cell *n, float *dt, int dim) {
   n->pflux.rho += flux;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   flux = 0.5 * (1. + s * psi.u[0]) * vel * c->prim.u[0] +
-         0.5 * (1. - s * psi.u[0]) * vel * *n->prim.u[0];
+         0.5 * (1. - s * psi.u[0]) * vel * n->prim.u[0];
   c->pflux.u[0] -= flux;
   n->pflux.u[0] += flux;
   flux = 0.5 * (1. + s * psi.u[1]) * vel * c->prim.u[1] +

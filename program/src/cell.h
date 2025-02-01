@@ -45,20 +45,20 @@ extern cell **grid;
 #endif
 
 void cell_init_cell(cell *c);
-void cell_init_grid();
-void cell_set_boundary();
+void cell_init_grid(void);
+void cell_set_boundary(void);
 void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
                         cell **ghostR, int dimension);
 void cell_copy_boundary_data(cell *real, cell *ghost);
 void cell_copy_boundary_data_reflective(cell *real, cell *ghost, int dimension);
-void cell_reset_fluxes();
-void cell_get_pstates_from_cstates();
-void cell_get_cstates_from_pstates();
+void cell_reset_fluxes(void);
+void cell_get_pstates_from_cstates(void);
+void cell_get_cstates_from_pstates(void);
 
-float cell_get_total_mass();
+float cell_get_total_mass(void);
 
 void cell_print_grid(char field[4]);
-void cell_print_grid_part(char field[4], int *limits);
+void cell_print_grid_part(char field[4], const int *limits);
 void cell_get_ij(cell *c, int *i, int *j);
 char *cell_get_index_string(cell *c);
 

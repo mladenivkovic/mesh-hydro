@@ -252,7 +252,7 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
         sol->u[otherdim] = left->u[otherdim];
         sol->p = left->p;
       } else {
-        float astarL = aL * pow(pstaroverpL, BETA);
+        float astarL = aL * powf(pstaroverpL, BETA);
         float STL = ustar - astarL; /* speed of tail of left rarefaction fan */
         if (xovert < STL) {
           /* we're inside the fan */
@@ -264,7 +264,7 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
           sol->p = left->p * pow(precomp, GAMMA);
         } else {
           /* we're in the star region */
-          sol->rho = left->rho * pow(pstaroverpL, ONEOVERGAMMA);
+          sol->rho = left->rho * powf(pstaroverpL, ONEOVERGAMMA);
           sol->u[dim] = ustar;
           sol->u[otherdim] = left->u[otherdim];
           sol->p = pstar;
@@ -311,7 +311,7 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
         sol->u[otherdim] = right->u[otherdim];
         sol->p = right->p;
       } else {
-        float astarR = aR * pow(pstaroverpR, BETA);
+        float astarR = aR * powf(pstaroverpR, BETA);
         float STR = ustar + astarR; /* speed of tail of right rarefaction fan */
         if (xovert > STR) {
           /* we're inside the fan */
@@ -323,7 +323,7 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
           sol->p = right->p * pow(precomp, GAMMA);
         } else {
           /* we're in the star region */
-          sol->rho = right->rho * pow(pstaroverpR, ONEOVERGAMMA);
+          sol->rho = right->rho * powf(pstaroverpR, ONEOVERGAMMA);
           sol->u[dim] = ustar;
           sol->u[otherdim] = right->u[otherdim];
           sol->p = pstar;

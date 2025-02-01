@@ -13,7 +13,7 @@
 
 extern params pars;
 
-void params_init_defaults() {
+void params_init_defaults(void) {
   /*------------------------------------------*/
   /* Initialize parameters to default values  */
   /*------------------------------------------*/
@@ -61,7 +61,7 @@ void params_init_defaults() {
   pars.sources_are_read = 0;
 }
 
-void params_init_derived() {
+void params_init_derived(void) {
   /* ------------------------------------------------- */
   /* Set up parameters that need some processing first */
   /* ------------------------------------------------- */
@@ -168,7 +168,7 @@ void params_init_derived() {
 #endif
 }
 
-void params_print_log() {
+void params_print_log(void) {
   /*------------------------------------------*/
   /* Print out current parameters             */
   /*------------------------------------------*/
@@ -178,10 +178,12 @@ void params_print_log() {
   log_message("\n");
 
   log_message("Verbose?                     ");
-  if (pars.verbose > 0)
+  if (pars.verbose > 0) {
     printbool(pars.verbose);
-  if (pars.verbose > 0)
+  }
+  if (pars.verbose > 0) {
     printf("\n");
+  }
   if (pars.nstep_log > 0) {
     log_message("Will write logs every %d steps\n", pars.nstep_log);
   }
@@ -236,7 +238,8 @@ void params_print_log() {
               "-------------------------\n");
 }
 
-void params_check() {
+
+void params_check(void) {
   /* ----------------------------------------------- */
   /* Check whether we can work with these parameters */
   /* ----------------------------------------------- */
@@ -299,7 +302,7 @@ void params_check() {
 #endif
 }
 
-void params_check_riemann() {
+void params_check_riemann(void) {
   /* ----------------------------------------------- */
   /* Check whether we can work with these parameters */
   /* When using the program as a riemann solver      */
@@ -318,7 +321,7 @@ void params_check_riemann() {
   }
 }
 
-void params_generate_riemann_output_filename() {
+void params_generate_riemann_output_filename(void) {
   /* ------------------------------------------------- */
   /* Create a filename for the output for when the code
    * is employed as a Riemann solver only
@@ -344,10 +347,12 @@ void params_generate_riemann_output_filename() {
       }
     }
 
-    if (dot == 0)
+    if (dot == 0) {
       dot = strlen(pars.datafilename);
-    if (slash > 0)
+    }
+    if (slash > 0) {
       slash += 1;
+    }
 
     char solver[80];
     char riemann[80];

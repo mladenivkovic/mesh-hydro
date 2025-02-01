@@ -12,12 +12,6 @@
 #include <math.h>
 #include <stdio.h>
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
 void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
@@ -303,7 +297,7 @@ float limiter_r(float topleft, float topright, float bottomleft) {
 
   if (bottomleft == topleft) {
     return ((topleft - topright) * 1e6);
-  } else {
-    return ((topleft - topright) / (bottomleft - topleft));
   }
+  return ((topleft - topright) / (bottomleft - topleft));
+
 }

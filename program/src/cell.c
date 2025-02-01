@@ -3,7 +3,6 @@
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,12 +12,6 @@
 #include "gas.h"
 #include "params.h"
 #include "utils.h"
-
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
 
 extern params pars;
 
@@ -40,7 +33,7 @@ void cell_init_cell(cell *c) {
   c->acc[1] = 0.;
 }
 
-void cell_init_grid() {
+void cell_init_grid(void) {
   /*----------------------------------------------------
    * Initialize the grid: Allocate memory for the cells,
    * initialize them, then distribute their position.
@@ -83,7 +76,7 @@ void cell_init_grid() {
 #endif
 }
 
-void cell_set_boundary() {
+void cell_set_boundary(void) {
   /* -------------------------------------------------------
    * enforce boundary conditions.
    * This function only picks out the pairs of real
@@ -222,7 +215,7 @@ void cell_copy_boundary_data_reflective(cell *real, cell *ghost,
   ghost->cons.E = real->cons.E;
 }
 
-void cell_reset_fluxes() {
+void cell_reset_fluxes(void) {
   /* ----------------------------------------------------
    * reset the fluxes to zero in all cells in the grid
    * ---------------------------------------------------- */
@@ -245,7 +238,8 @@ void cell_reset_fluxes() {
 #endif
 }
 
-void cell_get_pstates_from_cstates() {
+
+void cell_get_pstates_from_cstates(void) {
   /* ---------------------------------------------
    * Computes the primitive state from conserved
    * states for all cells
@@ -266,7 +260,8 @@ void cell_get_pstates_from_cstates() {
 #endif
 }
 
-void cell_get_cstates_from_pstates() {
+
+void cell_get_cstates_from_pstates(void) {
   /* ---------------------------------------------
    * Computes the conserve state from primitive
    * states for all cells
@@ -287,13 +282,13 @@ void cell_get_cstates_from_pstates() {
 #endif
 }
 
-float cell_get_total_mass() {
+float cell_get_total_mass(void) {
   /* -----------------------------------
    * Compute the total "mass" currently
    * on the grid.
    * ----------------------------------- */
 
-  float mtot = 0;
+  float mtot = 0.f;
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {
@@ -322,7 +317,7 @@ void cell_print_grid(char field[4]) {
   cell_print_grid_part(field, limits);
 }
 
-void cell_print_grid_part(char field[4], int *limits) {
+void cell_print_grid_part(char field[4], const int *limits) {
   /* ---------------------------------------------------------
    * Print out the grid quantities. Select which
    * quantity by field:
@@ -352,8 +347,9 @@ void cell_print_grid_part(char field[4], int *limits) {
   int imax = limits[1];
   for (int i = imin; i < imax; i++) {
 
-    if (i == BC || i == pars.nx + BC)
+    if (i == BC || i == pars.nx + BC) {
       printf("|");
+    }
 
     if (strcmp(field, "pos") == 0) {
       printf("%8.3f", grid[i].x);

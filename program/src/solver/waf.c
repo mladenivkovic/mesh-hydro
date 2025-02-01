@@ -17,15 +17,9 @@
 #include "sources.h"
 #include "utils.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
-void solver_step(float *t, float *dt, int step, int *write_output) {
+void solver_step(const float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -85,7 +79,7 @@ void solver_step(float *t, float *dt, int step, int *write_output) {
 #endif
 }
 
-void solver_init_step() {
+void solver_init_step(void) {
   /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
@@ -122,7 +116,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
   for (int i = BC - 1; i < pars.nx + BC; i++) {
     left = &grid[i];
     right = &grid[i + 1];
-    solver_compute_cell_pair_flux(left, right, dt, /*dimension=*/0);
+    solver_compute_cell_pair_flux(left, right, dt, /*dim=*/0);
   }
 
 #elif NDIM == 2
@@ -204,6 +198,7 @@ void solver_prepare_flux_computation(cell *left, cell *right, int dim) {
   }
 }
 
+
 void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
                                    int dim) {
   /* --------------------------------------------------------------------
@@ -259,10 +254,11 @@ void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
     /* now compute r. Check for stability when dividing first though! */
     float oneoverdq;
 
-    if (fabs(left->delta_q[k]) < SMALLRHO) {
+    if (fabsf(left->delta_q[k]) < SMALLRHO) {
       oneoverdq = 1.e6;
-      if (left->delta_q[k] < 0.)
+      if (left->delta_q[k] < 0.) {
         oneoverdq = -oneoverdq;
+      }
     } else {
       oneoverdq = 1. / left->delta_q[k];
     }
@@ -281,11 +277,12 @@ void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
 
   for (int k = 0; k < 3; k++) {
 
-    float abscfl = fabs(ck[k]);
+    float abscfl = fabsf(ck[k]);
     float psi = 1. - (1. - abscfl) * phi[k];
     float s = 1.;
-    if (ck[k] < 0.)
+    if (ck[k] < 0.) {
       s = -1.;
+    }
 
     fluxsum.rho +=
         s * psi *

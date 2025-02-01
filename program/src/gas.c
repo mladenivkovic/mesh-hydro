@@ -10,26 +10,26 @@
 #include "defines.h"
 #include "gas.h"
 
-void gas_init_pstate(pstate *s) {
+void gas_init_pstate(pstate *p) {
   /*-------------------------------------------------*/
   /* This function sets the pstate to zero           */
   /*-------------------------------------------------*/
 
-  s->rho = 0;
-  s->u[0] = 0;
-  s->u[1] = 0;
-  s->p = 0;
+  p->rho = 0;
+  p->u[0] = 0;
+  p->u[1] = 0;
+  p->p = 0;
 }
 
-void gas_init_cstate(cstate *s) {
+void gas_init_cstate(cstate *c) {
   /*-------------------------------------------------*/
   /* This function sets the cstate to zero           */
   /*-------------------------------------------------*/
 
-  s->rho = 0;
-  s->rhou[0] = 0;
-  s->rhou[1] = 0;
-  s->E = 0;
+  c->rho = 0;
+  c->rhou[0] = 0;
+  c->rhou[1] = 0;
+  c->E = 0;
 }
 
 void gas_prim_to_cons(pstate *p, cstate *c) {
@@ -65,8 +65,9 @@ void gas_cons_to_prim(cstate *c, pstate *p) {
             0.5 * (c->rhou[0] * c->rhou[0] + c->rhou[1] * c->rhou[1]) / c->rho);
     /* do some exception handling. Sometimes the time step is too large, and we
      * end up with negative pressures. */
-    if (p->p <= SMALLP)
+    if (p->p <= SMALLP) {
       p->p = SMALLP;
+    }
   }
 }
 

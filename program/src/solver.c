@@ -5,20 +5,14 @@
 #include <math.h>
 
 #include "cell.h"
-#include "io.h"
 #include "params.h"
 #include "solver.h"
 #include "utils.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
 
 extern params pars;
 
-void solver_advection_check_global_velocity() {
+void solver_advection_check_global_velocity(void) {
   /* -----------------------------------------------------
    * Check whether the velocities in the IC are constant
    * -----------------------------------------------------*/
@@ -68,7 +62,7 @@ void solver_get_advection_dt(float *dt) {
 
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i <= pars.nx + BC; i++) {
-    float uxabs = fabs(grid[i].prim.u[0]);
+    float uxabs = fabsf(grid[i].prim.u[0]);
     if (uxabs > umax) {
       umax = uxabs;
     }
@@ -121,11 +115,12 @@ void solver_get_advection_dt(float *dt) {
     }
   }
 
-  if (*dt <= DT_MIN)
+  if (*dt <= DT_MIN) {
     throw_error("Got weird time step? dt=%12.4e", *dt);
+  }
 }
 
-void solver_advance_step_advection(float *dt) {
+void solver_advance_step_advection(const float *dt) {
   /* ---------------------------------------------
    * Integrate the equations for one time step
    * --------------------------------------------- */
@@ -176,7 +171,7 @@ void solver_get_hydro_dt(float *dt, int step) {
   float umax = 0.;
 
   for (int i = BC; i < pars.nx + BC; i++) {
-    float uxabs = fabs(grid[i].prim.u[0]);
+    float uxabs = fabsf(grid[i].prim.u[0]);
     float a = gas_soundspeed(&grid[i].prim);
     float S = uxabs + a;
     if (S > umax) {
@@ -226,22 +221,24 @@ void solver_get_hydro_dt(float *dt, int step) {
 
   /* sometimes there might be trouble with sharp discontinuities at the
    * beginning, so reduce the timestep for the first few steps */
-  if (step <= 5)
+  if (step <= 5) {
     *dt *= 0.2;
+  }
 
   /* safety check */
-  if (*dt <= DT_MIN)
+  if (*dt <= DT_MIN) {
     throw_error("Got weird time step? dt=%12.4e", *dt);
+  }
 }
 
-void solver_advance_step_hydro(float *dt, int dimension) {
+void solver_advance_step_hydro(const float *dt, int dimension) {
   /* ---------------------------------------------
    * Integrate the equations for one time step
    * --------------------------------------------- */
 
   debugmessage("Called solver_advance_step with dt = %f", *dt);
 
-  float dtdx = *dt / pars.dx;
+  const float dtdx = *dt / pars.dx;
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {

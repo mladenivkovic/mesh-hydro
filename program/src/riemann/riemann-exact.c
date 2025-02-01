@@ -6,11 +6,10 @@
 #include "gas.h"
 #include "params.h"
 #include "riemann.h"
-#include "utils.h"
+/* #include "utils.h" */
 
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 extern params pars;
 
@@ -43,8 +42,9 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
               0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
   pguess = ppv;
 
-  if (pguess < SMALLP)
+  if (pguess < SMALLP) {
     pguess = SMALLP;
+  }
 
   /* Newton-Raphson iteration */
   int niter = 0;
@@ -57,18 +57,20 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
     float dfpdpL = dfpdp(pguess, left, AL, BL, aL);
     float dfpdpR = dfpdp(pguess, right, AR, BR, aR);
     pguess = pold - (fL + fR + delta_u) / (dfpdpL + dfpdpR);
-    if (pguess < EPSILON_ITER)
+    if (pguess < EPSILON_ITER) {
       pguess = SMALLP;
+    }
     if (niter > 100) {
       printf("Iteration for central pressure needs more than %d steps. "
              "Force-quitting iteration. Old-to-new ratio is %g\n",
-             niter, fabs(1 - pguess / pold));
+             niter, fabsf(1.f - pguess / pold));
       break;
     }
-  } while (2 * fabs((pguess - pold) / (pguess + pold)) >= EPSILON_ITER);
+  } while (2.f * fabsf((pguess - pold) / (pguess + pold)) >= EPSILON_ITER);
 
-  if (pguess <= SMALLP)
+  if (pguess <= SMALLP) {
     pguess = SMALLP;
+  }
 
   *ustar = left->u[dim] - fp(pguess, left, AL, BL, aL);
   *pstar = pguess;
@@ -89,10 +91,9 @@ float fp(float pstar, pstate *s, float A, float B, float a) {
   if (pstar > s->p) {
     /* we have a shock situation */
     return (pstar - s->p) * sqrtf(A / (pstar + B));
-  } else {
-    /* we have a rarefaction situation */
-    return 2 * a / GM1 * (pow(pstar / s->p, BETA) - 1);
   }
+  /* we have a rarefaction situation */
+  return 2. * a / GM1 * (powf(pstar / s->p, BETA) - 1.);
 }
 
 float dfpdp(float pstar, pstate *s, float A, float B, float a) {
@@ -103,8 +104,7 @@ float dfpdp(float pstar, pstate *s, float A, float B, float a) {
   if (pstar > s->p) {
     /* we have a shock situation */
     return sqrtf(A / (pstar + B)) * (1. - 0.5 * (pstar - s->p) / (pstar + B));
-  } else {
-    /* we have a rarefaction situation */
-    return 1. / (s->rho * a) * pow(pstar / s->p, -0.5 * GP1 / GAMMA);
   }
+  /* we have a rarefaction situation */
+  return 1. / (s->rho * a) * pow(pstar / s->p, -0.5 * GP1 / GAMMA);
 }

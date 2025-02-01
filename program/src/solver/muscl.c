@@ -4,9 +4,6 @@
  * mladen.ivkovic@hotmail.com           */
 /* -------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-
 #include "cell.h"
 #include "defines.h"
 #include "io.h"
@@ -17,15 +14,9 @@
 #include "sources.h"
 #include "utils.h"
 
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
-
 extern params pars;
 
-void solver_step(float *t, float *dt, int step, int *write_output) {
+void solver_step(const float *t, float *dt, int step, int *write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -85,7 +76,8 @@ void solver_step(float *t, float *dt, int step, int *write_output) {
 #endif
 }
 
-void solver_init_step() {
+
+void solver_init_step(void) {
   /* ---------------------------------------------
    * Do everything that needs to be done before
    * we can compute the fluxes, the timestep, and
@@ -118,14 +110,14 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #if NDIM == 1
   /* compute intermediate boundary extrapolated states first */
   for (int i = BC - 1; i < pars.nx + BC + 1; i++) {
-    solver_prepare_flux_computation(&grid[i], dthalf, /*dimension=*/0);
+    solver_prepare_flux_computation(&grid[i], dthalf, /*dim=*/0);
   }
 
   /* now update states for this dimension */
   for (int i = BC - 1; i < pars.nx + BC; i++) {
     left = &grid[i];
     right = &grid[i + 1];
-    solver_compute_cell_pair_flux(left, right, dt, /*dimension=*/0);
+    solver_compute_cell_pair_flux(left, right, dt, /*dim=*/0);
   }
 
 #elif NDIM == 2
@@ -220,7 +212,7 @@ void solver_prepare_flux_computation(cell *c, float dthalf, int dim) {
   c->URmid.E = c->cons.E + dtdxhalf * (FL.E - FR.E) + 0.5 * slope.E;
 }
 
-void solver_compute_cell_pair_flux(cell *left, cell *right, float *dt,
+void solver_compute_cell_pair_flux(cell *left, cell *right, const float *dt,
                                    int dim) {
   /* ---------------------------------------------------------------------------
    * Compute the flux F_{i+1/2} for a given cell w.r.t. a specific cell pair

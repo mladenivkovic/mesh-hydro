@@ -4,19 +4,9 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "cell.h"
-#include "gas.h"
 #include "limiter.h"
 #include "params.h"
 #include "utils.h"
-
-#include <math.h>
-#include <stdio.h>
-
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
 
 extern params pars;
 
@@ -48,19 +38,22 @@ float limiter_mc(float r) {
 
   /* min((1+r)/2, 2) */
   float temp = 0.5 * (1 + r);
-  if (temp > 2.0)
+  if (temp > 2.0) {
     temp = 2.0;
+  }
   min = temp;
 
   /* min( min((1+r)/2, 2), 2r) */
   temp = 2 * r;
-  if (temp > min)
+  if (temp > min) {
     temp = min;
+  }
   min = temp;
 
   /* max( 0, min(...) ) */
-  if (min > max)
+  if (min > max) {
     max = min;
+  }
 
   return (max);
 }

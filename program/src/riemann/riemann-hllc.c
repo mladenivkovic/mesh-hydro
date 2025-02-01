@@ -137,7 +137,7 @@ void riemann_compute_wave_speed_estimates(pstate *left, pstate *right,
 
       float aLinv = 1. / aL;
       float aRinv = 1. / aR;
-      float pLRbeta = pow(left->p / right->p, BETA);
+      float pLRbeta = powf(left->p / right->p, BETA);
 
       ustar = ((pLRbeta - 1.) / GM1HALF + left->u[dim] * aLinv * pLRbeta +
                right->u[dim] * aRinv) /

@@ -3,7 +3,6 @@
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,12 +13,6 @@
 #include "io.h"
 #include "params.h"
 #include "utils.h"
-
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
 
 extern params pars;
 
@@ -58,11 +51,13 @@ void io_read_ic_type(int *skip_lines) {
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     *skip_lines += 1;
 
-    if (line_is_comment(tempbuff))
+    if (line_is_comment(tempbuff)) {
       continue;
+    }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
+    if (line_is_empty(tempbuff)) {
       continue;
+    }
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     remove_whitespace(varname);
@@ -93,11 +88,13 @@ void io_read_ic_type(int *skip_lines) {
     while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
       *skip_lines += 1;
 
-      if (line_is_comment(tempbuff))
+      if (line_is_comment(tempbuff)) {
         continue;
+      }
       remove_trailing_comments(tempbuff);
-      if (line_is_empty(tempbuff))
+      if (line_is_empty(tempbuff)) {
         continue;
+      }
 
       sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
       remove_whitespace(varname);
@@ -115,8 +112,9 @@ void io_read_ic_type(int *skip_lines) {
                     tempbuff);
       }
 
-      if (nx_read && ndim_read)
+      if (nx_read && ndim_read) {
         break;
+      }
     }
   }
 
@@ -125,7 +123,7 @@ void io_read_ic_type(int *skip_lines) {
   debugmessage("In io_read_ic_type: got skiplines: %d", *skip_lines);
 }
 
-void io_read_ic_twostate(int skip) {
+void io_read_ic_twostate(const int skip_lines) {
   /*--------------------------------------------------------
    * Read in initial conditions file, store read states.
    * This is for the two-state IC file format.
@@ -163,16 +161,20 @@ void io_read_ic_twostate(int skip) {
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     i += 1;
     /* debugmessage("i=%d, skip=%d, Got line: ||%s", i, skip, tempbuff); */
-    if (i <= skip)
+    if (i <= skip_lines) {
       continue; /* skip header */
+    }
 
-    if (line_is_comment(tempbuff))
+    if (line_is_comment(tempbuff)) {
       continue;
+    }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
+    if (line_is_empty(tempbuff)) {
       continue;
-    if (!check_name_equal_value_present(tempbuff))
+    }
+    if (!check_name_equal_value_present(tempbuff)) {
       continue;
+    }
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     remove_whitespace(varname);
@@ -204,18 +206,24 @@ void io_read_ic_twostate(int skip) {
 
   fclose(dat);
 
-  if (!rhol_set)
+  if (!rhol_set) {
     throw_error("rho left is not given in IC file");
-  if (!rhor_set)
+  }
+  if (!rhor_set) {
     throw_error("rho right is not given in IC file");
-  if (!ul_set)
+  }
+  if (!ul_set) {
     throw_error("u left is not given in IC file");
-  if (!ur_set)
+  }
+  if (!ur_set) {
     throw_error("u right is not given in IC file");
-  if (!pl_set)
+  }
+  if (!pl_set) {
     throw_error("u left is not given in IC file");
-  if (!pr_set)
+  }
+  if (!pr_set) {
     throw_error("u right is not given in IC file");
+  }
 
     /* Now write the data in the actual grid */
 
@@ -281,14 +289,17 @@ void io_read_ic_arbitrary(int skip) {
   int counter = 0;
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     sc += 1;
-    if (sc <= skip)
+    if (sc <= skip) {
       continue; /* skip header */
+    }
 
-    if (line_is_comment(tempbuff))
+    if (line_is_comment(tempbuff)) {
       continue;
+    }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
+    if (line_is_empty(tempbuff)) {
       continue;
+    }
 
 #if NDIM == 1
     float rho, u, p;
@@ -323,8 +334,9 @@ void io_read_ic_arbitrary(int skip) {
 
     /* safety measure */
 #if NDIM == 1
-    if (counter == pars.nx)
+    if (counter == pars.nx) {
       break;
+    }
 #elif NDIM == 2
     if (counter == pars.nx * pars.nx)
       break;
@@ -349,11 +361,13 @@ void io_read_ic_arbitrary(int skip) {
 #endif
   else {
     while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
-      if (line_is_comment(tempbuff))
+      if (line_is_comment(tempbuff)) {
         continue;
+      }
       remove_trailing_comments(tempbuff);
-      if (line_is_empty(tempbuff))
+      if (line_is_empty(tempbuff)) {
         continue;
+      }
 
       /* if you arrived at this point, you have something that is not a comment
        * nor empty line even though we have all the data that we need */
@@ -367,7 +381,7 @@ void io_read_ic_arbitrary(int skip) {
   fclose(dat);
 }
 
-void io_read_paramfile() {
+void io_read_paramfile(void) {
   /*------------------------------------------------------------*/
   /* Read in parameter file, store read in global parameters.   */
   /*------------------------------------------------------------*/
@@ -442,7 +456,7 @@ void io_read_paramfile() {
   fclose(par);
 }
 
-void io_read_toutfile() {
+void io_read_toutfile(void) {
   /*------------------------------------------------------------*/
   /* Read in parameter file, store read in global parameters.   */
   /*------------------------------------------------------------*/
@@ -490,11 +504,13 @@ void io_read_toutfile() {
   par = fopen(pars.toutfilename, "r");
   while (fgets(tempbuff, MAX_LINE_SIZE, par)) {
 
-    if (line_is_comment(tempbuff))
+    if (line_is_comment(tempbuff)) {
       continue;
+    }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
+    if (line_is_empty(tempbuff)) {
       continue;
+    }
 
     sscanf(tempbuff, "%f\n", &pars.outputtimes[nlines]);
     nlines += 1;
@@ -511,8 +527,9 @@ void io_write_output(int *outstep, int step, float t) {
    * t:     Current time of the simulation
    *----------------------------------------*/
 
-  if (*outstep > 9999)
+  if (*outstep > 9999) {
     throw_error("I'm not made to write outputs > 9999\n");
+  }
 
   /* generate output filename for this snapshot */
 
@@ -608,9 +625,8 @@ int io_is_output_step(float t, float *dt, int step) {
   if (pars.foutput > 0) {
     if (step % pars.foutput == 0) {
       return (1);
-    } else {
-      return (0);
     }
+    return (0);
   }
 
   return (0);
@@ -631,7 +647,7 @@ void io_check_file_exists(char *fname) {
   }
 }
 
-int line_is_empty(char *line) {
+int line_is_empty(const char *line) {
   /* --------------------------------- */
   /* Check whether this line is empty, */
   /* i.e. only whitespaces or newlines.*/
@@ -643,15 +659,16 @@ int line_is_empty(char *line) {
 
   for (int i = 0; i < MAX_LINE_SIZE; i++) {
     if (line[i] != ' ') {
-      if (line[i] == '\n')
+      if (line[i] == '\n') {
         isempty = 1;
+      }
       break;
     }
   }
   return (isempty);
 }
 
-int line_is_comment(char *line) {
+int line_is_comment(const char *line) {
   /* --------------------------------------
    * Check whether the given line string is
    * a comment, i.e. starts with // or
@@ -666,9 +683,9 @@ int line_is_comment(char *line) {
   /* strcmp returns 0 if strings are equal */
   if (!strcmp(firsttwo, "//") || !strcmp(firsttwo, "/*")) {
     return (1);
-  } else {
-    return (0);
   }
+  return (0);
+
 }
 
 void remove_whitespace(char *line) {
@@ -701,6 +718,7 @@ void remove_whitespace(char *line) {
   strcpy(line, newline);
 }
 
+
 void remove_trailing_comments(char *line) {
   /*---------------------------------------------------------
    * Check whether there are trailing comments in this line
@@ -712,7 +730,8 @@ void remove_trailing_comments(char *line) {
      * and I only check for the first.*/
     if (line[i] == '\0') {
       break;
-    } else if (line[i] == '/') {
+    }
+    if (line[i] == '/') {
       char twochars[3];
       strncpy(twochars, line + i, 2);
       if (line_is_comment(twochars)) {
@@ -744,8 +763,9 @@ int check_name_equal_value_present(char *line) {
       break;
     }
   }
-  if (pos == 0)
+  if (pos == 0) {
     return (0); /* '=' is either in first place or not present. */
+  }
 
   /* now check that we have non-whitespace characters */
   for (int i = 0; i < pos; i++) {
@@ -755,8 +775,9 @@ int check_name_equal_value_present(char *line) {
     }
   }
 
-  if (!check)
+  if (!check) {
     return (0);
+  }
   check = 0;
 
   /* now check that we have non-whitespace characters after the equal sign */
@@ -767,8 +788,9 @@ int check_name_equal_value_present(char *line) {
     }
   }
 
-  if (!check)
+  if (!check) {
     return (0);
+  }
   return (1);
 }
 

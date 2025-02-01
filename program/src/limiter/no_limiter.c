@@ -3,17 +3,8 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
-#include "cell.h"
-#include "gas.h"
 #include "limiter.h"
 #include "params.h"
-#include "utils.h"
-
-#if NDIM == 1
-extern cell *grid;
-#elif NDIM == 2
-extern cell **grid;
-#endif
 
 extern params pars;
 

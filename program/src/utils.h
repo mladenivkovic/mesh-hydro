@@ -6,11 +6,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "defines.h"
-
 /* stuff that doesn't fit anywhere else */
-void print_header();
-void print_compile_defines();
+void print_header(void);
+void print_compile_defines(void);
 void utils_get_macro_strings(char *solver, char *riemann, char *limiter);
 
 /* helper functions */

@@ -61,14 +61,14 @@ typedef struct {
 
 } params;
 
-void params_init_defaults();
-void params_init_derived();
-void params_print_log();
-void params_check();
+void params_init_defaults(void);
+void params_init_derived(void);
+void params_print_log(void);
+void params_check(void);
 
 /* Functions for when the code is used as a Riemann solver only */
 
-void params_check_riemann();
-void params_generate_riemann_output_filename();
+void params_check_riemann(void);
+void params_generate_riemann_output_filename(void);
 
 #endif

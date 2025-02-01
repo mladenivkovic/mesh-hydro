@@ -6,11 +6,9 @@
 #include "gas.h"
 #include "params.h"
 #include "riemann.h"
-#include "utils.h"
+/* #include "utils.h" */
 
 #include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 extern params pars;
 
@@ -39,14 +37,16 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
   /* Find initial guess for star pressure */
   float pguess = 0.5 * (left->p + right->p) -
                  0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
-  if (pguess < EPSILON_ITER)
+  if (pguess < EPSILON_ITER) {
     pguess = EPSILON_ITER;
+  }
 
   float gL = sqrtf(AL / (pguess + BL));
   float gR = sqrtf(AR / (pguess + BR));
   *pstar = (gL * left->p + gR * right->p - delta_u) / (gL + gR);
-  if (SMALLP > *pstar)
+  if (SMALLP > *pstar) {
     *pstar = SMALLP;
+  }
 
   *ustar = 0.5 * (right->u[dim] + left->u[dim] + (*pstar - right->p) * gR -
                   (*pstar - left->p) * gL);

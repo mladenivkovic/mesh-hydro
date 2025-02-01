@@ -9,15 +9,11 @@
  * ======================================================= */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h> /* measure time */
 
 #include "cell.h"
-#include "defines.h"
-#include "gas.h"
 #include "io.h"
 #include "params.h"
-#include "riemann.h"
 #include "solver.h"
 #include "utils.h"
 
@@ -59,8 +55,9 @@ int main(int argc, char *argv[]) {
   io_read_ic_type(&skiplines_ic);
 
   /* read in output times if necessary */
-  if (pars.use_toutfile)
+  if (pars.use_toutfile) {
     io_read_toutfile();
+  }
 
   params_check();        /* check whether we can work with this setup. */
   params_init_derived(); /* process the parameters you got. */
