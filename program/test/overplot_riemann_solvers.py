@@ -13,7 +13,15 @@
 # ----------------------------------------------------
 
 
-from mesh_hydro_utils import label_to_kwargs, read_ic, read_output, check_file_exists, riemann_solver, plot_1D, plot_savefig
+from mesh_hydro_utils import (
+    label_to_kwargs,
+    read_ic,
+    read_output,
+    check_file_exists,
+    riemann_solver,
+    plot_1D,
+    plot_savefig,
+)
 from sys import argv
 import numpy as np
 import os
