@@ -25,6 +25,10 @@ genmakefile(){
     echo "RIEMANN = $3" >> $f
     echo "LIMITER = $4" >> $f
     echo "EXEC = $5"    >> $f
+
+    echo ------------------- defines.mk --------------------
+    cat defines.mk
+    echo ------------------- defines.mk --------------------
 }
 
 
