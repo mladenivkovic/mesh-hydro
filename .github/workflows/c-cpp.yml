@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: run test
+    - name: compile all executables
       run: |
         cd program/bin
         ./generate-all-execs.sh
