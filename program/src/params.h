@@ -16,33 +16,33 @@ typedef struct {
   int nstep_log; /* on how many steps to write log message of time step */
 
   /* simulation related parameters */
-  int nsteps; /* how many steps to take */
-  float tmax; /* at what time to end */
+  int   nsteps; /* how many steps to take */
+  float tmax;   /* at what time to end */
 
-  int nx;         /* number of mesh points */
+  int   nx;       /* number of mesh points */
   float ccfl;     /* CFL coefficient */
   float force_dt; /* force a time step size (except if you need to write an
                      output) */
   int boundary;   /* boundary condition for all walls.*/
 
-  int nxtot; /* number of mesh points, including boundary cells */
-  float dx;  /* cell size */
+  int   nxtot; /* number of mesh points, including boundary cells */
+  float dx;    /* cell size */
 
   /* output related parameters */
-  int foutput;  /* after how many steps to write output */
-  float dt_out; /* time interval between outputs */
-  char outputfilename[MAX_FNAME_SIZE]; /* Output file name basename */
+  int   foutput; /* after how many steps to write output */
+  float dt_out;  /* time interval between outputs */
+  char  outputfilename[MAX_FNAME_SIZE]; /* Output file name basename */
 
   char toutfilename[MAX_FNAME_SIZE]; /* file name containing output times */
-  int use_toutfile;                  /* whether we're using the t_out_file */
-  int noutput_tot;    /* how many outputs we will be writing. Only used
+  int  use_toutfile;                 /* whether we're using the t_out_file */
+  int  noutput_tot;   /* how many outputs we will be writing. Only used
                          if(use_toutfile) */
-  int noutput;        /* at which output we are. Only used if(use_toutfile) */
-  float *outputtimes; /* array of output times given in the output file */
+  int    noutput;     /* at which output we are. Only used if(use_toutfile) */
+  float* outputtimes; /* array of output times given in the output file */
 
   /* IC related parameters */
-  int twostate_ic;                   /* whether IC are left/right state only */
-  int ndim_ic;                       /* dimension of IC file */
+  int  twostate_ic;                  /* whether IC are left/right state only */
+  int  ndim_ic;                      /* dimension of IC file */
   char datafilename[MAX_FNAME_SIZE]; /* IC data filename */
 
   char paramfilename[MAX_FNAME_SIZE]; /* parameter filename */

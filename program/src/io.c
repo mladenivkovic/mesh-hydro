@@ -3,6 +3,8 @@
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include "io.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +12,6 @@
 #include "cell.h"
 #include "defines.h"
 #include "gas.h" /* pstates */
-#include "io.h"
 #include "params.h"
 #include "utils.h"
 
@@ -20,11 +21,13 @@ extern params pars;
  * This function reads in the command line arguments and stores them in the
  * params struct
  */
-void io_read_cmdlineargs(int argc, char *argv[]) {
+void io_read_cmdlineargs(int argc, char* argv[]) {
 
   if (argc < 3) {
-    throw_error("Too few arguments given. Run this program with ./hydro "
-                "paramfile datafile\n");
+    throw_error(
+      "Too few arguments given. Run this program with ./hydro "
+      "paramfile datafile\n"
+    );
   } else {
     strcpy(pars.paramfilename, argv[1]);
     strcpy(pars.datafilename, argv[2]);
@@ -35,13 +38,13 @@ void io_read_cmdlineargs(int argc, char *argv[]) {
 /**
  * Start reading IC file, find what IC type we have
  */
-void io_read_ic_type(int *skip_lines) {
+void io_read_ic_type(int* skip_lines) {
 
   /* check whether file exists first */
   io_check_file_exists(pars.datafilename);
 
   /* open file */
-  FILE *dat = fopen(pars.datafilename, "r");
+  FILE* dat = fopen(pars.datafilename, "r");
 
   char varname[MAX_LINE_SIZE];
   char varvalue[MAX_LINE_SIZE];
@@ -52,13 +55,9 @@ void io_read_ic_type(int *skip_lines) {
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     *skip_lines += 1;
 
-    if (line_is_comment(tempbuff)) {
-      continue;
-    }
+    if (line_is_comment(tempbuff)) { continue; }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff)) {
-      continue;
-    }
+    if (line_is_empty(tempbuff)) { continue; }
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     remove_whitespace(varname);
@@ -71,31 +70,29 @@ void io_read_ic_type(int *skip_lines) {
         pars.twostate_ic = 0;
       } else {
         throw_error(
-            "while reading IC file type: I don't recognize file type \"%s\"\n",
-            varvalue);
+          "while reading IC file type: I don't recognize file type \"%s\"\n",
+          varvalue
+        );
       }
       break;
     } else {
       throw_error(
-          "while reading IC file type: Unrecongized line [error loc 1]\n    %s",
-          tempbuff);
+        "while reading IC file type: Unrecongized line [error loc 1]\n    %s",
+        tempbuff
+      );
     }
   }
 
   /* If we have arbitrary IC file type, keep reading nx and ndim */
-  char nx_read = 0;
+  char nx_read   = 0;
   char ndim_read = 0;
   if (!pars.twostate_ic) {
     while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
       *skip_lines += 1;
 
-      if (line_is_comment(tempbuff)) {
-        continue;
-      }
+      if (line_is_comment(tempbuff)) { continue; }
       remove_trailing_comments(tempbuff);
-      if (line_is_empty(tempbuff)) {
-        continue;
-      }
+      if (line_is_empty(tempbuff)) { continue; }
 
       sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
       remove_whitespace(varname);
@@ -106,16 +103,16 @@ void io_read_ic_type(int *skip_lines) {
         nx_read = 1;
       } else if (strcmp(varname, "ndim") == 0) {
         pars.ndim_ic = atoi(varvalue);
-        ndim_read = 1;
+        ndim_read    = 1;
       } else {
-        throw_error("while reading IC file type: Unrecongized line [error loc "
-                    "2]: \n    \"%s\" \n",
-                    tempbuff);
+        throw_error(
+          "while reading IC file type: Unrecongized line [error loc "
+          "2]: \n    \"%s\" \n",
+          tempbuff
+        );
       }
 
-      if (nx_read && ndim_read) {
-        break;
-      }
+      if (nx_read && ndim_read) { break; }
     }
   }
 
@@ -123,7 +120,6 @@ void io_read_ic_type(int *skip_lines) {
 
   debugmessage("In io_read_ic_type: got skiplines: %d", *skip_lines);
 }
-
 
 
 /**
@@ -145,17 +141,17 @@ void io_read_ic_twostate(const int skip_lines) {
 
   /* bools to check we get complete data set */
   char rhol_set = 0;
-  char ul_set = 0;
-  char pl_set = 0;
+  char ul_set   = 0;
+  char pl_set   = 0;
   char rhor_set = 0;
-  char ur_set = 0;
-  char pr_set = 0;
+  char ur_set   = 0;
+  char pr_set   = 0;
 
   /* check whether file exists first */
   io_check_file_exists(pars.datafilename);
 
   /* open file */
-  FILE *dat = fopen(pars.datafilename, "r");
+  FILE* dat = fopen(pars.datafilename, "r");
 
   char varname[MAX_LINE_SIZE];
   char varvalue[MAX_LINE_SIZE];
@@ -165,20 +161,12 @@ void io_read_ic_twostate(const int skip_lines) {
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     i += 1;
     /* debugmessage("i=%d, skip=%d, Got line: ||%s", i, skip, tempbuff); */
-    if (i <= skip_lines) {
-      continue; /* skip header */
-    }
+    if (i <= skip_lines) { continue; /* skip header */ }
 
-    if (line_is_comment(tempbuff)) {
-      continue;
-    }
+    if (line_is_comment(tempbuff)) { continue; }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff)) {
-      continue;
-    }
-    if (!check_name_equal_value_present(tempbuff)) {
-      continue;
-    }
+    if (line_is_empty(tempbuff)) { continue; }
+    if (!check_name_equal_value_present(tempbuff)) { continue; }
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     remove_whitespace(varname);
@@ -189,58 +177,47 @@ void io_read_ic_twostate(const int skip_lines) {
       rhol_set = 1;
     } else if (strcmp(varname, "u_L") == 0) {
       left.u[0] = atof(varvalue);
-      ul_set = 1;
+      ul_set    = 1;
     } else if (strcmp(varname, "p_L") == 0) {
       left.p = atof(varvalue);
       pl_set = 1;
     } else if (strcmp(varname, "rho_R") == 0) {
       right.rho = atof(varvalue);
-      rhor_set = 1;
+      rhor_set  = 1;
     } else if (strcmp(varname, "u_R") == 0) {
       right.u[0] = atof(varvalue);
-      ur_set = 1;
+      ur_set     = 1;
     } else if (strcmp(varname, "p_R") == 0) {
       right.p = atof(varvalue);
-      pr_set = 1;
+      pr_set  = 1;
     } else {
-      log_message("ATTENTION: Unrecongized data : \"%s\" | \"%s\"\n", varname,
-                  varvalue);
+      log_message(
+        "ATTENTION: Unrecongized data : \"%s\" | \"%s\"\n", varname, varvalue
+      );
     }
   }
 
   fclose(dat);
 
-  if (!rhol_set) {
-    throw_error("rho left is not given in IC file");
-  }
-  if (!rhor_set) {
-    throw_error("rho right is not given in IC file");
-  }
-  if (!ul_set) {
-    throw_error("u left is not given in IC file");
-  }
-  if (!ur_set) {
-    throw_error("u right is not given in IC file");
-  }
-  if (!pl_set) {
-    throw_error("u left is not given in IC file");
-  }
-  if (!pr_set) {
-    throw_error("u right is not given in IC file");
-  }
+  if (!rhol_set) { throw_error("rho left is not given in IC file"); }
+  if (!rhor_set) { throw_error("rho right is not given in IC file"); }
+  if (!ul_set) { throw_error("u left is not given in IC file"); }
+  if (!ur_set) { throw_error("u right is not given in IC file"); }
+  if (!pl_set) { throw_error("u left is not given in IC file"); }
+  if (!pr_set) { throw_error("u right is not given in IC file"); }
 
   /* Now write the data in the actual grid */
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx / 2 + BC; i++) {
-    grid[i].prim.rho = left.rho;
+    grid[i].prim.rho  = left.rho;
     grid[i].prim.u[0] = left.u[0];
-    grid[i].prim.p = left.p;
+    grid[i].prim.p    = left.p;
   }
   for (int i = pars.nx / 2 + BC; i < pars.nx + BC; i++) {
-    grid[i].prim.rho = right.rho;
+    grid[i].prim.rho  = right.rho;
     grid[i].prim.u[0] = right.u[0];
-    grid[i].prim.p = right.p;
+    grid[i].prim.p    = right.p;
   }
 
 #elif NDIM == 2
@@ -248,23 +225,24 @@ void io_read_ic_twostate(const int skip_lines) {
   for (int j = BC; j < pars.nx + BC; j++) {
 
     for (int i = BC; i < pars.nx / 2 + BC; i++) {
-      grid[i][j].prim.rho = left.rho;
+      grid[i][j].prim.rho  = left.rho;
       grid[i][j].prim.u[0] = left.u[0];
       grid[i][j].prim.u[1] = 0;
-      grid[i][j].prim.p = left.p;
+      grid[i][j].prim.p    = left.p;
     }
     for (int i = pars.nx / 2 + BC; i < pars.nx + BC; i++) {
-      grid[i][j].prim.rho = right.rho;
+      grid[i][j].prim.rho  = right.rho;
       grid[i][j].prim.u[0] = right.u[0];
       grid[i][j].prim.u[1] = 0;
-      grid[i][j].prim.p = right.p;
+      grid[i][j].prim.p    = right.p;
     }
   }
 
 #endif
 
-  log_message("The initial discontinuity is at x = %8.5lf\n",
-              (pars.nx / 2) * pars.dx);
+  log_message(
+    "The initial discontinuity is at x = %8.5lf\n", (pars.nx / 2) * pars.dx
+  );
 }
 
 
@@ -283,7 +261,7 @@ void io_read_ic_arbitrary(int skip) {
   io_check_file_exists(pars.datafilename);
 
   /* open file */
-  FILE *dat = fopen(pars.datafilename, "r");
+  FILE* dat = fopen(pars.datafilename, "r");
 
   char tempbuff[MAX_LINE_SIZE];
 
@@ -291,31 +269,25 @@ void io_read_ic_arbitrary(int skip) {
 #if NDIM > 1
   int j = BC;
 #endif
-  int sc = 0;
+  int sc      = 0;
   int counter = 0;
   while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
     sc += 1;
-    if (sc <= skip) {
-      continue; /* skip header */
-    }
+    if (sc <= skip) { continue; /* skip header */ }
 
-    if (line_is_comment(tempbuff)) {
-      continue;
-    }
+    if (line_is_comment(tempbuff)) { continue; }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff)) {
-      continue;
-    }
+    if (line_is_empty(tempbuff)) { continue; }
 
 #if NDIM == 1
     float rho, u, p;
     check_number_of_columns_IC(tempbuff, 3);
     sscanf(tempbuff, "%f %f %f\n", &rho, &u, &p);
 
-    grid[i].prim.rho = rho;
+    grid[i].prim.rho  = rho;
     grid[i].prim.u[0] = u;
     grid[i].prim.u[1] = 0;
-    grid[i].prim.p = p;
+    grid[i].prim.p    = p;
 
     i += 1;
 
@@ -324,10 +296,10 @@ void io_read_ic_arbitrary(int skip) {
     check_number_of_columns_IC(tempbuff, 4);
     sscanf(tempbuff, "%f %f %f %f\n", &rho, &ux, &uy, &p);
 
-    grid[i][j].prim.rho = rho;
+    grid[i][j].prim.rho  = rho;
     grid[i][j].prim.u[0] = ux;
     grid[i][j].prim.u[1] = uy;
-    grid[i][j].prim.p = p;
+    grid[i][j].prim.p    = p;
 
     i += 1;
     if (i == pars.nx + BC) {
@@ -340,47 +312,48 @@ void io_read_ic_arbitrary(int skip) {
 
     /* safety measure */
 #if NDIM == 1
-    if (counter == pars.nx) {
-      break;
-    }
+    if (counter == pars.nx) { break; }
 #elif NDIM == 2
-    if (counter == pars.nx * pars.nx)
-      break;
+    if (counter == pars.nx * pars.nx) break;
 #endif
   }
 
   /* another safety mesure */
 #if NDIM == 1
   if (counter != pars.nx) {
-    throw_error("In io_read_ic_arbitrary:I didn't get the proper number of IC "
-                "cell data.\n"
-                "Expected nx = %d, got %d",
-                pars.nx, counter);
+    throw_error(
+      "In io_read_ic_arbitrary:I didn't get the proper number of IC "
+      "cell data.\n"
+      "Expected nx = %d, got %d",
+      pars.nx,
+      counter
+    );
   }
 #elif NDIM == 2
   if (counter != pars.nx * pars.nx) {
-    throw_error("In io_read_ic_arbitrary: I didn't get the proper number of IC "
-                "cell data.\n"
-                "Expected nx^2 = %d, got %d",
-                pars.nx * pars.nx, counter);
+    throw_error(
+      "In io_read_ic_arbitrary: I didn't get the proper number of IC "
+      "cell data.\n"
+      "Expected nx^2 = %d, got %d",
+      pars.nx * pars.nx,
+      counter
+    );
   }
 #endif
   else {
     while (fgets(tempbuff, MAX_LINE_SIZE, dat)) {
-      if (line_is_comment(tempbuff)) {
-        continue;
-      }
+      if (line_is_comment(tempbuff)) { continue; }
       remove_trailing_comments(tempbuff);
-      if (line_is_empty(tempbuff)) {
-        continue;
-      }
+      if (line_is_empty(tempbuff)) { continue; }
 
       /* if you arrived at this point, you have something that is not a comment
        * nor empty line even though we have all the data that we need */
-      throw_error("In io_read_ic_arbitrary: I read enough data according to "
-                  "given nx, but there is still more stuff in the IC file.\n"
-                  "The line I read was: %s",
-                  tempbuff);
+      throw_error(
+        "In io_read_ic_arbitrary: I read enough data according to "
+        "given nx, but there is still more stuff in the IC file.\n"
+        "The line I read was: %s",
+        tempbuff
+      );
     }
   }
 
@@ -397,7 +370,7 @@ void io_read_paramfile(void) {
   io_check_file_exists(pars.paramfilename);
 
   /* open file */
-  FILE *par = fopen(pars.paramfilename, "r");
+  FILE* par = fopen(pars.paramfilename, "r");
 
   char varname[MAX_LINE_SIZE];
   char varvalue[MAX_LINE_SIZE];
@@ -405,13 +378,10 @@ void io_read_paramfile(void) {
 
   while (fgets(tempbuff, MAX_LINE_SIZE, par)) {
 
-    if (line_is_comment(tempbuff))
-      continue;
+    if (line_is_comment(tempbuff)) continue;
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
-      continue;
-    if (!check_name_equal_value_present(tempbuff))
-      continue;
+    if (line_is_empty(tempbuff)) continue;
+    if (!check_name_equal_value_present(tempbuff)) continue;
 
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     remove_whitespace(varname);
@@ -438,22 +408,20 @@ void io_read_paramfile(void) {
     } else if (strcmp(varname, "dt_out") == 0) {
       pars.dt_out = atof(varvalue);
     } else if (strcmp(varname, "basename") == 0) {
-      if (!line_is_empty(varvalue)) {
-        strcpy(pars.outputfilename, varvalue);
-      }
+      if (!line_is_empty(varvalue)) { strcpy(pars.outputfilename, varvalue); }
     } else if (strcmp(varname, "toutfile") == 0) {
       if (!line_is_empty(varvalue)) {
         strcpy(pars.toutfilename, varvalue);
         pars.use_toutfile = 1;
       }
     } else if (strcmp(varname, "src_const_acc_x") == 0) {
-      pars.src_const_acc_x = atof(varvalue);
+      pars.src_const_acc_x  = atof(varvalue);
       pars.sources_are_read = 1;
     } else if (strcmp(varname, "src_const_acc_y") == 0) {
-      pars.src_const_acc_y = atof(varvalue);
+      pars.src_const_acc_y  = atof(varvalue);
       pars.sources_are_read = 1;
     } else if (strcmp(varname, "src_const_acc_r") == 0) {
-      pars.src_const_acc_r = atof(varvalue);
+      pars.src_const_acc_r  = atof(varvalue);
       pars.sources_are_read = 1;
     } else {
       log_message("ATTENTION: Unrecongized parameter : \"%s\"\n", varname);
@@ -473,31 +441,33 @@ void io_read_toutfile(void) {
   io_check_file_exists(pars.toutfilename);
 
   /* open file */
-  FILE *par = fopen(pars.toutfilename, "r");
+  FILE* par = fopen(pars.toutfilename, "r");
 
   char tempbuff[MAX_LINE_SIZE];
 
-  int nlines = 0;
+  int   nlines     = 0;
   float past_value = 0;
-  float value = 0;
+  float value      = 0;
 
   /* get how many lines we have */
   while (fgets(tempbuff, MAX_LINE_SIZE, par)) {
 
-    if (line_is_comment(tempbuff))
-      continue;
+    if (line_is_comment(tempbuff)) continue;
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff))
-      continue;
+    if (line_is_empty(tempbuff)) continue;
 
     nlines += 1;
     sscanf(tempbuff, "%f\n", &value);
 
     if (nlines > 1) {
       if (value <= past_value)
-        throw_error("While reading output time file '%s':"
-                    " Got output time %f <= previous output time %f",
-                    pars.toutfilename, value, past_value);
+        throw_error(
+          "While reading output time file '%s':"
+          " Got output time %f <= previous output time %f",
+          pars.toutfilename,
+          value,
+          past_value
+        );
     }
     past_value = value;
   }
@@ -507,18 +477,14 @@ void io_read_toutfile(void) {
 
   pars.outputtimes = malloc(nlines * sizeof(float));
   pars.noutput_tot = nlines;
-  nlines = 0;
+  nlines           = 0;
 
   par = fopen(pars.toutfilename, "r");
   while (fgets(tempbuff, MAX_LINE_SIZE, par)) {
 
-    if (line_is_comment(tempbuff)) {
-      continue;
-    }
+    if (line_is_comment(tempbuff)) { continue; }
     remove_trailing_comments(tempbuff);
-    if (line_is_empty(tempbuff)) {
-      continue;
-    }
+    if (line_is_empty(tempbuff)) { continue; }
 
     sscanf(tempbuff, "%f\n", &pars.outputtimes[nlines]);
     nlines += 1;
@@ -534,7 +500,7 @@ void io_read_toutfile(void) {
  * @param step:  Current step of the simulation
  * @param t:     Current time of the simulation
  */
-void io_write_output(int *outstep, int step, float t) {
+void io_write_output(int* outstep, int step, float t) {
 
   if (*outstep > 9999) {
     throw_error("I'm not made to write outputs > 9999\n");
@@ -543,7 +509,7 @@ void io_write_output(int *outstep, int step, float t) {
   /* generate output filename for this snapshot */
 
   char filename[MAX_FNAME_SIZE] = "";
-  char snapnrstr[5] = "";
+  char snapnrstr[5]             = "";
 
   strcpy(filename, pars.outputfilename);
   sprintf(snapnrstr, "%04d", *outstep);
@@ -557,7 +523,7 @@ void io_write_output(int *outstep, int step, float t) {
   /* Write output file */
   /*-------------------*/
 
-  FILE *outfilep = fopen(filename, "w");
+  FILE* outfilep = fopen(filename, "w");
   fprintf(outfilep, "# ndim = %2d\n", NDIM);
   fprintf(outfilep, "# nx = %10d\n", pars.nx);
   fprintf(outfilep, "# t = %12.6lf\n", t);
@@ -566,21 +532,37 @@ void io_write_output(int *outstep, int step, float t) {
 #if NDIM == 1
   fprintf(outfilep, "# %12s %12s %12s %12s\n", "x", "rho", "u", "p");
   for (int i = BC; i < pars.nx + BC; i++) {
-    cell c = grid[i];
+    cell   c = grid[i];
     pstate s = c.prim;
     fprintf(outfilep, "%12.6e %12.6e %12.6e %12.6e\n", c.x, s.rho, s.u[0], s.p);
   }
 
 #elif NDIM == 2
 
-  fprintf(outfilep, "# %12s %12s %12s %12s %12s %12s\n", "x", "y", "rho", "u_x",
-          "u_y", "p");
+  fprintf(
+    outfilep,
+    "# %12s %12s %12s %12s %12s %12s\n",
+    "x",
+    "y",
+    "rho",
+    "u_x",
+    "u_y",
+    "p"
+  );
   for (int j = BC; j < pars.nx + BC; j++) {
     for (int i = BC; i < pars.nx + BC; i++) {
-      cell c = grid[i][j];
+      cell   c = grid[i][j];
       pstate s = c.prim;
-      fprintf(outfilep, "%12.6e %12.6e %12.6e %12.6e %12.6e %12.6e\n", c.x, c.y,
-              s.rho, s.u[0], s.u[1], s.p);
+      fprintf(
+        outfilep,
+        "%12.6e %12.6e %12.6e %12.6e %12.6e %12.6e\n",
+        c.x,
+        c.y,
+        s.rho,
+        s.u[0],
+        s.u[1],
+        s.p
+      );
     }
   }
 
@@ -601,11 +583,13 @@ void io_write_output(int *outstep, int step, float t) {
  * @param dt:    current time step size of sim
  * @param step:  current step of sim
  */
-int io_is_output_step(float t, float *dt, int step) {
+int io_is_output_step(float t, float* dt, int step) {
 
   debugmessage(
-      "Checking whether we need to limit the timestep for output. t=%g, dt=%g",
-      t, *dt);
+    "Checking whether we need to limit the timestep for output. t=%g, dt=%g",
+    t,
+    *dt
+  );
 
   if (pars.use_toutfile) { /* if we have a toutfile or dt_out in params is given
                             */
@@ -613,8 +597,9 @@ int io_is_output_step(float t, float *dt, int step) {
       return (0); /* final output will be dumped anyhow */
     float tnext = pars.outputtimes[pars.noutput];
     if (t + *dt >= tnext) {
-      debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,
-                   tnext - t, tnext);
+      debugmessage(
+        "Overwriting dt from %f to %f such that t+dt=%f", *dt, tnext - t, tnext
+      );
       *dt = tnext - t;
       pars.noutput += 1;
       return (1);
@@ -624,17 +609,19 @@ int io_is_output_step(float t, float *dt, int step) {
   /* do timestep limiting first! */
   /* this case can happen if dt_out = 0 and foutput = 0! */
   if (pars.tmax > 0 && pars.tmax < t + *dt) {
-    debugmessage("Overwriting dt from %f to %f such that t+dt=%f", *dt,
-                 pars.tmax - t, pars.tmax);
+    debugmessage(
+      "Overwriting dt from %f to %f such that t+dt=%f",
+      *dt,
+      pars.tmax - t,
+      pars.tmax
+    );
     *dt = pars.tmax - t;
-    return (
-        0); /* write up as not output step because last output will be dumped */
+    return (0
+    ); /* write up as not output step because last output will be dumped */
   }
 
   if (pars.foutput > 0) {
-    if (step % pars.foutput == 0) {
-      return (1);
-    }
+    if (step % pars.foutput == 0) { return (1); }
     return (0);
   }
 
@@ -645,9 +632,9 @@ int io_is_output_step(float t, float *dt, int step) {
 /**
  * Check whether a file exists. If it doesn't, exit.
  */
-void io_check_file_exists(char *fname) {
+void io_check_file_exists(char* fname) {
 
-  FILE *f = fopen(fname, "r");
+  FILE* f = fopen(fname, "r");
 
   /* check if file exists */
   if (f == NULL) {
@@ -662,14 +649,12 @@ void io_check_file_exists(char *fname) {
  * Check whether this line is empty, i.e. only whitespaces or newlines.
  * returns 1 if true, 0 otherwise. assumes line is MAX_LINE_SIZE
  */
-int line_is_empty(const char *line) {
+int line_is_empty(const char* line) {
   int isempty = 0;
 
   for (int i = 0; i < MAX_LINE_SIZE; i++) {
     if (line[i] != ' ') {
-      if (line[i] == '\n') {
-        isempty = 1;
-      }
+      if (line[i] == '\n') { isempty = 1; }
       break;
     }
   }
@@ -681,7 +666,7 @@ int line_is_empty(const char *line) {
  * Check whether the given line string is a comment, i.e. starts with // or
  * <slash>*
  */
-int line_is_comment(const char *line) {
+int line_is_comment(const char* line) {
 
   /* initialize firsttwo explicily for valgrind */
   char firsttwo[3] = {0, 0, 0};
@@ -689,9 +674,7 @@ int line_is_comment(const char *line) {
   strncpy(firsttwo, line, 2);
 
   /* strcmp returns 0 if strings are equal */
-  if (!strcmp(firsttwo, "//") || !strcmp(firsttwo, "/*")) {
-    return (1);
-  }
+  if (!strcmp(firsttwo, "//") || !strcmp(firsttwo, "/*")) { return (1); }
   return (0);
 }
 
@@ -699,10 +682,10 @@ int line_is_comment(const char *line) {
 /**
  * remove heading and trailing whitespaces
  */
-void remove_whitespace(char *line) {
+void remove_whitespace(char* line) {
 
   int start = 0;
-  int stop = strlen(line);
+  int stop  = strlen(line);
 
   /* find first non-whitespace character */
   for (int i = 0; i < MAX_LINE_SIZE; i++) {
@@ -731,19 +714,17 @@ void remove_whitespace(char *line) {
  * Check whether there are trailing comments in this line and if so, remove
  * them.
  */
-void remove_trailing_comments(char *line) {
+void remove_trailing_comments(char* line) {
 
   for (int i = 0; i < MAX_LINE_SIZE - 2; i++) {
     /* -2: 1 for \0 char, 1 because comment is always 2 characters long,
      * and I only check for the first.*/
-    if (line[i] == '\0') {
-      break;
-    }
+    if (line[i] == '\0') { break; }
     if (line[i] == '/') {
       char twochars[3];
       strncpy(twochars, line + i, 2);
       if (line_is_comment(twochars)) {
-        line[i] = '\n';
+        line[i]     = '\n';
         line[i + 1] = '\0';
         break;
       }
@@ -759,11 +740,11 @@ void remove_trailing_comments(char *line) {
  *
  * returns 1 if that is the case, 0 if not.
  */
-int check_name_equal_value_present(char *line) {
+int check_name_equal_value_present(char* line) {
 
-  int pos = 0;
+  int pos   = 0;
   int check = 0;
-  int len = strlen(line);
+  int len   = strlen(line);
 
   /* first check that we have an equal sign in there */
   for (int i = 0; i < len; i++) {
@@ -784,9 +765,7 @@ int check_name_equal_value_present(char *line) {
     }
   }
 
-  if (!check) {
-    return (0);
-  }
+  if (!check) { return (0); }
   check = 0;
 
   /* now check that we have non-whitespace characters after the equal sign */
@@ -797,9 +776,7 @@ int check_name_equal_value_present(char *line) {
     }
   }
 
-  if (!check) {
-    return (0);
-  }
+  if (!check) { return (0); }
   return (1);
 }
 
@@ -809,9 +786,9 @@ int check_name_equal_value_present(char *line) {
  * columns, delimited by an empty space. int should defines the
  * expected number of columns.
  */
-void check_number_of_columns_IC(char *line, int should) {
+void check_number_of_columns_IC(char* line, int should) {
 
-  int splits = 0;
+  int  splits = 0;
   char cpy[MAX_LINE_SIZE];
   strcpy(cpy, line);
 
@@ -822,7 +799,7 @@ void check_number_of_columns_IC(char *line, int should) {
     i -= 1;
   }
 
-  char *split_token = strtok(cpy, " ");
+  char* split_token = strtok(cpy, " ");
 
   if (split_token != NULL) {
     while (split_token != NULL) {
@@ -831,7 +808,8 @@ void check_number_of_columns_IC(char *line, int should) {
     }
   }
   if (splits != should) {
-    throw_error("I expected %d columns, I got %d; Line was %s", should, splits,
-                line);
+    throw_error(
+      "I expected %d columns, I got %d; Line was %s", should, splits, line
+    );
   }
 }

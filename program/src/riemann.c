@@ -3,13 +3,14 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include "riemann.h"
+
 #include <math.h>
 #include <stddef.h>
 
 #include "defines.h"
 #include "gas.h"
 #include "params.h"
-#include "riemann.h"
 
 #if RIEMANN == HLLC
 #include "utils.h"
@@ -27,8 +28,9 @@ extern params pars;
  * @param float xovert:    x / t, point where solution shall be sampled
  * @param int dimension:   which fluid velocity dimension to use. 0: x, 1: y
  */
-void riemann_solve(pstate *left, pstate *right, pstate *sol, float xovert,
-                   int dimension) {
+void riemann_solve(
+  pstate* left, pstate* right, pstate* sol, float xovert, int dimension
+) {
 
   if (riemann_has_vacuum(left, right, dimension)) {
     riemann_compute_vacuum_solution(left, right, sol, xovert, dimension);
@@ -49,21 +51,15 @@ void riemann_solve(pstate *left, pstate *right, pstate *sol, float xovert,
  * @param pstate* right:   right state of Riemann problem
  * @param int dimension:   which fluid velocity dimension to use. 0: x, 1: y
  */
-int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
+int riemann_has_vacuum(pstate* left, pstate* right, int dimension) {
 
-  if (left->rho <= SMALLRHO) {
-    return (1);
-  }
-  if (right->rho <= SMALLRHO) {
-    return (1);
-  }
+  if (left->rho <= SMALLRHO) { return (1); }
+  if (right->rho <= SMALLRHO) { return (1); }
 
   float delta_u = right->u[dimension] - left->u[dimension];
-  float u_crit = 2. / GM1 * (gas_soundspeed(left) + gas_soundspeed(right));
+  float u_crit  = 2. / GM1 * (gas_soundspeed(left) + gas_soundspeed(right));
 
-  if (delta_u < u_crit) {
-    return (0);
-  }
+  if (delta_u < u_crit) { return (0); }
   return (1);
 }
 
@@ -78,16 +74,17 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
  * @param float xovert:    x / t, point where solution shall be sampled
  * @param int dim:   which fluid velocity dim to use. 0: x, 1: y
  */
-void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
-                                     float xovert, int dim) {
+void riemann_compute_vacuum_solution(
+  pstate* left, pstate* right, pstate* sol, float xovert, int dim
+) {
 
   int notdim = (dim + 1) % 2;
 
   if (left->rho <= SMALLRHO && right->rho <= SMALLRHO) {
-    sol->rho = SMALLRHO;
-    sol->u[dim] = SMALLU;
+    sol->rho       = SMALLRHO;
+    sol->u[dim]    = SMALLU;
     sol->u[notdim] = SMALLU;
-    sol->p = SMALLP;
+    sol->p         = SMALLP;
     return;
   }
 
@@ -95,8 +92,8 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
     /*------------------------*/
     /* Left vacuum state      */
     /*------------------------*/
-    float aR = gas_soundspeed(right);
-    float SR = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
+    float aR  = gas_soundspeed(right);
+    float SR  = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
     float SHR = right->u[dim] + aR; /* speed of head of right rarefaction fan */
 
     if (xovert <= SR) {
@@ -108,21 +105,22 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
       sol->u[dim] = SMALLU;
 #endif
       sol->u[notdim] = SMALLU;
-      sol->p = SMALLP;
+      sol->p         = SMALLP;
     } else if (xovert < SHR) {
       /* inside rarefaction */
-      float precomp =
-          pow((2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1));
-      sol->rho = right->rho * precomp;
-      sol->u[dim] = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+      float precomp = pow(
+        (2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1)
+      );
+      sol->rho       = right->rho * precomp;
+      sol->u[dim]    = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
       sol->u[notdim] = right->u[notdim];
-      sol->p = right->p * pow(precomp, GAMMA);
+      sol->p         = right->p * pow(precomp, GAMMA);
     } else {
       /* original right pstate */
-      sol->rho = right->rho;
-      sol->u[dim] = right->u[dim];
+      sol->rho       = right->rho;
+      sol->u[dim]    = right->u[dim];
       sol->u[notdim] = right->u[notdim];
-      sol->p = right->p;
+      sol->p         = right->p;
     }
   }
 
@@ -131,8 +129,8 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
     /* Right vacuum state     */
     /*------------------------*/
 
-    float aL = gas_soundspeed(left);
-    float SL = left->u[dim] + 2. * aL / GM1; /* vacuum front speed */
+    float aL  = gas_soundspeed(left);
+    float SL  = left->u[dim] + 2. * aL / GM1; /* vacuum front speed */
     float SHL = left->u[dim] - aL; /* speed of head of left rarefaction fan */
 
     if (xovert >= SL) {
@@ -144,48 +142,50 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
       sol->u[dim] = SMALLU;
 #endif
       sol->u[notdim] = SMALLU;
-      sol->p = SMALLP;
+      sol->p         = SMALLP;
     } else if (xovert > SHL) {
       /* inside rarefaction */
-      float precomp =
-          pow((2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1));
-      sol->rho = left->rho * precomp;
-      sol->u[dim] = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+      float precomp = pow(
+        (2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1)
+      );
+      sol->rho       = left->rho * precomp;
+      sol->u[dim]    = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
       sol->u[notdim] = left->u[notdim];
-      sol->p = left->p * pow(precomp, GAMMA);
+      sol->p         = left->p * pow(precomp, GAMMA);
     } else {
       /* original left pstate */
-      sol->rho = left->rho;
-      sol->u[dim] = left->u[dim];
+      sol->rho       = left->rho;
+      sol->u[dim]    = left->u[dim];
       sol->u[notdim] = left->u[notdim];
-      sol->p = left->p;
+      sol->p         = left->p;
     }
   } else {
     /*------------------------*/
     /* Vacuum generating case */
     /*------------------------*/
 
-    float aL = gas_soundspeed(left);
-    float aR = gas_soundspeed(right);
-    float SL = left->u[dim] + 2. * aL / GM1;  /* vacuum front speed */
-    float SR = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
+    float aL  = gas_soundspeed(left);
+    float aR  = gas_soundspeed(right);
+    float SL  = left->u[dim] + 2. * aL / GM1;  /* vacuum front speed */
+    float SR  = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
     float SHL = left->u[dim] - aL;  /* speed of head of left rarefaction fan */
     float SHR = right->u[dim] + aR; /* speed of head of right rarefaction fan */
 
     if (xovert <= SHL) {
       /* left original pstate*/
-      sol->rho = left->rho;
-      sol->u[dim] = left->u[dim];
+      sol->rho       = left->rho;
+      sol->u[dim]    = left->u[dim];
       sol->u[notdim] = left->u[notdim];
-      sol->p = left->p;
+      sol->p         = left->p;
     } else if (xovert < SL) {
       /* inside rarefaction fan from right to left */
-      float precomp =
-          pow((2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1));
-      sol->rho = left->rho * precomp;
-      sol->u[dim] = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+      float precomp = pow(
+        (2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1)
+      );
+      sol->rho       = left->rho * precomp;
+      sol->u[dim]    = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
       sol->u[notdim] = left->u[notdim];
-      sol->p = left->p * pow(precomp, GAMMA);
+      sol->p         = left->p * pow(precomp, GAMMA);
     } else if (xovert < SR) {
       /* vacuum region */
       sol->rho = SMALLRHO;
@@ -195,21 +195,22 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
       sol->u[dim] = SMALLU;
 #endif
       sol->u[notdim] = SMALLU;
-      sol->p = SMALLP;
+      sol->p         = SMALLP;
     } else if (xovert < SHR) {
       /* inside rarefaction fan from left to right */
-      float precomp =
-          pow((2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1));
-      sol->rho = right->rho * precomp;
-      sol->u[dim] = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+      float precomp = pow(
+        (2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1)
+      );
+      sol->rho       = right->rho * precomp;
+      sol->u[dim]    = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
       sol->u[notdim] = right->u[notdim];
-      sol->p = right->p * pow(precomp, GAMMA);
+      sol->p         = right->p * pow(precomp, GAMMA);
     } else {
       /* right original pstate */
-      sol->rho = right->rho;
-      sol->u[dim] = right->u[dim];
+      sol->rho       = right->rho;
+      sol->u[dim]    = right->u[dim];
       sol->u[notdim] = right->u[notdim];
-      sol->p = right->p;
+      sol->p         = right->p;
     }
   }
 }
@@ -227,8 +228,15 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
  * @param float xovert:    x / t, point where solution shall be sampled
  * @param int dim:         which fluid velocity direction to use. 0: x, 1: y
  */
-void riemann_sample_solution(pstate *left, pstate *right, float pstar,
-                             float ustar, pstate *sol, float xovert, int dim) {
+void riemann_sample_solution(
+  pstate* left,
+  pstate* right,
+  float   pstar,
+  float   ustar,
+  pstate* sol,
+  float   xovert,
+  int     dim
+) {
 
   int otherdim = (dim + 1) % 2;
 
@@ -236,7 +244,7 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
     /*------------------------*/
     /* We're on the left side */
     /*------------------------*/
-    float aL = gas_soundspeed(left);
+    float aL          = gas_soundspeed(left);
     float pstaroverpL = pstar / left->p;
 
     if (pstar <= left->p) {
@@ -246,107 +254,115 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
       float SHL = left->u[dim] - aL; /* speed of head of left rarefaction fan */
       if (xovert < SHL) {
         /* we're outside the rarefaction fan */
-        sol->rho = left->rho;
-        sol->u[dim] = left->u[dim];
+        sol->rho         = left->rho;
+        sol->u[dim]      = left->u[dim];
         sol->u[otherdim] = left->u[otherdim];
-        sol->p = left->p;
+        sol->p           = left->p;
       } else {
         float astarL = aL * powf(pstaroverpL, BETA);
         float STL = ustar - astarL; /* speed of tail of left rarefaction fan */
         if (xovert < STL) {
           /* we're inside the fan */
           float precomp = pow(
-              (2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1));
-          sol->rho = left->rho * precomp;
-          sol->u[dim] = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
+            (2. / GP1 + GM1OGP1 / aL * (left->u[dim] - xovert)), (2. / GM1)
+          );
+          sol->rho         = left->rho * precomp;
+          sol->u[dim]      = 2. / GP1 * (GM1HALF * left->u[dim] + aL + xovert);
           sol->u[otherdim] = left->u[otherdim];
-          sol->p = left->p * pow(precomp, GAMMA);
+          sol->p           = left->p * pow(precomp, GAMMA);
         } else {
           /* we're in the star region */
-          sol->rho = left->rho * powf(pstaroverpL, ONEOVERGAMMA);
-          sol->u[dim] = ustar;
+          sol->rho         = left->rho * powf(pstaroverpL, ONEOVERGAMMA);
+          sol->u[dim]      = ustar;
           sol->u[otherdim] = left->u[otherdim];
-          sol->p = pstar;
+          sol->p           = pstar;
         }
       }
     } else {
       /*------------------*/
       /* left shock       */
       /*------------------*/
-      float SL = left->u[dim] - aL * sqrtf(0.5 * GP1 / GAMMA * pstaroverpL +
-                                           BETA); /* left shock speed */
+      float SL = left->u[dim]
+                 - aL * sqrtf(0.5 * GP1 / GAMMA * pstaroverpL + BETA); /* left
+                                                                          shock
+                                                                          speed
+                                                                        */
       if (xovert < SL) {
         /* we're outside the shock */
-        sol->rho = left->rho;
-        sol->u[dim] = left->u[dim];
+        sol->rho         = left->rho;
+        sol->u[dim]      = left->u[dim];
         sol->u[otherdim] = left->u[otherdim];
-        sol->p = left->p;
+        sol->p           = left->p;
       } else {
         /* we're in the star region */
-        sol->rho =
-            (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.) * left->rho;
-        sol->u[dim] = ustar;
+        sol->rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.)
+                   * left->rho;
+        sol->u[dim]      = ustar;
         sol->u[otherdim] = left->u[otherdim];
-        sol->p = pstar;
+        sol->p           = pstar;
       }
     }
   } else {
     /*-------------------------*/
     /* We're on the right side */
     /*-------------------------*/
-    float aR = gas_soundspeed(right);
+    float aR          = gas_soundspeed(right);
     float pstaroverpR = pstar / right->p;
     if (pstar <= right->p) {
 
       /*-------------------*/
       /* right rarefaction */
       /*-------------------*/
-      float SHR =
-          right->u[dim] + aR; /* speed of head of right rarefaction fan */
+      float SHR = right->u[dim] + aR; /* speed of head of right rarefaction fan
+                                       */
       if (xovert > SHR) {
         /* we're outside the rarefaction fan */
-        sol->rho = right->rho;
-        sol->u[dim] = right->u[dim];
+        sol->rho         = right->rho;
+        sol->u[dim]      = right->u[dim];
         sol->u[otherdim] = right->u[otherdim];
-        sol->p = right->p;
+        sol->p           = right->p;
       } else {
         float astarR = aR * powf(pstaroverpR, BETA);
         float STR = ustar + astarR; /* speed of tail of right rarefaction fan */
         if (xovert > STR) {
           /* we're inside the fan */
           float precomp = pow(
-              (2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1));
-          sol->rho = right->rho * precomp;
-          sol->u[dim] = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
+            (2. / GP1 - GM1OGP1 / aR * (right->u[dim] - xovert)), (2. / GM1)
+          );
+          sol->rho         = right->rho * precomp;
+          sol->u[dim]      = 2. / GP1 * (GM1HALF * right->u[dim] - aR + xovert);
           sol->u[otherdim] = right->u[otherdim];
-          sol->p = right->p * pow(precomp, GAMMA);
+          sol->p           = right->p * pow(precomp, GAMMA);
         } else {
           /* we're in the star region */
-          sol->rho = right->rho * powf(pstaroverpR, ONEOVERGAMMA);
-          sol->u[dim] = ustar;
+          sol->rho         = right->rho * powf(pstaroverpR, ONEOVERGAMMA);
+          sol->u[dim]      = ustar;
           sol->u[otherdim] = right->u[otherdim];
-          sol->p = pstar;
+          sol->p           = pstar;
         }
       }
     } else {
       /*------------------*/
       /* right shock      */
       /*------------------*/
-      float SR = right->u[dim] + aR * sqrtf(0.5 * GP1 / GAMMA * pstaroverpR +
-                                            BETA); /* right shock speed */
+      float SR = right->u[dim]
+                 + aR * sqrtf(0.5 * GP1 / GAMMA * pstaroverpR + BETA); /* right
+                                                                          shock
+                                                                          speed
+                                                                        */
       if (xovert > SR) {
         /* we're outside the shock */
-        sol->rho = right->rho;
-        sol->u[dim] = right->u[dim];
+        sol->rho         = right->rho;
+        sol->u[dim]      = right->u[dim];
         sol->u[otherdim] = right->u[otherdim];
-        sol->p = right->p;
+        sol->p           = right->p;
       } else {
         /* we're in the star region */
-        sol->rho =
-            (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.) * right->rho;
-        sol->u[dim] = ustar;
+        sol->rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.)
+                   * right->rho;
+        sol->u[dim]      = ustar;
         sol->u[otherdim] = right->u[otherdim];
-        sol->p = pstar;
+        sol->p           = pstar;
       }
     }
   }
@@ -369,13 +385,20 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
  *                           waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
  * @param int dim:           which fluid velocity direction to use. 0: x, 1: y
  */
-void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
-                                       cstate fluxes[4], float delta_q[3],
-                                       int dim) {
+void riemann_get_full_solution_for_WAF(
+  pstate* left,
+  pstate* right,
+  float   S[3],
+  cstate  fluxes[4],
+  float   delta_q[3],
+  int     dim
+) {
 
 #if RIEMANN == HLLC
-  throw_error("In riemann_get_full_solution: You shouldn't be calling this "
-              "function with the HLLC Riemann solver.");
+  throw_error(
+    "In riemann_get_full_solution: You shouldn't be calling this "
+    "function with the HLLC Riemann solver."
+  );
 #endif
 
   int notdim = (dim + 1) % 2;
@@ -387,32 +410,32 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
   /* Now fill them into left and right star state variables */
   pstate star_left;
   gas_init_pstate(&star_left);
-  star_left.u[dim] = ustar;
+  star_left.u[dim]    = ustar;
   star_left.u[notdim] = left->u[notdim];
-  star_left.p = pstar;
-  float pstaroverpL = pstar / left->p;
+  star_left.p         = pstar;
+  float pstaroverpL   = pstar / left->p;
   if (pstar <= left->p) {
     /* rarefaction star state */
     star_left.rho = left->rho * powf(pstaroverpL, ONEOVERGAMMA);
   } else {
     /* shock star state */
-    star_left.rho =
-        (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.) * left->rho;
+    star_left.rho = (pstaroverpL + GM1OGP1) / (GM1OGP1 * pstaroverpL + 1.)
+                    * left->rho;
   }
 
   pstate star_right;
   gas_init_pstate(&star_right);
-  star_right.u[dim] = ustar;
+  star_right.u[dim]    = ustar;
   star_right.u[notdim] = right->u[notdim];
-  star_right.p = pstar;
-  float pstaroverpR = pstar / right->p;
+  star_right.p         = pstar;
+  float pstaroverpR    = pstar / right->p;
   if (pstar <= right->p) {
     /* rarefaction star state */
     star_right.rho = right->rho * powf(pstaroverpR, ONEOVERGAMMA);
   } else {
     /* shock star state */
-    star_right.rho =
-        (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.) * right->rho;
+    star_right.rho = (pstaroverpR + GM1OGP1) / (GM1OGP1 * pstaroverpR + 1.)
+                     * right->rho;
   }
 
   /* get wave speeds. We always expect 3 waves. */
@@ -440,8 +463,15 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
   /* find solution at x = 0 in case we need it */
   pstate state_at_x_zero;
   gas_init_pstate(&state_at_x_zero);
-  riemann_sample_solution(left, right, pstar, ustar, &state_at_x_zero,
-                          /*xovert =*/0., dim);
+  riemann_sample_solution(
+    left,
+    right,
+    pstar,
+    ustar,
+    &state_at_x_zero,
+    /*xovert =*/0.,
+    dim
+  );
 
   /* get fluxes from the states. For 1D Euler equations, there will always be 4
    * fluxes to consider. */
@@ -455,7 +485,7 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
     /* use approximation for fan instead of adding one more wave and properly
      * integrating */
     float astarL = gas_soundspeed(&star_left);
-    float tailL = ustar - astarL;
+    float tailL  = ustar - astarL;
     if (tailL * S[0] < 0.) {
       /* if head and tail speeds have different sign, we have a sonic
        * rarefaction. */
@@ -475,7 +505,7 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
     /* use approximation for fan instead of adding one more wave and properly
      * integrating */
     float astarR = gas_soundspeed(&star_right);
-    float tailR = ustar + astarR;
+    float tailR  = ustar + astarR;
     if (tailR * S[2] < 0.) {
       /* if head and tail speeds have different sign, we have asonic
        * rarefaction. */
@@ -514,9 +544,14 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
  *                           U*_L - U_L, U*_R - U*_L, U_R - U*_R
  * @param int dim:           which fluid velocity direction to use. 0: x, 1: y
  */
-void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
-                                              float S[3], cstate fluxes[4],
-                                              float delta_q[3], int dim) {
+void riemann_get_full_vacuum_solution_for_WAF(
+  pstate* left,
+  pstate* right,
+  float   S[3],
+  cstate  fluxes[4],
+  float   delta_q[3],
+  int     dim
+) {
 
   int notdim = (dim + 1) % 2;
 
@@ -529,7 +564,7 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
       gas_get_cflux_from_pstate(&vacuum, &fluxes[k], dim);
     }
     for (int k = 0; k < 3; k++) {
-      S[k] = 0.;
+      S[k]       = 0.;
       delta_q[k] = 0.;
     }
     return;
@@ -546,32 +581,33 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     /*------------------------*/
     /* Left vacuum state      */
     /*------------------------*/
-    float aR = gas_soundspeed(right);
-    float SR = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
+    float aR  = gas_soundspeed(right);
+    float SR  = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
     float SHR = right->u[dim] + aR; /* speed of head of right rarefaction fan */
     float rho_star_right = 0;
 
     /* We always have a rarefaction, so find the state at x = 0 */
     if (0. <= SR) {
-      state_at_x_zero.rho = SMALLRHO;
-      state_at_x_zero.u[dim] = SMALLU;
+      state_at_x_zero.rho       = SMALLRHO;
+      state_at_x_zero.u[dim]    = SMALLU;
       state_at_x_zero.u[notdim] = SMALLU;
-      state_at_x_zero.p = SMALLP;
+      state_at_x_zero.p         = SMALLP;
     } else if (0. < SHR) {
       /* inside rarefaction */
       float precomp = pow(
-          (2. / GP1 - GM1OGP1 / aR * (right->u[dim] /*- x/t */)), (2. / GM1));
-      state_at_x_zero.rho = right->rho * precomp;
-      state_at_x_zero.u[dim] =
-          2. / GP1 * (GM1HALF * right->u[dim] - aR /* + x/t */);
+        (2. / GP1 - GM1OGP1 / aR * (right->u[dim] /*- x/t */)), (2. / GM1)
+      );
+      state_at_x_zero.rho    = right->rho * precomp;
+      state_at_x_zero.u[dim] = 2. / GP1
+                               * (GM1HALF * right->u[dim] - aR /* + x/t */);
       state_at_x_zero.u[notdim] = right->u[notdim];
-      state_at_x_zero.p = right->p * pow(precomp, GAMMA);
+      state_at_x_zero.p         = right->p * pow(precomp, GAMMA);
     } else {
       /* original right pstate */
-      state_at_x_zero.rho = right->rho;
-      state_at_x_zero.u[dim] = right->u[dim];
+      state_at_x_zero.rho       = right->rho;
+      state_at_x_zero.u[dim]    = right->u[dim];
       state_at_x_zero.u[notdim] = right->u[notdim];
-      state_at_x_zero.p = right->p;
+      state_at_x_zero.p         = right->p;
     }
 
     /* compute the fluxes */
@@ -607,32 +643,33 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     /* Right vacuum state     */
     /*------------------------*/
 
-    float aL = gas_soundspeed(left);
-    float SL = left->u[dim] + 2. * aL / GM1; /* vacuum front speed */
+    float aL  = gas_soundspeed(left);
+    float SL  = left->u[dim] + 2. * aL / GM1; /* vacuum front speed */
     float SHL = left->u[dim] - aL; /* speed of head of left rarefaction fan */
     float rho_star_left = 0;
 
     if (0. >= SL) {
       /* right vacuum */
-      state_at_x_zero.rho = SMALLRHO;
-      state_at_x_zero.u[dim] = SMALLU;
+      state_at_x_zero.rho       = SMALLRHO;
+      state_at_x_zero.u[dim]    = SMALLU;
       state_at_x_zero.u[notdim] = SMALLU;
-      state_at_x_zero.p = SMALLP;
+      state_at_x_zero.p         = SMALLP;
     } else if (0. > SHL) {
       /* inside rarefaction */
       float precomp = pow(
-          (2. / GP1 + GM1OGP1 / aL * (left->u[dim] /* - x/t */)), (2. / GM1));
-      state_at_x_zero.rho = left->rho * precomp;
-      state_at_x_zero.u[dim] =
-          2. / GP1 * (GM1HALF * left->u[dim] + aL /* + x/t */);
+        (2. / GP1 + GM1OGP1 / aL * (left->u[dim] /* - x/t */)), (2. / GM1)
+      );
+      state_at_x_zero.rho    = left->rho * precomp;
+      state_at_x_zero.u[dim] = 2. / GP1
+                               * (GM1HALF * left->u[dim] + aL /* + x/t */);
       state_at_x_zero.u[notdim] = left->u[notdim];
-      state_at_x_zero.p = left->p * pow(precomp, GAMMA);
+      state_at_x_zero.p         = left->p * pow(precomp, GAMMA);
     } else {
       /* original left pstate */
-      state_at_x_zero.rho = left->rho;
-      state_at_x_zero.u[dim] = left->u[dim];
+      state_at_x_zero.rho       = left->rho;
+      state_at_x_zero.u[dim]    = left->u[dim];
       state_at_x_zero.u[notdim] = left->u[notdim];
-      state_at_x_zero.p = left->p;
+      state_at_x_zero.p         = left->p;
     }
 
     /* compute the fluxes */
@@ -667,10 +704,10 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     /* Vacuum generating case */
     /*------------------------*/
 
-    float aL = gas_soundspeed(left);
-    float aR = gas_soundspeed(right);
-    float SL = left->u[dim] + 2. * aL / GM1;  /* vacuum front speed */
-    float SR = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
+    float aL  = gas_soundspeed(left);
+    float aR  = gas_soundspeed(right);
+    float SL  = left->u[dim] + 2. * aL / GM1;  /* vacuum front speed */
+    float SR  = right->u[dim] - 2. * aR / GM1; /* vacuum front speed */
     float SHL = left->u[dim] - aL;  /* speed of head of left rarefaction fan */
     float SHR = right->u[dim] + aR; /* speed of head of right rarefaction fan */
 
@@ -680,22 +717,24 @@ void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
     gas_init_pstate(&star_left);
 
     speed_average = 0.5 * (SHL + SL);
-    precomp =
-        pow((2. / GP1 + GM1OGP1 / aL * (left->u[dim] - /*x/t=*/speed_average)),
-            (2. / GM1));
-    star_left.rho = left->rho * precomp;
+    precomp       = pow(
+      (2. / GP1 + GM1OGP1 / aL * (left->u[dim] - /*x/t=*/speed_average)),
+      (2. / GM1)
+    );
+    star_left.rho    = left->rho * precomp;
     star_left.u[dim] = 0.5 * (SL + SR);
-    star_left.p = left->p * pow(precomp, GAMMA);
+    star_left.p      = left->p * pow(precomp, GAMMA);
 
     pstate star_right;
     gas_init_pstate(&star_right);
     speed_average = 0.5 * (SHR + SR);
-    precomp =
-        pow((2. / GP1 - GM1OGP1 / aR * (right->u[dim] - /*x/t=*/speed_average)),
-            (2. / GM1));
-    star_right.rho = right->rho * precomp;
+    precomp       = pow(
+      (2. / GP1 - GM1OGP1 / aR * (right->u[dim] - /*x/t=*/speed_average)),
+      (2. / GM1)
+    );
+    star_right.rho    = right->rho * precomp;
     star_right.u[dim] = 0.5 * (SL + SR);
-    star_right.p = right->p * pow(precomp, GAMMA);
+    star_right.p      = right->p * pow(precomp, GAMMA);
 
     f = (SHL - SL) / (SHL - 0.5 * (SL + SR));
     star_left.rho *= f;

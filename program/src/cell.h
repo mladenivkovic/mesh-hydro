@@ -26,9 +26,9 @@ typedef struct {
 
 #if SOLVER == WAF
   /* The following is needed for the WAF scheme */
-  float Sk[3];              /* wave speeds of the Riemann solution */
+  float  Sk[3];             /* wave speeds of the Riemann solution */
   cstate riemann_fluxes[4]; /* the emerging fluxes: F_L, F*_L, F*_R, F_R */
-  float delta_q[3];         /* difference in densities between each wave */
+  float  delta_q[3];        /* difference in densities between each wave */
 #endif
 #if SOLVER == MUSCL
   /* The following is needed for the MUSCL scheme */
@@ -39,27 +39,28 @@ typedef struct {
 } cell;
 
 #if NDIM == 1
-extern cell *grid;
+extern cell* grid;
 #elif NDIM == 2
-extern cell **grid;
+extern cell** grid;
 #endif
 
-void cell_init_cell(cell *c);
+void cell_init_cell(cell* c);
 void cell_init_grid(void);
 void cell_set_boundary(void);
-void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
-                        cell **ghostR, int dimension);
-void cell_copy_boundary_data(cell *real, cell *ghost);
-void cell_copy_boundary_data_reflective(cell *real, cell *ghost, int dimension);
+void cell_real_to_ghost(
+  cell** realL, cell** realR, cell** ghostL, cell** ghostR, int dimension
+);
+void cell_copy_boundary_data(cell* real, cell* ghost);
+void cell_copy_boundary_data_reflective(cell* real, cell* ghost, int dimension);
 void cell_reset_fluxes(void);
 void cell_get_pstates_from_cstates(void);
 void cell_get_cstates_from_pstates(void);
 
 float cell_get_total_mass(void);
 
-void cell_print_grid(char field[4]);
-void cell_print_grid_part(char field[4], const int *limits);
-void cell_get_ij(cell *c, int *i, int *j);
-char *cell_get_index_string(cell *c);
+void  cell_print_grid(char field[4]);
+void  cell_print_grid_part(char field[4], const int* limits);
+void  cell_get_ij(cell* c, int* i, int* j);
+char* cell_get_index_string(cell* c);
 
 #endif

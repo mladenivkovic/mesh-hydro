@@ -45,7 +45,7 @@
 /* File related stuff */
 
 #define MAX_FNAME_SIZE 200 /* limit for file name size */
-#define MAX_LINE_SIZE                                                          \
+#define MAX_LINE_SIZE \
   200 /* limit for line length in formatted file which is read in*/
 
 /* Macro functions */
@@ -79,13 +79,13 @@
 
 /* Compute gamma related constants */
 
-static const float GM1 = GAMMA - 1.;
-static const float GP1 = GAMMA + 1.;
-static const float GP1OGM1 = (GAMMA + 1.) / (GAMMA - 1.);
-static const float GM1OGP1 = (GAMMA - 1.) / (GAMMA + 1.);
+static const float GM1          = GAMMA - 1.;
+static const float GP1          = GAMMA + 1.;
+static const float GP1OGM1      = (GAMMA + 1.) / (GAMMA - 1.);
+static const float GM1OGP1      = (GAMMA - 1.) / (GAMMA + 1.);
 static const float ONEOVERGAMMA = 1. / GAMMA;
-static const float GM1HALF = 0.5 * (GAMMA - 1.);
-static const float BETA = 0.5 * (GAMMA - 1.) / GAMMA;
+static const float GM1HALF      = 0.5 * (GAMMA - 1.);
+static const float BETA         = 0.5 * (GAMMA - 1.) / GAMMA;
 
 /* PI */
 /* I know there are better ways of doing this. Sue me. */

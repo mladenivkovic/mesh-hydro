@@ -14,7 +14,7 @@
 
 extern params pars;
 
-void solver_step(const float *t, float *dt, int step, int *write_output) {
+void solver_step(const float* t, float* dt, int step, int* write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -55,7 +55,7 @@ void solver_init_step(void) {
   cell_set_boundary();
 }
 
-void solver_compute_fluxes(float *dt, int dimension) {
+void solver_compute_fluxes(float* dt, int dimension) {
   /* ------------------------------------------------------
    * Computes the actual *net* fluxes between cells
    * Here we compute F^{n+1/2}_{i-1/2} - F^{n+1/2}_{i+1/2}
@@ -66,9 +66,9 @@ void solver_compute_fluxes(float *dt, int dimension) {
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
-  cell *c;  /* this cell */
-  cell *uw; /* the cell upwind of the flux at the interface of *c */
-  cell *dw; /* the cell downwind of the flux at the interface of *c */
+  cell* c;  /* this cell */
+  cell* uw; /* the cell upwind of the flux at the interface of *c */
+  cell* dw; /* the cell downwind of the flux at the interface of *c */
 
 #if NDIM == 1
 
@@ -118,8 +118,9 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #endif /* ndim */
 }
 
-void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, const float *dt,
-                                   int dim) {
+void solver_compute_cell_pair_flux(
+  cell* c, cell* uw, cell* dw, const float* dt, int dim
+) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with
@@ -163,14 +164,14 @@ void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, const float *dt,
     dsd = -pars.dx - dw->prim.u[dim] * (*dt);
   }
 
-  c->pflux.rho = uw->prim.u[dim] * (uw->prim.rho + 0.5 * su.rho * dsu) -
-                 dw->prim.u[dim] * (dw->prim.rho + 0.5 * sd.rho * dsd);
+  c->pflux.rho = uw->prim.u[dim] * (uw->prim.rho + 0.5 * su.rho * dsu)
+                 - dw->prim.u[dim] * (dw->prim.rho + 0.5 * sd.rho * dsd);
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->pflux.u[0] = uw->prim.u[dim] * (uw->prim.u[0] + 0.5 * su.u[0] * dsu) -
-                  dw->prim.u[dim] * (dw->prim.u[0] + 0.5 * sd.u[0] * dsd);
-  c->pflux.u[1] = uw->prim.u[dim] * (uw->prim.u[1] + 0.5 * su.u[1] * dsu) -
-                  dw->prim.u[dim] * (dw->prim.u[1] + 0.5 * sd.u[1] * dsd);
+  c->pflux.u[0] = uw->prim.u[dim] * (uw->prim.u[0] + 0.5 * su.u[0] * dsu)
+                  - dw->prim.u[dim] * (dw->prim.u[0] + 0.5 * sd.u[0] * dsd);
+  c->pflux.u[1] = uw->prim.u[dim] * (uw->prim.u[1] + 0.5 * su.u[1] * dsu)
+                  - dw->prim.u[dim] * (dw->prim.u[1] + 0.5 * sd.u[1] * dsd);
 #endif
-  c->pflux.p = uw->prim.u[dim] * (uw->prim.p + 0.5 * su.p * dsu) -
-               dw->prim.u[dim] * (dw->prim.p + 0.5 * sd.p * dsd);
+  c->pflux.p = uw->prim.u[dim] * (uw->prim.p + 0.5 * su.p * dsu)
+               - dw->prim.u[dim] * (dw->prim.p + 0.5 * sd.p * dsd);
 }

@@ -26,13 +26,13 @@
 params pars;
 
 #if NDIM == 1
-cell *grid;
+cell* grid;
 #elif NDIM == 2
-cell **grid;
+cell** grid;
 #endif
 
 /* ====================================== */
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   /* ====================================== */
 
   /* initialize parameters struct */
@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
   io_read_paramfile();
 
   /* check which IC type we have */
-  int skiplines_ic =
-      0; /* how many lines to skip next time you open the IC file */
+  int skiplines_ic = 0; /* how many lines to skip next time you open the IC file
+                         */
   io_read_ic_type(&skiplines_ic);
 
   if (!pars.twostate_ic) {
@@ -71,28 +71,28 @@ int main(int argc, char *argv[]) {
   /* copy them, otherwise you will overwrite them! */
   pstate left;
   gas_init_pstate(&left);
-  left.rho = grid[pars.nx / 2 + BC - 1].prim.rho;
+  left.rho  = grid[pars.nx / 2 + BC - 1].prim.rho;
   left.u[0] = grid[pars.nx / 2 + BC - 1].prim.u[0];
   left.u[1] = grid[pars.nx / 2 + BC - 1].prim.u[1];
-  left.p = grid[pars.nx / 2 + BC - 1].prim.p;
+  left.p    = grid[pars.nx / 2 + BC - 1].prim.p;
   pstate right;
   gas_init_pstate(&right);
-  right.rho = grid[pars.nx / 2 + BC].prim.rho;
+  right.rho  = grid[pars.nx / 2 + BC].prim.rho;
   right.u[0] = grid[pars.nx / 2 + BC].prim.u[0];
   right.u[1] = grid[pars.nx / 2 + BC].prim.u[1];
-  right.p = grid[pars.nx / 2 + BC].prim.p;
+  right.p    = grid[pars.nx / 2 + BC].prim.p;
 
   /* pretend we're doing hydro */
-  int outcount = 0;
-  int step = 0;
-  float t = 0;
+  int   outcount = 0;
+  int   step     = 0;
+  float t        = 0;
 
   log_extra("Writing initial output");
   io_write_output(&outcount, step, t);
 
   outcount = 1;
-  step = 1;
-  t = pars.tmax;
+  step     = 1;
+  t        = pars.tmax;
 
   log_message("Solving Riemann problem.\n");
   log_message("rho_L %12.6f; rho_R %12.6f\n", left.rho, right.rho);
@@ -102,11 +102,16 @@ int main(int argc, char *argv[]) {
   /* center: where the initial separation of the states is.*/
   float center = (pars.nx / 2) * pars.dx;
   for (int i = BC; i < BC + pars.nx; i++) {
-    float x = (i - BC + 0.5) * pars.dx - center;
+    float x      = (i - BC + 0.5) * pars.dx - center;
     float xovert = x / pars.tmax;
 #if RIEMANN == HLLC
-    riemann_solve_hllc_state(&left, &right, &grid[i].prim, xovert,
-                             /*dimension=*/0);
+    riemann_solve_hllc_state(
+      &left,
+      &right,
+      &grid[i].prim,
+      xovert,
+      /*dimension=*/0
+    );
 #else
     riemann_solve(&left, &right, &grid[i].prim, xovert, /*dimension=*/0);
 #endif

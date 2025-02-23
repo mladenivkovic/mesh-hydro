@@ -16,7 +16,7 @@
 
 extern params pars;
 
-void solver_step(const float *t, float *dt, int step, int *write_output) {
+void solver_step(const float* t, float* dt, int step, int* write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -70,8 +70,10 @@ void solver_step(const float *t, float *dt, int step, int *write_output) {
 #ifdef WITH_SOURCES
   /* Update the source terms for the second time over half the time step
    * for second order accuracy. */
-  debugmessage("Computing source term ODE for half timestep after hydro step "
-               "has finished");
+  debugmessage(
+    "Computing source term ODE for half timestep after hydro step "
+    "has finished"
+  );
   sources_update_state(dthalf);
 #endif
 }
@@ -89,7 +91,7 @@ void solver_init_step(void) {
   cell_set_boundary();
 }
 
-void solver_compute_fluxes(float *dt, int dimension) {
+void solver_compute_fluxes(float* dt, int dimension) {
   /* ------------------------------------------------------------
    * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
    * and store it in cell i.
@@ -103,8 +105,8 @@ void solver_compute_fluxes(float *dt, int dimension) {
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
   float dthalf = 0.5 * (*dt);
-  cell *left;  /* this cell */
-  cell *right; /* the right neighbour */
+  cell* left;  /* this cell */
+  cell* right; /* the right neighbour */
 
 #if NDIM == 1
   /* compute intermediate boundary extrapolated states first */
@@ -114,7 +116,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
 
   /* now update states for this dimension */
   for (int i = BC - 1; i < pars.nx + BC; i++) {
-    left = &grid[i];
+    left  = &grid[i];
     right = &grid[i + 1];
     solver_compute_cell_pair_flux(left, right, dt, /*dim=*/0);
   }
@@ -132,7 +134,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
   if (dimension == 0) {
     for (int i = BC - 1; i < pars.nx + BC; i++) {
       for (int j = BC - 1; j < pars.nx + BC; j++) {
-        left = &(grid[i][j]);
+        left  = &(grid[i][j]);
         right = &(grid[i + 1][j]);
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
@@ -140,7 +142,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
   } else if (dimension == 1) {
     for (int i = BC - 1; i < pars.nx + BC; i++) {
       for (int j = BC - 1; j < pars.nx + BC; j++) {
-        left = &(grid[i][j]);
+        left  = &(grid[i][j]);
         right = &(grid[i][j + 1]);
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
@@ -150,7 +152,7 @@ void solver_compute_fluxes(float *dt, int dimension) {
 #endif /* ndim */
 }
 
-void solver_prepare_flux_computation(cell *c, float dthalf, int dim) {
+void solver_prepare_flux_computation(cell* c, float dthalf, int dim) {
   /* ---------------------------------------------------------------------------
    * For the MUSCL-Hancock scheme, we need to first compute the slopes for each
    * conserved variable and each cell, and then compute the updated boundary
@@ -173,10 +175,10 @@ void solver_prepare_flux_computation(cell *c, float dthalf, int dim) {
   /* compute fluxes */
   cstate UL;
   gas_init_cstate(&UL);
-  UL.rho = c->cons.rho - 0.5 * slope.rho;
+  UL.rho     = c->cons.rho - 0.5 * slope.rho;
   UL.rhou[0] = c->cons.rhou[0] - 0.5 * slope.rhou[0];
   UL.rhou[1] = c->cons.rhou[1] - 0.5 * slope.rhou[1];
-  UL.E = c->cons.E - 0.5 * slope.E;
+  UL.E       = c->cons.E - 0.5 * slope.E;
 
   cstate FL;
   gas_init_cstate(&FL);
@@ -184,10 +186,10 @@ void solver_prepare_flux_computation(cell *c, float dthalf, int dim) {
 
   cstate UR;
   gas_init_cstate(&UR);
-  UR.rho = c->cons.rho + 0.5 * slope.rho;
+  UR.rho     = c->cons.rho + 0.5 * slope.rho;
   UR.rhou[0] = c->cons.rhou[0] + 0.5 * slope.rhou[0];
   UR.rhou[1] = c->cons.rhou[1] + 0.5 * slope.rhou[1];
-  UR.E = c->cons.E + 0.5 * slope.E;
+  UR.E       = c->cons.E + 0.5 * slope.E;
 
   cstate FR;
   gas_init_cstate(&FR);
@@ -197,22 +199,23 @@ void solver_prepare_flux_computation(cell *c, float dthalf, int dim) {
   float dtdxhalf = dthalf / pars.dx;
 
   c->ULmid.rho = c->cons.rho + dtdxhalf * (FL.rho - FR.rho) - 0.5 * slope.rho;
-  c->ULmid.rhou[0] = c->cons.rhou[0] + dtdxhalf * (FL.rhou[0] - FR.rhou[0]) -
-                     0.5 * slope.rhou[0];
-  c->ULmid.rhou[1] = c->cons.rhou[1] + dtdxhalf * (FL.rhou[1] - FR.rhou[1]) -
-                     0.5 * slope.rhou[1];
+  c->ULmid.rhou[0] = c->cons.rhou[0] + dtdxhalf * (FL.rhou[0] - FR.rhou[0])
+                     - 0.5 * slope.rhou[0];
+  c->ULmid.rhou[1] = c->cons.rhou[1] + dtdxhalf * (FL.rhou[1] - FR.rhou[1])
+                     - 0.5 * slope.rhou[1];
   c->ULmid.E = c->cons.E + dtdxhalf * (FL.E - FR.E) - 0.5 * slope.E;
 
   c->URmid.rho = c->cons.rho + dtdxhalf * (FL.rho - FR.rho) + 0.5 * slope.rho;
-  c->URmid.rhou[0] = c->cons.rhou[0] + dtdxhalf * (FL.rhou[0] - FR.rhou[0]) +
-                     0.5 * slope.rhou[0];
-  c->URmid.rhou[1] = c->cons.rhou[1] + dtdxhalf * (FL.rhou[1] - FR.rhou[1]) +
-                     0.5 * slope.rhou[1];
+  c->URmid.rhou[0] = c->cons.rhou[0] + dtdxhalf * (FL.rhou[0] - FR.rhou[0])
+                     + 0.5 * slope.rhou[0];
+  c->URmid.rhou[1] = c->cons.rhou[1] + dtdxhalf * (FL.rhou[1] - FR.rhou[1])
+                     + 0.5 * slope.rhou[1];
   c->URmid.E = c->cons.E + dtdxhalf * (FL.E - FR.E) + 0.5 * slope.E;
 }
 
-void solver_compute_cell_pair_flux(cell *left, cell *right, const float *dt,
-                                   int dim) {
+void solver_compute_cell_pair_flux(
+  cell* left, cell* right, const float* dt, int dim
+) {
   /* ---------------------------------------------------------------------------
    * Compute the flux F_{i+1/2} for a given cell w.r.t. a specific cell pair
    *

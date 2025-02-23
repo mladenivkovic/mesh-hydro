@@ -3,10 +3,10 @@
 /* Written by Mladen Ivkovic, FEB 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include <math.h>
+
 #include "limiter.h"
 #include "params.h"
-
-#include <math.h>
 
 extern params pars;
 
@@ -29,12 +29,10 @@ float limiter_xi_of_r(float r) {
   float xi = 0;
 
   if (r > 0.) {
-    xi = (2. * r) / (1. + r);
-    float d = 1. - OMEGA + (1. + OMEGA) * r;
+    xi        = (2. * r) / (1. + r);
+    float d   = 1. - OMEGA + (1. + OMEGA) * r;
     float xiR = 2. / d;
-    if (xiR < xi) {
-      xi = xiR;
-    }
+    if (xiR < xi) { xi = xiR; }
   }
 
   return (xi);

@@ -8,6 +8,6 @@
 
 #include "gas.h"
 
-void integrate(cstate *U, float acc[2], float dt, cstate *Unew);
+void integrate(cstate* U, float acc[2], float dt, cstate* Unew);
 
 #endif

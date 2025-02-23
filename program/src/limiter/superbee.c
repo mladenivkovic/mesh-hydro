@@ -19,21 +19,13 @@ float limiter_phi_of_r(float r) {
 
   /* min(1, 2r) */
   float temp = 1.0;
-  if (temp > 2 * r) {
-    temp = 2 * r;
-  }
-  if (temp > max) {
-    max = temp;
-  }
+  if (temp > 2 * r) { temp = 2 * r; }
+  if (temp > max) { max = temp; }
 
   /* min(2, r) */
   temp = 2.0;
-  if (temp > r) {
-    temp = r;
-  }
-  if (temp > max) {
-    max = temp;
-  }
+  if (temp > r) { temp = r; }
+  if (temp > max) { max = temp; }
   return (max);
 }
 
@@ -43,26 +35,18 @@ float limiter_xi_of_r(float r) {
    * for the superbee limiter
    * --------------------------------------- */
   float xi = 0;
-  if (r > 0.) {
-    xi = 2. * r;
-  }
-  if (r > 0.5) {
-    xi = 1.0;
-  }
+  if (r > 0.) { xi = 2. * r; }
+  if (r > 0.5) { xi = 1.0; }
   if (r > 1.) {
-    float d = 1. - OMEGA + (1. + OMEGA) * r;
+    float d   = 1. - OMEGA + (1. + OMEGA) * r;
     float xiR = 2. / d;
 
     /* xi = min(xiR, r) */
     xi = r;
-    if (xiR < xi) {
-      xi = xiR;
-    }
+    if (xiR < xi) { xi = xiR; }
 
     /* xi = min(xi, 2) */
-    if (xi > 2.) {
-      xi = 2.;
-    }
+    if (xi > 2.) { xi = 2.; }
   }
   return (xi);
 }

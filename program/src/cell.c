@@ -3,11 +3,12 @@
 /* Written by Mladen Ivkovic, JAN 2020
  * mladen.ivkovic@hotmail.com           */
 
+#include "cell.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "cell.h"
 #include "defines.h"
 #include "gas.h"
 #include "params.h"
@@ -18,11 +19,11 @@ extern params pars;
 /**
  * @brief Initialize/reset the values of a cell
  */
-void cell_init_cell(cell *c) {
+void cell_init_cell(cell* c) {
 
   c->id = 0;
-  c->x = 0;
-  c->y = 0;
+  c->x  = 0;
+  c->y  = 0;
 
   gas_init_pstate(&(c->prim));
   gas_init_pstate(&(c->pflux));
@@ -52,13 +53,13 @@ void cell_init_grid(void) {
 
   for (int i = 0; i < pars.nxtot; i++) {
     cell_init_cell(&grid[i]);
-    grid[i].x = (i - BC + 0.5) * pars.dx;
+    grid[i].x  = (i - BC + 0.5) * pars.dx;
     grid[i].id = i;
   }
 
 #elif NDIM == 2
 
-  grid = malloc(pars.nxtot * sizeof(cell *));
+  grid = malloc(pars.nxtot * sizeof(cell*));
 
   for (int i = 0; i < pars.nxtot; i++) {
     grid[i] = malloc(pars.nxtot * sizeof(cell));
@@ -69,8 +70,8 @@ void cell_init_grid(void) {
 
   for (int j = 0; j < pars.nxtot; j++) {
     for (int i = 0; i < pars.nxtot; i++) {
-      grid[i][j].x = (i - BC + 0.5) * pars.dx;
-      grid[i][j].y = (j - BC + 0.5) * pars.dx;
+      grid[i][j].x  = (i - BC + 0.5) * pars.dx;
+      grid[i][j].y  = (j - BC + 0.5) * pars.dx;
       grid[i][j].id = i + j * pars.nxtot;
     }
   }
@@ -88,17 +89,17 @@ void cell_set_boundary(void) {
 
   debugmessage("Setting boundary conditions");
 
-  cell *realL[BC];
-  cell *realR[BC];
-  cell *ghostL[BC];
-  cell *ghostR[BC];
+  cell* realL[BC];
+  cell* realR[BC];
+  cell* ghostL[BC];
+  cell* ghostR[BC];
 
 #if NDIM == 1
 
   for (int i = 0; i < BC; i++) {
-    realL[i] = &(grid[BC + i]);
-    realR[i] =
-        &(grid[pars.nx + i]); /* = last index of a real cell  - BC + (i + 1) */
+    realL[i]  = &(grid[BC + i]);
+    realR[i]  = &(grid[pars.nx + i]
+    ); /* = last index of a real cell  - BC + (i + 1) */
     ghostL[i] = &(grid[i]);
     ghostR[i] = &(grid[pars.nx + BC + i]);
   }
@@ -111,7 +112,7 @@ void cell_set_boundary(void) {
     for (int i = 0; i < BC; i++) {
       realL[i] = &(grid[BC + i][j]);
       /* nx + i = last index of a real cell  - BC + (i + 1) */
-      realR[i] = &(grid[pars.nx + i][j]);
+      realR[i]  = &(grid[pars.nx + i][j]);
       ghostL[i] = &(grid[i][j]);
       ghostR[i] = &(grid[pars.nx + BC + i][j]);
     }
@@ -147,8 +148,9 @@ void cell_set_boundary(void) {
  * all arguments are arrays of size BC, defined in defines.h
  * lowest array index is also lowest index of cell in grid
  */
-void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
-                        cell **ghostR, int dimension) {
+void cell_real_to_ghost(
+  cell** realL, cell** realR, cell** ghostL, cell** ghostR, int dimension
+) {
 
   if (pars.boundary == 0) {
     /* periodic boundary conditions */
@@ -162,10 +164,12 @@ void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
     /* reflective boundary conditions */
     /* ------------------------------ */
     for (int i = 0; i < BC; i++) {
-      cell_copy_boundary_data_reflective(realL[i], ghostL[BC - 1 - i],
-                                         dimension);
-      cell_copy_boundary_data_reflective(realR[i], ghostR[BC - 1 - i],
-                                         dimension);
+      cell_copy_boundary_data_reflective(
+        realL[i], ghostL[BC - 1 - i], dimension
+      );
+      cell_copy_boundary_data_reflective(
+        realR[i], ghostR[BC - 1 - i], dimension
+      );
     }
 
   } else if (pars.boundary == 2) {
@@ -183,17 +187,17 @@ void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
  * Copies the actual data needed for boundaries from a real
  * cell to a ghost cell
  */
-void cell_copy_boundary_data(cell *real, cell *ghost) {
+void cell_copy_boundary_data(cell* real, cell* ghost) {
 
-  ghost->prim.rho = real->prim.rho;
+  ghost->prim.rho  = real->prim.rho;
   ghost->prim.u[0] = real->prim.u[0];
   ghost->prim.u[1] = real->prim.u[1];
-  ghost->prim.p = real->prim.p;
+  ghost->prim.p    = real->prim.p;
 
-  ghost->cons.rho = real->cons.rho;
+  ghost->cons.rho     = real->cons.rho;
   ghost->cons.rhou[0] = real->cons.rhou[0];
   ghost->cons.rhou[1] = real->cons.rhou[1];
-  ghost->cons.E = real->cons.E;
+  ghost->cons.E       = real->cons.E;
 }
 
 
@@ -206,17 +210,18 @@ void cell_copy_boundary_data(cell *real, cell *ghost) {
  * @param cell* ghost: pointer to ghost cell into which we copy data
  * @param int dimension: in which dimension the reflection is supposed to be
  */
-void cell_copy_boundary_data_reflective(cell *real, cell *ghost,
-                                        int dimension) {
-  ghost->prim.rho = real->prim.rho;
-  ghost->prim.u[dimension] = -real->prim.u[dimension];
+void cell_copy_boundary_data_reflective(
+  cell* real, cell* ghost, int dimension
+) {
+  ghost->prim.rho                    = real->prim.rho;
+  ghost->prim.u[dimension]           = -real->prim.u[dimension];
   ghost->prim.u[(dimension + 1) % 2] = real->prim.u[(dimension + 1) % 2];
-  ghost->prim.p = real->prim.p;
+  ghost->prim.p                      = real->prim.p;
 
-  ghost->cons.rho = real->cons.rho;
-  ghost->cons.rhou[dimension] = -real->cons.rhou[dimension];
+  ghost->cons.rho                       = real->cons.rho;
+  ghost->cons.rhou[dimension]           = -real->cons.rhou[dimension];
   ghost->cons.rhou[(dimension + 1) % 2] = real->cons.rhou[(dimension + 1) % 2];
-  ghost->cons.E = real->cons.E;
+  ghost->cons.E                         = real->cons.E;
 }
 
 
@@ -251,13 +256,13 @@ void cell_get_pstates_from_cstates(void) {
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {
-    cell *c = &grid[i];
+    cell* c = &grid[i];
     gas_cons_to_prim(&c->cons, &c->prim);
   }
 #elif NDIM == 2
   for (int i = BC; i < pars.nx + BC; i++) {
     for (int j = BC; j < pars.nx + BC; j++) {
-      cell *c = &grid[i][j];
+      cell* c = &grid[i][j];
       gas_cons_to_prim(&c->cons, &c->prim);
     }
   }
@@ -272,13 +277,13 @@ void cell_get_cstates_from_pstates(void) {
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {
-    cell *c = &grid[i];
+    cell* c = &grid[i];
     gas_prim_to_cons(&c->prim, &c->cons);
   }
 #elif NDIM == 2
   for (int i = BC; i < pars.nx + BC; i++) {
     for (int j = BC; j < pars.nx + BC; j++) {
-      cell *c = &grid[i][j];
+      cell* c = &grid[i][j];
       gas_prim_to_cons(&c->prim, &c->cons);
     }
   }
@@ -345,15 +350,13 @@ void cell_print_grid(char field[4]) {
  *          values at grid indices imin, jmin are
  *          included in the printout; imax, jmax are not.
  */
-void cell_print_grid_part(char field[4], const int *limits) {
+void cell_print_grid_part(char field[4], const int* limits) {
 #if NDIM == 1
   int imin = limits[0];
   int imax = limits[1];
   for (int i = imin; i < imax; i++) {
 
-    if (i == BC || i == pars.nx + BC) {
-      printf("|");
-    }
+    if (i == BC || i == pars.nx + BC) { printf("|"); }
 
     if (strcmp(field, "pos") == 0) {
       printf("%8.3f", grid[i].x);
@@ -366,8 +369,11 @@ void cell_print_grid_part(char field[4], const int *limits) {
     } else if (strcmp(field, "v_y") == 0) {
       printf("%8.3f", grid[i].prim.u[1]);
     } else if (strcmp(field, "vsq") == 0) {
-      printf("%8.3f", grid[i].prim.u[0] * grid[i].prim.u[0] +
-                          grid[i].prim.u[1] * grid[i].prim.u[1]);
+      printf(
+        "%8.3f",
+        grid[i].prim.u[0] * grid[i].prim.u[0]
+          + grid[i].prim.u[1] * grid[i].prim.u[1]
+      );
     } else if (strcmp(field, "pre") == 0) {
       printf("%8.3f", grid[i].prim.p);
     } else if (strcmp(field, "frh") == 0) {
@@ -431,10 +437,8 @@ void cell_print_grid_part(char field[4], const int *limits) {
       }
 
       int dashes = (imax - imin) * len;
-      if (imin <= BC)
-        dashes += 2; /* for x boundary */
-      if (imax >= pars.nx + BC)
-        dashes += 2; /* for x boundary */
+      if (imin <= BC) dashes += 2;           /* for x boundary */
+      if (imax >= pars.nx + BC) dashes += 2; /* for x boundary */
       /* int dashes = pars.nxtot * len + 4; [> +4 for x boundary <] */
 
       for (int k = 0; k < dashes; k++) {
@@ -446,8 +450,7 @@ void cell_print_grid_part(char field[4], const int *limits) {
     for (int i = imin; i < imax; i++) {
 
       /* print boundary */
-      if (i == BC || i == pars.nx + BC)
-        printf(" |");
+      if (i == BC || i == pars.nx + BC) printf(" |");
 
       if (strcmp(field, "pos") == 0) {
         printf("(%6.3f, %6.3f) ", grid[i][j].x, grid[i][j].y);
@@ -460,8 +463,11 @@ void cell_print_grid_part(char field[4], const int *limits) {
       } else if (strcmp(field, "v_y") == 0) {
         printf("%8.3f", grid[i][j].prim.u[1]);
       } else if (strcmp(field, "vsq") == 0) {
-        printf("%8.3f", grid[i][j].prim.u[0] * grid[i][j].prim.u[0] +
-                            grid[i][j].prim.u[1] * grid[i][j].prim.u[1]);
+        printf(
+          "%8.3f",
+          grid[i][j].prim.u[0] * grid[i][j].prim.u[0]
+            + grid[i][j].prim.u[1] * grid[i][j].prim.u[1]
+        );
       } else if (strcmp(field, "pre") == 0) {
         printf("%8.3f", grid[i][j].prim.p);
       } else if (strcmp(field, "frh") == 0) {
@@ -488,10 +494,10 @@ void cell_print_grid_part(char field[4], const int *limits) {
 
 
 /**
- * @brief Compute the i and j value of a cell such that it can be addressed in the
- * grid[] array
+ * @brief Compute the i and j value of a cell such that it can be addressed in
+ * the grid[] array
  */
-void cell_get_ij(cell *c, int *i, int *j) {
+void cell_get_ij(cell* c, int* i, int* j) {
 
 #if NDIM == 1
 
@@ -513,9 +519,9 @@ void cell_get_ij(cell *c, int *i, int *j) {
  * if left/lower boundary: returns negative number in a
  * string. If in upper/right boundary: return (nx+int)
  */
-char *cell_get_index_string(cell *c) {
+char* cell_get_index_string(cell* c) {
 
-  char *output = malloc(MAX_LINE_SIZE * sizeof(char));
+  char* output = malloc(MAX_LINE_SIZE * sizeof(char));
 
 #if NDIM == 1
   int id = c->id - BC;
@@ -529,7 +535,7 @@ char *cell_get_index_string(cell *c) {
 
   strcpy(output, "(");
   char temp[20] = "";
-  int i, j;
+  int  i, j;
 
   j = c->id / pars.nxtot;
   i = c->id - j * pars.nxtot - BC;

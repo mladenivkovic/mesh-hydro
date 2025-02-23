@@ -10,7 +10,7 @@
 
 void sources_get_acceleration(void);
 
-void sources_get_source_vector(cstate *s, const float acc[2], cstate *cons);
+void sources_get_source_vector(cstate* s, const float acc[2], cstate* cons);
 
 void sources_update_state(float dt);
 

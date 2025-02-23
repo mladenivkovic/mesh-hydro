@@ -4,10 +4,11 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "minmod.h"
-#include "limiter.h"
-#include "params.h"
 
 #include <math.h>
+
+#include "limiter.h"
+#include "params.h"
 
 extern params pars;
 
@@ -26,18 +27,14 @@ float limiter_xi_of_r(float r) {
    * -------------------------------------------*/
 
   float xi = 0;
-  if (r > 0.) {
-    xi = r;
-  }
+  if (r > 0.) { xi = r; }
   if (r > 1.) {
-    float d = 1. - OMEGA + (1. + OMEGA) * r;
+    float d   = 1. - OMEGA + (1. + OMEGA) * r;
     float xiR = 2. / d;
 
     /* xi = min(1, xiR) */
     xi = 1.;
-    if (xiR < xi) {
-      xi = xiR;
-    }
+    if (xiR < xi) { xi = xiR; }
   }
   return (xi);
 }
@@ -47,12 +44,8 @@ float minmod(float a, float b) {
    * Computes the minmod() operator on a and b
    * ---------------------------------------------- */
 
-  if (a * b <= 0.0) {
-    return (0.0);
-  }
+  if (a * b <= 0.0) { return (0.0); }
 
-  if (fabsf(a) < fabsf(b)) {
-    return (a);
-  }
+  if (fabsf(a) < fabsf(b)) { return (a); }
   return (b);
 }

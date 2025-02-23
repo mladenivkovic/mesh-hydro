@@ -5,12 +5,13 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "limiter.h"
-#include "cell.h"
-#include "gas.h"
-#include "params.h"
 
 #include <math.h>
 #include <stdio.h>
+
+#include "cell.h"
+#include "gas.h"
+#include "params.h"
 
 extern params pars;
 
@@ -26,7 +27,7 @@ extern params pars;
  *                       conservative states individually
  * @param int dimension: for which dimension we are working. 0: x, 1: y.
  */
-void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
+void limiter_get_limited_slope(cell* c, cstate* slope, int dimension) {
 
   cstate Uip1, Ui, Uim1;
   gas_init_cstate(&Ui);
@@ -39,16 +40,16 @@ void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
 
 #if NDIM == 1
   Uip1 = grid[i + 1].cons;
-  Ui = grid[i].cons;
+  Ui   = grid[i].cons;
   Uim1 = grid[i - 1].cons;
 #elif NDIM == 2
   if (dimension == 0) {
     Uip1 = grid[i + 1][j].cons;
-    Ui = grid[i][j].cons;
+    Ui   = grid[i][j].cons;
     Uim1 = grid[i - 1][j].cons;
   } else if (dimension == 1) {
     Uip1 = grid[i][j + 1].cons;
-    Ui = grid[i][j].cons;
+    Ui   = grid[i][j].cons;
     Uim1 = grid[i][j - 1].cons;
   }
 #endif
@@ -61,23 +62,23 @@ void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
   cstate xi;
   gas_init_cstate(&xi);
 
-  xi.rho = limiter_xi_of_r(r.rho);
+  xi.rho     = limiter_xi_of_r(r.rho);
   xi.rhou[0] = limiter_xi_of_r(r.rhou[0]);
   xi.rhou[1] = limiter_xi_of_r(r.rhou[1]);
-  xi.E = limiter_xi_of_r(r.E);
+  xi.E       = limiter_xi_of_r(r.E);
 
   /* Now finally compute the actual slope */
-  slope->rho =
-      xi.rho * 0.5 *
-      ((1. + OMEGA) * (Ui.rho - Uim1.rho) + (1. - OMEGA) * (Uip1.rho - Ui.rho));
-  slope->rhou[0] = xi.rhou[0] * 0.5 *
-                   ((1. + OMEGA) * (Ui.rhou[0] - Uim1.rhou[0]) +
-                    (1. - OMEGA) * (Uip1.rhou[0] - Ui.rhou[0]));
-  slope->rhou[1] = xi.rhou[1] * 0.5 *
-                   ((1. + OMEGA) * (Ui.rhou[1] - Uim1.rhou[1]) +
-                    (1. - OMEGA) * (Uip1.rhou[1] - Ui.rhou[1]));
-  slope->E = xi.E * 0.5 *
-             ((1. + OMEGA) * (Ui.E - Uim1.E) + (1. - OMEGA) * (Uip1.E - Ui.E));
+  slope->rho
+    = xi.rho * 0.5
+      * ((1. + OMEGA) * (Ui.rho - Uim1.rho) + (1. - OMEGA) * (Uip1.rho - Ui.rho));
+  slope->rhou[0]
+    = xi.rhou[0] * 0.5
+      * ((1. + OMEGA) * (Ui.rhou[0] - Uim1.rhou[0]) + (1. - OMEGA) * (Uip1.rhou[0] - Ui.rhou[0]));
+  slope->rhou[1]
+    = xi.rhou[1] * 0.5
+      * ((1. + OMEGA) * (Ui.rhou[1] - Uim1.rhou[1]) + (1. - OMEGA) * (Uip1.rhou[1] - Ui.rhou[1]));
+  slope->E = xi.E * 0.5
+             * ((1. + OMEGA) * (Ui.E - Uim1.E) + (1. - OMEGA) * (Uip1.E - Ui.E));
 }
 
 
@@ -88,17 +89,17 @@ void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
  * @param pstate* phi: where the limiter will be stored
  * @param dimension:   for which dimension we're working
  */
-void limiter_get_phi(cell *c, pstate *phi, int dimension) {
+void limiter_get_phi(cell* c, pstate* phi, int dimension) {
 
 #if (SOLVER == ADVECTION_WAF) && (LIMITER == NONE)
   /* if we utilize a WAF method and no limiter, the implemented centered
    * slope will give wrong results. Instead, catch it here and just return
    * phi = 1. Then psi = 1 - (1 - |c|)phi(r) = |c| and we indeed get the
    * original method back. */
-  phi->rho = 1.;
+  phi->rho  = 1.;
   phi->u[0] = 1.;
   phi->u[1] = 1.;
-  phi->p = 1.;
+  phi->p    = 1.;
   return;
 #endif
 
@@ -114,22 +115,22 @@ void limiter_get_phi(cell *c, pstate *phi, int dimension) {
 
   float vel = 0;
 #if NDIM == 1
-  vel = c->prim.u[0];
+  vel  = c->prim.u[0];
   Uip2 = grid[i + 2].prim;
   Uip1 = grid[i + 1].prim;
-  Ui = grid[i].prim;
+  Ui   = grid[i].prim;
   Uim1 = grid[i - 1].prim;
 #elif NDIM == 2
   vel = c->prim.u[dimension];
   if (dimension == 0) {
     Uip2 = grid[i + 2][j].prim;
     Uip1 = grid[i + 1][j].prim;
-    Ui = grid[i][j].prim;
+    Ui   = grid[i][j].prim;
     Uim1 = grid[i - 1][j].prim;
   } else if (dimension == 1) {
     Uip2 = grid[i][j + 2].prim;
     Uip1 = grid[i][j + 1].prim;
-    Ui = grid[i][j].prim;
+    Ui   = grid[i][j].prim;
     Uim1 = grid[i][j - 1].prim;
   }
 #endif
@@ -138,10 +139,10 @@ void limiter_get_phi(cell *c, pstate *phi, int dimension) {
   gas_init_pstate(&r);
   limiter_get_r_pstate(&Uip2, &Uip1, &Ui, &Uim1, &r, vel);
 
-  phi->rho = limiter_phi_of_r(r.rho);
+  phi->rho  = limiter_phi_of_r(r.rho);
   phi->u[0] = limiter_phi_of_r(r.u[0]);
   phi->u[1] = limiter_phi_of_r(r.u[1]);
-  phi->p = limiter_phi_of_r(r.p);
+  phi->p    = limiter_phi_of_r(r.p);
 }
 
 
@@ -156,12 +157,12 @@ void limiter_get_phi(cell *c, pstate *phi, int dimension) {
  *                       primitive states individually
  * @param int dimension: for which dimension we are working. 0: x, 1: y.
  */
-void limiter_get_advection_slope_left(cell *c, pstate *slope, int dimension) {
+void limiter_get_advection_slope_left(cell* c, pstate* slope, int dimension) {
 
   int i, j;
   cell_get_ij(c, &i, &j);
 
-  cell *left_cell;
+  cell* left_cell;
 #if NDIM == 1
   left_cell = &grid[i - 1];
 #elif NDIM == 2
@@ -186,7 +187,7 @@ void limiter_get_advection_slope_left(cell *c, pstate *slope, int dimension) {
  *                       primitive states individually
  * @param int dimension: for which dimension we are working. 0: x, 1: y.
  */
-void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
+void limiter_get_advection_slope_right(cell* c, pstate* slope, int dimension) {
 
   pstate Uip1, Ui;
   gas_init_pstate(&Ui);
@@ -198,14 +199,14 @@ void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
 
 #if NDIM == 1
   Uip1 = grid[i + 1].prim;
-  Ui = grid[i].prim;
+  Ui   = grid[i].prim;
 #elif NDIM == 2
   if (dimension == 0) {
     Uip1 = grid[i + 1][j].prim;
-    Ui = grid[i][j].prim;
+    Ui   = grid[i][j].prim;
   } else if (dimension == 1) {
     Uip1 = grid[i][j + 1].prim;
-    Ui = grid[i][j].prim;
+    Ui   = grid[i][j].prim;
   }
 #endif
 
@@ -215,10 +216,10 @@ void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
   limiter_get_phi(c, &phi, dimension);
 
   /* Now finally compute the actual slope */
-  slope->rho = phi.rho * (Uip1.rho - Ui.rho) / pars.dx;
+  slope->rho  = phi.rho * (Uip1.rho - Ui.rho) / pars.dx;
   slope->u[0] = phi.u[0] * (Uip1.u[0] - Ui.u[0]) / pars.dx;
   slope->u[1] = phi.u[1] * (Uip1.u[1] - Ui.u[1]) / pars.dx;
-  slope->p = phi.p * (Uip1.p - Ui.p) / pars.dx;
+  slope->p    = phi.p * (Uip1.p - Ui.p) / pars.dx;
 }
 
 
@@ -241,19 +242,20 @@ void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
  * @param pstate* r:     r for every primitive state
  * @param float vel:     advection velocity
  * ---------------------------------------------------------------------------------------------*/
-void limiter_get_r_pstate(pstate *Uip2, pstate *Uip1, pstate *Ui, pstate *Uim1,
-                          pstate *r, float vel) {
+void limiter_get_r_pstate(
+  pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel
+) {
 
   if (vel >= 0) {
-    r->rho = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
+    r->rho  = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
     r->u[0] = limiter_r(Ui->u[0], Uim1->u[0], Uip1->u[0]);
     r->u[1] = limiter_r(Ui->u[1], Uim1->u[1], Uip1->u[1]);
-    r->p = limiter_r(Ui->p, Uim1->p, Uip1->p);
+    r->p    = limiter_r(Ui->p, Uim1->p, Uip1->p);
   } else {
-    r->rho = limiter_r(Uip1->rho, Uip2->rho, Ui->rho);
+    r->rho  = limiter_r(Uip1->rho, Uip2->rho, Ui->rho);
     r->u[0] = limiter_r(Uip1->u[0], Uip2->u[0], Ui->u[0]);
     r->u[1] = limiter_r(Uip1->u[1], Uip2->u[1], Ui->u[1]);
-    r->p = limiter_r(Uip1->p, Uip2->p, Ui->p);
+    r->p    = limiter_r(Uip1->p, Uip2->p, Ui->p);
   }
 }
 
@@ -269,12 +271,12 @@ void limiter_get_r_pstate(pstate *Uip2, pstate *Uip1, pstate *Ui, pstate *Uim1,
  * @param cstate* r:     where flow parameter r for every conserved state will
  *                       be stored
  */
-void limiter_get_r_cstate(cstate *Uip1, cstate *Ui, cstate *Uim1, cstate *r) {
+void limiter_get_r_cstate(cstate* Uip1, cstate* Ui, cstate* Uim1, cstate* r) {
 
-  r->rho = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
+  r->rho     = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
   r->rhou[0] = limiter_r(Ui->rhou[0], Uim1->rhou[0], Uip1->rhou[0]);
   r->rhou[1] = limiter_r(Ui->rhou[1], Uim1->rhou[1], Uip1->rhou[1]);
-  r->E = limiter_r(Ui->E, Uim1->E, Uip1->E);
+  r->E       = limiter_r(Ui->E, Uim1->E, Uip1->E);
 }
 
 
@@ -301,8 +303,6 @@ void limiter_get_r_cstate(cstate *Uip1, cstate *Ui, cstate *Uim1, cstate *r) {
  */
 float limiter_r(float topleft, float topright, float bottomleft) {
 
-  if (bottomleft == topleft) {
-    return ((topleft - topright) * 1e6);
-  }
+  if (bottomleft == topleft) { return ((topleft - topright) * 1e6); }
   return ((topleft - topright) / (bottomleft - topleft));
 }

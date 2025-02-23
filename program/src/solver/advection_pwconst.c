@@ -13,7 +13,7 @@
 
 extern params pars;
 
-void solver_step(const float *t, float *dt, int step, int *write_output) {
+void solver_step(const float* t, float* dt, int step, int* write_output) {
   /* -------------------------------------------------------
    * Main routine for the actual hydro step
    * ------------------------------------------------------- */
@@ -65,9 +65,9 @@ void solver_compute_fluxes(int dimension) {
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
-  cell *c;  /* this cell */
-  cell *uw; /* the cell upwind of the flux at the interface of *c */
-  cell *dw; /* the cell downwind of the flux at the interface of *c */
+  cell* c;  /* this cell */
+  cell* uw; /* the cell upwind of the flux at the interface of *c */
+  cell* dw; /* the cell downwind of the flux at the interface of *c */
 
 #if NDIM == 1
 
@@ -117,7 +117,7 @@ void solver_compute_fluxes(int dimension) {
 #endif /* ndim */
 }
 
-void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, int dim) {
+void solver_compute_cell_pair_flux(cell* c, cell* uw, cell* dw, int dim) {
   /* --------------------------------------------------------------------
    * Compute the net flux for a given cell w.r.t. a specific cell pair
    * c:   pointer to cell to work with
@@ -127,13 +127,12 @@ void solver_compute_cell_pair_flux(cell *c, cell *uw, cell *dw, int dim) {
    * dim: integer along which dimension to advect. 0: x. 1: y.
    * -------------------------------------------------------------------- */
 
-  c->pflux.rho =
-      uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
+  c->pflux.rho = uw->prim.rho * uw->prim.u[dim] - dw->prim.rho * dw->prim.u[dim];
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
-  c->pflux.u[0] =
-      uw->prim.u[0] * uw->prim.u[dim] - dw->prim.u[0] * dw->prim.u[dim];
-  c->pflux.u[1] =
-      uw->prim.u[1] * uw->prim.u[dim] - dw->prim.u[1] * dw->prim.u[dim];
+  c->pflux.u[0] = uw->prim.u[0] * uw->prim.u[dim]
+                  - dw->prim.u[0] * dw->prim.u[dim];
+  c->pflux.u[1] = uw->prim.u[1] * uw->prim.u[dim]
+                  - dw->prim.u[1] * dw->prim.u[dim];
 #endif
   c->pflux.p = uw->prim.p * uw->prim.u[dim] - dw->prim.p * dw->prim.u[dim];
 }

@@ -13,8 +13,9 @@
 
 extern params pars;
 
-void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
-                                 float *ustar, int dim) {
+void riemann_compute_star_states(
+  pstate* left, pstate* right, float* pstar, float* ustar, int dim
+) {
   /* ------------------------------------------------------------------------------------------
    * computes the star region pressure and velocity given the left and right
    *pstates.
@@ -38,39 +39,36 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
   float pguess, pold;
 
   /* Find initial guess for star pressure */
-  float ppv = 0.5 * (left->p + right->p) -
-              0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
+  float ppv = 0.5 * (left->p + right->p)
+              - 0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
   pguess = ppv;
 
-  if (pguess < SMALLP) {
-    pguess = SMALLP;
-  }
+  if (pguess < SMALLP) { pguess = SMALLP; }
 
   /* Newton-Raphson iteration */
   int niter = 0;
 
   do {
     niter += 1;
-    pold = pguess;
-    float fL = fp(pguess, left, AL, BL, aL);
-    float fR = fp(pguess, right, AR, BR, aR);
+    pold         = pguess;
+    float fL     = fp(pguess, left, AL, BL, aL);
+    float fR     = fp(pguess, right, AR, BR, aR);
     float dfpdpL = dfpdp(pguess, left, AL, BL, aL);
     float dfpdpR = dfpdp(pguess, right, AR, BR, aR);
-    pguess = pold - (fL + fR + delta_u) / (dfpdpL + dfpdpR);
-    if (pguess < EPSILON_ITER) {
-      pguess = SMALLP;
-    }
+    pguess       = pold - (fL + fR + delta_u) / (dfpdpL + dfpdpR);
+    if (pguess < EPSILON_ITER) { pguess = SMALLP; }
     if (niter > 100) {
-      printf("Iteration for central pressure needs more than %d steps. "
-             "Force-quitting iteration. Old-to-new ratio is %g\n",
-             niter, fabsf(1.f - pguess / pold));
+      printf(
+        "Iteration for central pressure needs more than %d steps. "
+        "Force-quitting iteration. Old-to-new ratio is %g\n",
+        niter,
+        fabsf(1.f - pguess / pold)
+      );
       break;
     }
   } while (2.f * fabsf((pguess - pold) / (pguess + pold)) >= EPSILON_ITER);
 
-  if (pguess <= SMALLP) {
-    pguess = SMALLP;
-  }
+  if (pguess <= SMALLP) { pguess = SMALLP; }
 
   *ustar = left->u[dim] - fp(pguess, left, AL, BL, aL);
   *pstar = pguess;
@@ -83,7 +81,7 @@ void riemann_compute_star_states(pstate *left, pstate *right, float *pstar,
    * dim); */
 }
 
-float fp(float pstar, pstate *s, float A, float B, float a) {
+float fp(float pstar, pstate* s, float A, float B, float a) {
   /* -----------------------------------------------------*/
   /* Left/Right part of the pressure function             */
   /*------------------------------------------------------*/
@@ -96,7 +94,7 @@ float fp(float pstar, pstate *s, float A, float B, float a) {
   return 2. * a / GM1 * (powf(pstar / s->p, BETA) - 1.);
 }
 
-float dfpdp(float pstar, pstate *s, float A, float B, float a) {
+float dfpdp(float pstar, pstate* s, float A, float B, float a) {
   /*---------------------------------------------------------------*/
   /* First derivative of Left/Right part of the pressure function  */
   /*---------------------------------------------------------------*/

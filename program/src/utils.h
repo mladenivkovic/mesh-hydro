@@ -9,13 +9,13 @@
 /* stuff that doesn't fit anywhere else */
 void print_header(void);
 void print_compile_defines(void);
-void utils_get_macro_strings(char *solver, char *riemann, char *limiter);
+void utils_get_macro_strings(char* solver, char* riemann, char* limiter);
 
 /* helper functions */
-void log_message(const char *format, ...);
-void debugmessage(const char *format, ...);
-void log_extra(const char *format, ...);
-void throw_error(const char *format, ...);
+void log_message(const char* format, ...);
+void debugmessage(const char* format, ...);
+void log_extra(const char* format, ...);
+void throw_error(const char* format, ...);
 void printbool(int boolean);
 
 #endif

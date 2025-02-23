@@ -21,13 +21,14 @@
 #include "limiter/monotonized_central_difference.h"
 #endif
 
-void limiter_get_limited_slope(cell *c, cstate *slope, int dimension);
-void limiter_get_advection_slope_left(cell *c, pstate *slope, int dimension);
-void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension);
-void limiter_get_phi(cell *, pstate *phi, int dimension);
-void limiter_get_r_pstate(pstate *Uip2, pstate *Uip1, pstate *Ui, pstate *Uim1,
-                          pstate *r, float vel);
-void limiter_get_r_cstate(cstate *Uip1, cstate *Ui, cstate *Uim1, cstate *r);
+void limiter_get_limited_slope(cell* c, cstate* slope, int dimension);
+void limiter_get_advection_slope_left(cell* c, pstate* slope, int dimension);
+void limiter_get_advection_slope_right(cell* c, pstate* slope, int dimension);
+void limiter_get_phi(cell*, pstate* phi, int dimension);
+void limiter_get_r_pstate(
+  pstate* Uip2, pstate* Uip1, pstate* Ui, pstate* Uim1, pstate* r, float vel
+);
+void  limiter_get_r_cstate(cstate* Uip1, cstate* Ui, cstate* Uim1, cstate* r);
 float limiter_r(float topleft, float topright, float bottomleft);
 
 /* declared here, should be defined in individual files */

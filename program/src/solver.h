@@ -23,15 +23,15 @@
 #include "solver/advection_waf.h"
 #endif
 
-void solver_step(const float *t, float *dt, int step, int *write_output);
+void solver_step(const float* t, float* dt, int step, int* write_output);
 
-void solver_get_advection_dt(float *dt);
-void solver_advance_step_advection(const float *dt);
-void solver_update_state_advection(cell *c, float dtdx);
+void solver_get_advection_dt(float* dt);
+void solver_advance_step_advection(const float* dt);
+void solver_update_state_advection(cell* c, float dtdx);
 
-void solver_get_hydro_dt(float *dt, int step);
-void solver_advance_step_hydro(const float *dt, int dimension);
-void solver_update_state_hydro(cell *left, cell *right, float dtdx);
+void solver_get_hydro_dt(float* dt, int step);
+void solver_advance_step_hydro(const float* dt, int dimension);
+void solver_update_state_hydro(cell* left, cell* right, float dtdx);
 
 #ifdef ADVECTION_KEEP_VELOCITY_CONSTANT
 void solver_advection_check_global_velocity(void);

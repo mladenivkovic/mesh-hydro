@@ -8,8 +8,8 @@
 #define RIEMANN_EXACT_H
 #include "gas.h"
 
-float fp(float pstar, pstate *s, float A, float B, float a);
+float fp(float pstar, pstate* s, float A, float B, float a);
 
-float dfpdp(float pstar, pstate *s, float A, float B, float a);
+float dfpdp(float pstar, pstate* s, float A, float B, float a);
 
 #endif

@@ -4,6 +4,7 @@
  * mladen.ivkovic@hotmail.com           */
 
 #include "sources.h"
+
 #include "cell.h"
 #include "gas.h"
 #include "integrate.h"
@@ -16,12 +17,12 @@ extern params pars;
  * quantities are up to date
  * TODO: dox
  */
-void sources_get_source_vector(cstate *s, const float acc[2], cstate *cons) {
+void sources_get_source_vector(cstate* s, const float acc[2], cstate* cons) {
 
-  s->rho = 0.;
+  s->rho     = 0.;
   s->rhou[0] = cons->rho * acc[0];
   s->rhou[1] = cons->rho * acc[1];
-  s->E = cons->rhou[0] * acc[0] + cons->rhou[1] * acc[1];
+  s->E       = cons->rhou[0] * acc[0] + cons->rhou[1] * acc[1];
 }
 
 
@@ -35,13 +36,13 @@ void sources_update_state(float dt) {
 
 #if NDIM == 1
   for (int i = 0; i < pars.nxtot; i++) {
-    cell *c = &grid[i];
+    cell* c = &grid[i];
     integrate(&c->cons, c->acc, dt, &c->cons);
   }
 #elif NDIM == 2
   for (int i = 0; i < pars.nxtot; i++) {
     for (int j = 0; j < pars.nxtot; j++) {
-      cell *c = &grid[i][j];
+      cell* c = &grid[i][j];
       integrate(&c->cons, c->acc, dt, &c->cons);
     }
   }

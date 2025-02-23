@@ -23,8 +23,10 @@ float limiter_xi_of_r(float r) {
    * compute slope limiter xi(r)
    * NOT IMPLEMENTED FOR MC!!!
    * ---------------------------- */
-  throw_error("The slope limiter \\xi(r) is not implemented for the MC "
-              "limiter. \nPlease try something else");
+  throw_error(
+    "The slope limiter \\xi(r) is not implemented for the MC "
+    "limiter. \nPlease try something else"
+  );
   return (1.);
 }
 
@@ -38,22 +40,16 @@ float limiter_mc(float r) {
 
   /* min((1+r)/2, 2) */
   float temp = 0.5 * (1 + r);
-  if (temp > 2.0) {
-    temp = 2.0;
-  }
+  if (temp > 2.0) { temp = 2.0; }
   min = temp;
 
   /* min( min((1+r)/2, 2), 2r) */
   temp = 2 * r;
-  if (temp > min) {
-    temp = min;
-  }
+  if (temp > min) { temp = min; }
   min = temp;
 
   /* max( 0, min(...) ) */
-  if (min > max) {
-    max = min;
-  }
+  if (min > max) { max = min; }
 
   return (max);
 }
