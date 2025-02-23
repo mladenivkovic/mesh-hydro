@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Clang format command, can be overridden using CLANG_FORMAT_CMD.
-clang=${CLANG_FORMAT_CMD:="clang-format-18"}
+clang=${CLANG_FORMAT_CMD:="clang-format"}
 
 # Formatting command
 cmd="$clang -style=file $(git ls-files | grep '\.[ch]$')"
