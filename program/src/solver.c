@@ -11,10 +11,10 @@
 
 extern params pars;
 
+/**
+ * Check whether the velocities in the IC are constant
+ */
 void solver_advection_check_global_velocity(void) {
-  /* -----------------------------------------------------
-   * Check whether the velocities in the IC are constant
-   * -----------------------------------------------------*/
 
 #if NDIM == 1
   float ux = grid[BC].prim.u[0];
@@ -45,15 +45,14 @@ void solver_advection_check_global_velocity(void) {
 #endif
 }
 
-void solver_get_advection_dt(float *dt) {
-  /* ----------------------------------------------
-   * Computes the maximal allowable time step size
-   * find max velocity present, then apply
-   * the Courant number.
-   *
-   * Intended for advection methods.
-   * ---------------------------------------------- */
 
+/**
+ * Computes the maximal allowable time step size find max velocity present,
+ * then apply the Courant number.
+ *
+ * Intended for advection methods.
+ */
+void solver_get_advection_dt(float *dt) {
   debugmessage("Called solver_get_dt", *dt);
 
 #if NDIM == 1
@@ -119,10 +118,11 @@ void solver_get_advection_dt(float *dt) {
   }
 }
 
+
+/**
+ * Integrate the equations for one time step
+ */
 void solver_advance_step_advection(const float *dt) {
-  /* ---------------------------------------------
-   * Integrate the equations for one time step
-   * --------------------------------------------- */
 
   debugmessage("Called solver_advance_step with dt = %f", *dt);
 
@@ -141,11 +141,13 @@ void solver_advance_step_advection(const float *dt) {
 #endif
 }
 
+
+/**
+ * Update the state using the fluxes in the cell and dt
+ *
+ * @param dtdx: dt / dx
+ */
 void solver_update_state_advection(cell *c, float dtdx) {
-  /* ------------------------------------------------------
-   * Update the state using the fluxes in the cell and dt
-   * dtdx: dt / dx
-   * ------------------------------------------------------ */
 
   c->prim.rho = c->prim.rho + dtdx * c->pflux.rho;
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
@@ -157,12 +159,12 @@ void solver_update_state_advection(cell *c, float dtdx) {
   c->prim.p = c->prim.p + dtdx * c->pflux.p;
 }
 
+
+/**
+ * Computes the maximal allowable time step size find max velocity present,
+ * then apply Courant number to reduce it.
+ */
 void solver_get_hydro_dt(float *dt, int step) {
-  /* ----------------------------------------------
-   * Computes the maximal allowable time step size
-   * find max velocity present, then apply Courant
-   * number to reduce it.
-   * ---------------------------------------------- */
 
   debugmessage("Called solver_get_hydro_dt", *dt);
 
@@ -230,10 +232,11 @@ void solver_get_hydro_dt(float *dt, int step) {
   }
 }
 
+
+/**
+ * Integrate the equations for one time step
+ */
 void solver_advance_step_hydro(const float *dt, int dimension) {
-  /* ---------------------------------------------
-   * Integrate the equations for one time step
-   * --------------------------------------------- */
 
   debugmessage("Called solver_advance_step with dt = %f", *dt);
 
@@ -256,14 +259,15 @@ void solver_advance_step_hydro(const float *dt, int dimension) {
 #endif
 }
 
+
+/**
+ * Update the state using the fluxes in the cell and dt
+ *
+ * @param dtdx: dt / dx
+ * @param right is the cell with index i that we are trying to update;
+ * @param left is the cell i-1, which stores the flux at i-1/2
+ */
 void solver_update_state_hydro(cell *left, cell *right, float dtdx) {
-  /* ------------------------------------------------------
-   * Update the state using the fluxes in the cell and dt
-   * dtdx: dt / dx
-   * right is the cell with index i that we are trying to
-   * update; left is the cell i-1, which stores the flux
-   * at i-1/2
-   * ------------------------------------------------------ */
 
   right->cons.rho =
       right->cons.rho + dtdx * (left->cflux.rho - right->cflux.rho);

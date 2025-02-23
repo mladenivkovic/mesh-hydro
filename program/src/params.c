@@ -13,10 +13,10 @@
 
 extern params pars;
 
+/**
+ * Initialize parameters to default values
+ */
 void params_init_defaults(void) {
-  /*------------------------------------------*/
-  /* Initialize parameters to default values  */
-  /*------------------------------------------*/
 
   /* Talking related parameters */
   pars.verbose = 0;
@@ -61,10 +61,11 @@ void params_init_defaults(void) {
   pars.sources_are_read = 0;
 }
 
+
+/**
+ * Set up parameters that need some processing first
+ */
 void params_init_derived(void) {
-  /* ------------------------------------------------- */
-  /* Set up parameters that need some processing first */
-  /* ------------------------------------------------- */
 
   /* Generate output filename based on ic filename */
   /*-----------------------------------------------*/
@@ -168,10 +169,11 @@ void params_init_derived(void) {
 #endif
 }
 
+
+/**
+ * Print out current parameters
+ */
 void params_print_log(void) {
-  /*------------------------------------------*/
-  /* Print out current parameters             */
-  /*------------------------------------------*/
 
   log_message("\n");
   log_message("Runtime parameters are:\n");
@@ -238,10 +240,11 @@ void params_print_log(void) {
               "-------------------------\n");
 }
 
+
+/**
+ * Check whether we can work with these parameters
+ */
 void params_check(void) {
-  /* ----------------------------------------------- */
-  /* Check whether we can work with these parameters */
-  /* ----------------------------------------------- */
 
   log_extra("Checking whether we have valid parameters");
 
@@ -301,11 +304,12 @@ void params_check(void) {
 #endif
 }
 
+
+/**
+ * Check whether we can work with these parameters When using the program as a
+ * riemann solver
+ */
 void params_check_riemann(void) {
-  /* ----------------------------------------------- */
-  /* Check whether we can work with these parameters */
-  /* When using the program as a riemann solver      */
-  /* ----------------------------------------------- */
 
   log_extra("Checking whether we have valid parameters");
 
@@ -320,11 +324,12 @@ void params_check_riemann(void) {
   }
 }
 
+
+/**
+ * Create a filename for the output for when the code is employed as a Riemann
+ * solver only
+ */
 void params_generate_riemann_output_filename(void) {
-  /* ------------------------------------------------- */
-  /* Create a filename for the output for when the code
-   * is employed as a Riemann solver only
-   * ------------------------------------------------- */
 
   /* do this only if no basename is given */
   if (strlen(pars.outputfilename) == 0) {

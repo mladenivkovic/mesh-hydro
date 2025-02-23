@@ -17,18 +17,18 @@
 
 extern params pars;
 
+
+/**
+ * Solve the Riemann problem posed by a left and right state
+ *
+ * @param pstate* left:    left state of Riemann problem
+ * @param pstate* right:   right state of Riemann problem
+ * @param pstate* sol:     pstate where solution will be written
+ * @param float xovert:    x / t, point where solution shall be sampled
+ * @param int dimension:   which fluid velocity dimension to use. 0: x, 1: y
+ */
 void riemann_solve(pstate *left, pstate *right, pstate *sol, float xovert,
                    int dimension) {
-  /* -------------------------------------------------------------------------
-   * Solve the Riemann problem posed by a left and right state
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * pstate* sol:     pstate where solution will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
-   * -------------------------------------------------------------------------
-   */
 
   if (riemann_has_vacuum(left, right, dimension)) {
     riemann_compute_vacuum_solution(left, right, sol, xovert, dimension);
@@ -40,16 +40,16 @@ void riemann_solve(pstate *left, pstate *right, pstate *sol, float xovert,
   }
 }
 
+
+/**
+ * Check whether we work with vacuum
+ * returns true (1) if vacuum, 0 otherwise
+ *
+ * @param pstate* left:    left state of Riemann problem
+ * @param pstate* right:   right state of Riemann problem
+ * @param int dimension:   which fluid velocity dimension to use. 0: x, 1: y
+ */
 int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
-  /* -------------------------------------------------------------------------
-   * Check whether we work with vacuum
-   * returns true (1) if vacuum, 0 otherwise
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
-   * -------------------------------------------------------------------------
-   */
 
   if (left->rho <= SMALLRHO) {
     return (1);
@@ -67,19 +67,19 @@ int riemann_has_vacuum(pstate *left, pstate *right, int dimension) {
   return (1);
 }
 
+
+/**
+ * Solve the Riemann problem posed by a left and right state
+ * and sample the solution at given x and t
+ *
+ * @param pstate* left:    left state of Riemann problem
+ * @param pstate* right:   right state of Riemann problem
+ * @param pstate* sol:     pstate where solution will be written
+ * @param float xovert:    x / t, point where solution shall be sampled
+ * @param int dim:   which fluid velocity dim to use. 0: x, 1: y
+ */
 void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
                                      float xovert, int dim) {
-  /* -------------------------------------------------------------------------
-   * Solve the Riemann problem posed by a left and right state
-   * and sample the solution at given x and t
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * pstate* sol:     pstate where solution will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dim:   which fluid velocity dim to use. 0: x, 1: y
-   * -------------------------------------------------------------------------
-   */
 
   int notdim = (dim + 1) % 2;
 
@@ -214,20 +214,21 @@ void riemann_compute_vacuum_solution(pstate *left, pstate *right, pstate *sol,
   }
 }
 
+
+/**
+ * Compute the solution of the riemann problem at given time t and x,
+ * specified as xovert = x/t
+ *
+ * @param pstate* left:    left state of Riemann problem
+ * @param pstate* right:   right state of Riemann problem
+ * @param float pstar:     pressure of star region
+ * @param float ustar:     velocity of star region
+ * @param pstate* sol:     pstate where solution will be written
+ * @param float xovert:    x / t, point where solution shall be sampled
+ * @param int dim:         which fluid velocity direction to use. 0: x, 1: y
+ */
 void riemann_sample_solution(pstate *left, pstate *right, float pstar,
                              float ustar, pstate *sol, float xovert, int dim) {
-  /*--------------------------------------------------------------------------------------------------
-   * Compute the solution of the riemann problem at given time t and x,
-   *specified as xovert = x/t
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float pstar:     pressure of star region
-   * float ustar:     velocity of star region
-   * pstate* sol:     pstate where solution will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dim:         which fluid velocity direction to use. 0: x, 1: y
-   *--------------------------------------------------------------------------------------------------*/
 
   int otherdim = (dim + 1) % 2;
 
@@ -351,25 +352,26 @@ void riemann_sample_solution(pstate *left, pstate *right, float pstar,
   }
 }
 
+
+/**
+ * Compute (and "return") the full solution of the Riemann problem: Get all
+ * wave speeds, the fluxes of all four states U_L, U*_L, U*_R, U_R, and the
+ * difference in densities between each wave. This function is needed for the
+ * WAF method, where we sum up all the occuring fluxes with different weights.
+ * This function handles the vacuum case.
+ *
+ * @param pstate* left:      left primitive state of Riemann problem
+ * @param pstate* right:     right primitive state of Riemann problem
+ * @param float S[3]:        where wave speeds will be written to
+ * @param cstate fluxes[4]:  where the four fluxes will be written to:
+ *                           F_L, F*_L, F*_R, F_R
+ * @param float delta_q[3]:  differences in densities over all four
+ *                           waves: U*_L - U_L, U*_R - U*_L, U_R - U*_R
+ * @param int dim:           which fluid velocity direction to use. 0: x, 1: y
+ */
 void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
                                        cstate fluxes[4], float delta_q[3],
                                        int dim) {
-  /*-------------------------------------------------------------------------------------------
-   * Compute (and "return") the full solution of the Riemann problem: Get all
-   * wave speeds, the fluxes of all four states U_L, U*_L, U*_R, U_R, and the
-   * difference in densities between each wave. This function is needed for the
-   * WAF method, where we sum up all the occuring fluxes with different weights.
-   * This function handles the vacuum case.
-   *
-   * pstate* left:      left primitive state of Riemann problem
-   * pstate* right:     right primitive state of Riemann problem
-   * float S[3]:        where wave speeds will be written to
-   * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L,
-   * F*_R, F_R float delta_q[3]:  differences in densities over all four waves:
-   *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
-   * int dim:           which fluid velocity direction to use. 0: x, 1: y
-   * ------------------------------------------------------------------------------------------
-   */
 
 #if RIEMANN == HLLC
   throw_error("In riemann_get_full_solution: You shouldn't be calling this "
@@ -495,26 +497,26 @@ void riemann_get_full_solution_for_WAF(pstate *left, pstate *right, float S[3],
   delta_q[2] = right->rho - star_right.rho;
 }
 
+
+/**
+ * Compute (and "return") the full solution of the Riemann problem: Get all
+ * wave speeds, the fluxes of all four states U_L, U*_L, U*_R, U_R, and the
+ * difference in densities between each wave. This function is needed for the
+ * WAF method, where we sum up all the occuring fluxes with different weights.
+ * This function handles the vacuum case.
+ *
+ * @param pstate* left:      left primitive state of Riemann problem
+ * @param pstate* right:     right primitive state of Riemann problem
+ * @param float S[3]:        where wave speeds will be written to
+ * @param cstate fluxes[4]:  where the four fluxes will be written to:
+ *                           F_L, F*_L, F*_R, F_R
+ * @param float delta_q[3]:  differences in densities over all four waves:
+ *                           U*_L - U_L, U*_R - U*_L, U_R - U*_R
+ * @param int dim:           which fluid velocity direction to use. 0: x, 1: y
+ */
 void riemann_get_full_vacuum_solution_for_WAF(pstate *left, pstate *right,
                                               float S[3], cstate fluxes[4],
                                               float delta_q[3], int dim) {
-  /*-------------------------------------------------------------------------------------------
-   * Compute (and "return") the full solution of the Riemann problem: Get all
-   * wave speeds, the fluxes of all four states U_L, U*_L, U*_R, U_R, and the
-   * difference in densities between each wave. This function is needed for the
-   * WAF method, where we sum up all the occuring fluxes with different weights.
-   * This function handles the vacuum case.
-   *
-   * pstate* left:      left primitive state of Riemann problem
-   * pstate* right:     right primitive state of Riemann problem
-   * float S[3]:        where wave speeds will be written to
-   * cstate fluxes[4]:  where the four fluxes will be written to: F_L, F*_L,
-   *                    F*_R, F_R
-   * float delta_q[3]:  differences in densities over all four waves:
-   *                      U*_L - U_L, U*_R - U*_L, U_R - U*_R
-   * int dim:           which fluid velocity direction to use. 0: x, 1: y
-   * ------------------------------------------------------------------------------------------
-   */
 
   int notdim = (dim + 1) % 2;
 

@@ -11,13 +11,12 @@
 
 extern params pars;
 
+/**
+ * Compute the source vector S for a given cell we assume that the CONSERVED
+ * quantities are up to date
+ * TODO: dox
+ */
 void sources_get_source_vector(cstate *s, const float acc[2], cstate *cons) {
-  /* ------------------------------------------------
-   * Compute the source vector S for a given cell
-   * we assume that the CONSERVED quantities are
-   * up to date
-   * TODO: dox
-   * ------------------------------------------------ */
 
   s->rho = 0.;
   s->rhou[0] = cons->rho * acc[0];
@@ -25,11 +24,11 @@ void sources_get_source_vector(cstate *s, const float acc[2], cstate *cons) {
   s->E = cons->rhou[0] * acc[0] + cons->rhou[1] * acc[1];
 }
 
+
+/**
+ * Compute the sources update over given time step dt for all cells
+ */
 void sources_update_state(float dt) {
-  /* -----------------------------------------------------
-   * Compute the sources update over given time step dt
-   * for all cells
-   * ----------------------------------------------------- */
 
   /* first, compute the current source terms */
   sources_get_acceleration();

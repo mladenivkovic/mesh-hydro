@@ -14,19 +14,19 @@
 
 extern params pars;
 
+/**
+ * Compute the slope of given cell c using slope limiters, as it is needed
+ * for the MUSCL-Hancock scheme.
+ * Remember:
+ *  slope = 0.5(1 + omega)(U_{i} - U_{i-1}) + 0.5(1 - omega)(U_{i+1} - U_{i})
+ * where omega is set in defines.h
+ *
+ * @param cell* c:       cell for which we are working
+ * @param cstate* slope: where the computed slope will be stored for all
+ *                       conservative states individually
+ * @param int dimension: for which dimension we are working. 0: x, 1: y.
+ */
 void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
-  /* ------------------------------------------------------------------------
-   * Compute the slope of given cell c using slope limiters, as it is needed
-   * for the MUSCL-Hancock scheme.
-   * Remember:
-   *  slope = 0.5(1 + omega)(U_{i} - U_{i-1}) + 0.5(1 - omega)(U_{i+1} - U_{i})
-   * where omega is set in defines.h
-   *
-   * cell* c:       cell for which we are working
-   * cstate* slope: where the computed slope will be stored for all conservative
-   *                states individually
-   * int dimension: for which dimension we are working. 0: x, 1: y.
-   * ------------------------------------------------------------------------ */
 
   cstate Uip1, Ui, Uim1;
   gas_init_cstate(&Ui);
@@ -80,14 +80,15 @@ void limiter_get_limited_slope(cell *c, cstate *slope, int dimension) {
              ((1. + OMEGA) * (Ui.E - Uim1.E) + (1. - OMEGA) * (Uip1.E - Ui.E));
 }
 
+
+/**
+ * Compute the flux limiter function phi_{i+1/2}
+ *
+ * @param cell* c:     for which cell i to work for
+ * @param pstate* phi: where the limiter will be stored
+ * @param dimension:   for which dimension we're working
+ */
 void limiter_get_phi(cell *c, pstate *phi, int dimension) {
-  /* ------------------------------------------------------------------------
-   * Compute the flux limiter function phi_{i+1/2}
-   *
-   * cell* c:     for which cell i to work for
-   * pstate* phi: where the limiter will be stored
-   * dimension:   for which dimension we're working
-   * ------------------------------------------------------------------------ */
 
 #if (SOLVER == ADVECTION_WAF) && (LIMITER == NONE)
   /* if we utilize a WAF method and no limiter, the implemented centered
@@ -143,18 +144,19 @@ void limiter_get_phi(cell *c, pstate *phi, int dimension) {
   phi->p = limiter_phi_of_r(r.p);
 }
 
+
+/**
+ * Compute the left slope of given cell c, i.e. the slope for the flux
+ * F_{i-1/2}.
+ * Just figure out which cell is one to the left and call
+ * limiter_get_slope_right for it instead of given cell c.
+ *
+ * @param cell* c:       cell for which we are working
+ * @param pstate* slope: where the computed slope will be stored for all
+ *                       primitive states individually
+ * @param int dimension: for which dimension we are working. 0: x, 1: y.
+ */
 void limiter_get_advection_slope_left(cell *c, pstate *slope, int dimension) {
-  /* ------------------------------------------------------------------------
-   * Compute the left slope of given cell c, i.e. the slope for the flux
-   * F_{i-1/2}.
-   * Just figure out which cell is one to the left and call
-   * limiter_get_slope_right for it instead of given cell c.
-   *
-   * cell* c:       cell for which we are working
-   * pstate* slope: where the computed slope will be stored for all primitive
-   *                states individually
-   * int dimension: for which dimension we are working. 0: x, 1: y.
-   * ------------------------------------------------------------------------ */
 
   int i, j;
   cell_get_ij(c, &i, &j);
@@ -173,17 +175,18 @@ void limiter_get_advection_slope_left(cell *c, pstate *slope, int dimension) {
   limiter_get_advection_slope_right(left_cell, slope, dimension);
 }
 
+
+/**
+ * Compute the right slope of given cell c, i.e. the slope for the flux
+ * F_{i+1/2}.
+ * Remember: slope_i = 1/dx * phi(r_{i+1/2}) * (U_{i+1} - U_{i})
+ *
+ * @param cell* c:       cell for which we are working
+ * @param pstate* slope: where the computed slope will be stored for all
+ *                       primitive states individually
+ * @param int dimension: for which dimension we are working. 0: x, 1: y.
+ */
 void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
-  /* ------------------------------------------------------------------------
-   * Compute the right slope of given cell c, i.e. the slope for the flux
-   * F_{i+1/2}.
-   * Remember: slope_i = 1/dx * phi(r_{i+1/2}) * (U_{i+1} - U_{i})
-   *
-   * cell* c:       cell for which we are working
-   * pstate* slope: where the computed slope will be stored for all primitive
-   *                states individually
-   * int dimension: for which dimension we are working. 0: x, 1: y.
-   * ------------------------------------------------------------------------ */
 
   pstate Uip1, Ui;
   gas_init_pstate(&Ui);
@@ -218,27 +221,28 @@ void limiter_get_advection_slope_right(cell *c, pstate *slope, int dimension) {
   slope->p = phi.p * (Uip1.p - Ui.p) / pars.dx;
 }
 
+
+/**
+ * Compute the flow parameter r for every component of the primitive states.
+ * We do upwind differnecing, so we need to compute the ratio delta_u_upwind /
+ * delta_u_local, and how that is computed depends on the local velocity v in
+ * the cell. This function is intended for advection purposes, not really for
+ * hydro.
+ *
+ * if v > 0:
+ *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i})
+ * else:
+ *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
+ *
+ * @param pstate* Uip2:  U_{i+2}
+ * @param pstate* Uip1:  U_{i+1}
+ * @param pstate* Ui:    U_{i}
+ * @param pstate* Uim1:  U_{i-1}
+ * @param pstate* r:     r for every primitive state
+ * @param float vel:     advection velocity
+ * ---------------------------------------------------------------------------------------------*/
 void limiter_get_r_pstate(pstate *Uip2, pstate *Uip1, pstate *Ui, pstate *Uim1,
                           pstate *r, float vel) {
-  /*----------------------------------------------------------------------------------------------
-   * Compute the flow parameter r for every component of the primitive states.
-   * We do upwind differnecing, so we need to compute the ratio delta_u_upwind /
-   * delta_u_local, and how that is computed depends on the local velocity v in
-   * the cell. This function is intended for advection purposes, not really for
-   * hydro.
-   *
-   * if v > 0:
-   *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i})
-   * else:
-   *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
-   *
-   * pstate* Uip2:  U_{i+2}
-   * pstate* Uip1:  U_{i+1}
-   * pstate* Ui:    U_{i}
-   * pstate* Uim1:  U_{i-1}
-   * pstate* r:     r for every primitive state
-   * float vel:     advection velocity
-   * ---------------------------------------------------------------------------------------------*/
 
   if (vel >= 0) {
     r->rho = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
@@ -253,18 +257,19 @@ void limiter_get_r_pstate(pstate *Uip2, pstate *Uip1, pstate *Ui, pstate *Uim1,
   }
 }
 
+
+/**
+ * Compute the flow parameter r for every component of the conserved states.
+ * We always compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i}), and for hydro
+ * purposes, we don't really need to care about upwinding.
+ *
+ * @param cstate* Uip1:  U_{i+1}
+ * @param cstate* Ui:    U_{i}
+ * @param cstate* Uim1:  U_{i-1}
+ * @param cstate* r:     where flow parameter r for every conserved state will
+ *                       be stored
+ */
 void limiter_get_r_cstate(cstate *Uip1, cstate *Ui, cstate *Uim1, cstate *r) {
-  /*----------------------------------------------------------------------------------------------
-   * Compute the flow parameter r for every component of the conserved states.
-   * We always compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i}), and for hydro
-   * purposes, we don't really need to care about upwinding.
-   *
-   * cstate* Uip1:  U_{i+1}
-   * cstate* Ui:    U_{i}
-   * cstate* Uim1:  U_{i-1}
-   * cstate* r:     where flow parameter r for every conserved state will be
-   * stored
-   * ---------------------------------------------------------------------------------------------*/
 
   r->rho = limiter_r(Ui->rho, Uim1->rho, Uip1->rho);
   r->rhou[0] = limiter_r(Ui->rhou[0], Uim1->rhou[0], Uip1->rhou[0]);
@@ -272,28 +277,29 @@ void limiter_get_r_cstate(cstate *Uip1, cstate *Ui, cstate *Uim1, cstate *r) {
   r->E = limiter_r(Ui->E, Uim1->E, Uip1->E);
 }
 
+
+/**
+ * in case of advection:
+ * if v > 0:
+ *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i})
+ * else:
+ *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
+ *
+ * In the tex documents, r for v < 0 is given as
+ *    r = (u_{i+2} - u_{i+1}) / (u_{i+1} - u_{i})
+ * which can be transformed into the above expression by multiplying
+ * the numerator and the denominator by -1.
+ * So then we can write
+ *
+ *          top_left - top_right
+ * r = ---------------------------------
+ *          bottom_left - top_left
+ *
+ * regardless of what sign the velocity v has. We only need to
+ * switch what topleft, topright, and bottomleft are, which is
+ * done in the function that is calling this one.
+ */
 float limiter_r(float topleft, float topright, float bottomleft) {
-  /* --------------------------------------------------------------
-   * in case of advection:
-   * if v > 0:
-   *    compute r = (u_{i} - u_{i-1}) / (u_{i+1} - u_{i})
-   * else:
-   *    compute r = (u_{i+1} - u_{i+2}) / (u_{i} - u_{i+1})
-   *
-   * In the tex documents, r for v < 0 is given as
-   *    r = (u_{i+2} - u_{i+1}) / (u_{i+1} - u_{i})
-   * which can be transformed into the above expression by multiplying
-   * the numerator and the denominator by -1.
-   * So then we can write
-   *
-   *          top_left - top_right
-   * r = ---------------------------------
-   *          bottom_left - top_left
-   *
-   * regardless of what sign the velocity v has. We only need to
-   * switch what topleft, topright, and bottomleft are, which is
-   * done in the function that is calling this one.
-   * -------------------------------------------------------------- */
 
   if (bottomleft == topleft) {
     return ((topleft - topright) * 1e6);

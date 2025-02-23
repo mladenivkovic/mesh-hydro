@@ -16,11 +16,11 @@
 
 extern params pars;
 
+/**
+ * This function reads in the command line arguments and stores them in the
+ * params struct
+ */
 void io_read_cmdlineargs(int argc, char *argv[]) {
-  /*--------------------------------------------------------
-   * This function reads in the command line arguments and
-   * stores them in the params struct
-   *--------------------------------------------------------*/
 
   if (argc < 3) {
     throw_error("Too few arguments given. Run this program with ./hydro "
@@ -31,10 +31,11 @@ void io_read_cmdlineargs(int argc, char *argv[]) {
   };
 }
 
+
+/**
+ * Start reading IC file, find what IC type we have
+ */
 void io_read_ic_type(int *skip_lines) {
-  /*--------------------------------------------------------
-   * Start reading IC file, find what IC type we have
-   *--------------------------------------------------------*/
 
   /* check whether file exists first */
   io_check_file_exists(pars.datafilename);
@@ -123,13 +124,16 @@ void io_read_ic_type(int *skip_lines) {
   debugmessage("In io_read_ic_type: got skiplines: %d", *skip_lines);
 }
 
+
+
+/**
+ * @brief Read in initial conditions file, store read states. This is for the
+ * two-state IC file format.
+ *
+ * @param int skip: how many lines in the IC file to skip before starting to
+ * read IC data
+ */
 void io_read_ic_twostate(const int skip_lines) {
-  /*--------------------------------------------------------
-   * Read in initial conditions file, store read states.
-   * This is for the two-state IC file format.
-   * int skip: how many lines in the IC file to skip before
-   * starting to read IC data
-   *--------------------------------------------------------*/
 
   log_extra("Reading in IC");
 
@@ -263,13 +267,15 @@ void io_read_ic_twostate(const int skip_lines) {
               (pars.nx / 2) * pars.dx);
 }
 
+
+/**
+ * @brief Read in initial conditions file, store read states. This is for the
+ * arbitrary IC file format.
+ *
+ * @param int skip: how many lines in the IC file to skip before starting to
+ * read IC data
+ */
 void io_read_ic_arbitrary(int skip) {
-  /*--------------------------------------------------------
-   * Read in initial conditions file, store read states.
-   * This is for the arbitrary IC file format.
-   * int skip: how many lines in the IC file to skip before
-   * starting to read IC data
-   *--------------------------------------------------------*/
 
   log_extra("Reading in IC");
 
@@ -381,10 +387,11 @@ void io_read_ic_arbitrary(int skip) {
   fclose(dat);
 }
 
+
+/**
+ * Read in parameter file, store read in global parameters.
+ */
 void io_read_paramfile(void) {
-  /*------------------------------------------------------------*/
-  /* Read in parameter file, store read in global parameters.   */
-  /*------------------------------------------------------------*/
 
   /* check whether file exists first */
   io_check_file_exists(pars.paramfilename);
@@ -456,10 +463,11 @@ void io_read_paramfile(void) {
   fclose(par);
 }
 
+
+/**
+ * Read in parameter file, store read in global parameters.
+ */
 void io_read_toutfile(void) {
-  /*------------------------------------------------------------*/
-  /* Read in parameter file, store read in global parameters.   */
-  /*------------------------------------------------------------*/
 
   /* check whether file exists first */
   io_check_file_exists(pars.toutfilename);
@@ -518,14 +526,15 @@ void io_read_toutfile(void) {
   fclose(par);
 }
 
+
+/**
+ * @brief Write output of step at time t.
+ *
+ * @param outstep: Current output number
+ * @param step:  Current step of the simulation
+ * @param t:     Current time of the simulation
+ */
 void io_write_output(int *outstep, int step, float t) {
-  /*----------------------------------------*/
-  /* Write output of step at time t.
-   *
-   * outstep: Current output number
-   * step:  Current step of the simulation
-   * t:     Current time of the simulation
-   *----------------------------------------*/
 
   if (*outstep > 9999) {
     throw_error("I'm not made to write outputs > 9999\n");
@@ -582,17 +591,17 @@ void io_write_output(int *outstep, int step, float t) {
   *outstep += 1;
 }
 
+
+/**
+ * @brief Check whether we should be writing an output in this time step.
+ * Returns 1 if true, 0 otherwise. If necessary, reduces size of dt so that it
+ * fits required output time exactly.
+ *
+ * @param t:     current time of sim
+ * @param dt:    current time step size of sim
+ * @param step:  current step of sim
+ */
 int io_is_output_step(float t, float *dt, int step) {
-  /* -------------------------------------------------------------------------------------------------
-   * Check whether we should be writing an output in this time step. Returns 1
-   * if true, 0 otherwise. If necessary, reduces size of dt so that it fits
-   * required output time exactly.
-   *
-   * t:     current time of sim
-   * dt:    current time step size of sim
-   * step:  current step of sim
-   * -------------------------------------------------------------------------------------------------
-   */
 
   debugmessage(
       "Checking whether we need to limit the timestep for output. t=%g, dt=%g",
@@ -632,10 +641,11 @@ int io_is_output_step(float t, float *dt, int step) {
   return (0);
 }
 
+
+/**
+ * Check whether a file exists. If it doesn't, exit.
+ */
 void io_check_file_exists(char *fname) {
-  /* -------------------------------------------------------- */
-  /* Check whether a file exists. If it doesn't, exit.        */
-  /* -------------------------------------------------------- */
 
   FILE *f = fopen(fname, "r");
 
@@ -647,14 +657,12 @@ void io_check_file_exists(char *fname) {
   }
 }
 
-int line_is_empty(const char *line) {
-  /* --------------------------------- */
-  /* Check whether this line is empty, */
-  /* i.e. only whitespaces or newlines.*/
-  /* returns 1 if true, 0 otherwise.   */
-  /* assumes line is MAX_LINE_SIZE     */
-  /* --------------------------------- */
 
+/**
+ * Check whether this line is empty, i.e. only whitespaces or newlines.
+ * returns 1 if true, 0 otherwise. assumes line is MAX_LINE_SIZE
+ */
+int line_is_empty(const char *line) {
   int isempty = 0;
 
   for (int i = 0; i < MAX_LINE_SIZE; i++) {
@@ -668,12 +676,12 @@ int line_is_empty(const char *line) {
   return (isempty);
 }
 
+
+/**
+ * Check whether the given line string is a comment, i.e. starts with // or
+ * <slash>*
+ */
 int line_is_comment(const char *line) {
-  /* --------------------------------------
-   * Check whether the given line string is
-   * a comment, i.e. starts with // or
-   * <slash>*
-   * -------------------------------------- */
 
   /* initialize firsttwo explicily for valgrind */
   char firsttwo[3] = {0, 0, 0};
@@ -687,10 +695,11 @@ int line_is_comment(const char *line) {
   return (0);
 }
 
+
+/**
+ * remove heading and trailing whitespaces
+ */
 void remove_whitespace(char *line) {
-  /*---------------------------------------------------------
-   * remove heading and trailing whitespaces
-   * --------------------------------------------------------*/
 
   int start = 0;
   int stop = strlen(line);
@@ -717,11 +726,12 @@ void remove_whitespace(char *line) {
   strcpy(line, newline);
 }
 
+
+/**
+ * Check whether there are trailing comments in this line and if so, remove
+ * them.
+ */
 void remove_trailing_comments(char *line) {
-  /*---------------------------------------------------------
-   * Check whether there are trailing comments in this line
-   * and if so, remove them.
-   * --------------------------------------------------------*/
 
   for (int i = 0; i < MAX_LINE_SIZE - 2; i++) {
     /* -2: 1 for \0 char, 1 because comment is always 2 characters long,
@@ -741,14 +751,15 @@ void remove_trailing_comments(char *line) {
   }
 }
 
+
+/**
+ * Check that the line you're reading has the correct number of columns,
+ * delimited by an equality sign.
+ * We expect <name> = <param>
+ *
+ * returns 1 if that is the case, 0 if not.
+ */
 int check_name_equal_value_present(char *line) {
-  /* ----------------------------------------------------------------
-   * Check that the line you're reading has the correct number of
-   * columns, delimited by an equality sign.
-   * We expect <name> = <param>
-   *
-   * returns 1 if that is the case, 0 if not.
-   * ----------------------------------------------------------------*/
 
   int pos = 0;
   int check = 0;
@@ -792,12 +803,13 @@ int check_name_equal_value_present(char *line) {
   return (1);
 }
 
+
+/**
+ * Check that the line you're reading has the correct number of
+ * columns, delimited by an empty space. int should defines the
+ * expected number of columns.
+ */
 void check_number_of_columns_IC(char *line, int should) {
-  /* ----------------------------------------------------------------
-   * Check that the line you're reading has the correct number of
-   * columns, delimited by an empty space. int should defines the
-   * expected number of columns.
-   * ----------------------------------------------------------------*/
 
   int splits = 0;
   char cpy[MAX_LINE_SIZE];

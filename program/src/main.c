@@ -29,9 +29,9 @@ cell *grid;
 cell **grid;
 #endif
 
-/* ====================================== */
+
+
 int main(int argc, char *argv[]) {
-  /* ====================================== */
 
   /* timing stuff */
   clock_t step_start, step_end;
@@ -49,9 +49,9 @@ int main(int argc, char *argv[]) {
   io_read_cmdlineargs(argc, argv);
   io_read_paramfile();
 
+  /* how many lines to skip next time you open the IC file */
+  int skiplines_ic = 0;
   /* check which IC type we have */
-  int skiplines_ic =
-      0; /* how many lines to skip next time you open the IC file */
   io_read_ic_type(&skiplines_ic);
 
   /* read in output times if necessary */

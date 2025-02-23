@@ -15,10 +15,10 @@
 
 extern params pars;
 
+/**
+ * @brief Initialize/reset the values of a cell
+ */
 void cell_init_cell(cell *c) {
-  /*---------------------------------------*/
-  /* Initialize/reset the values of a cell */
-  /*---------------------------------------*/
 
   c->id = 0;
   c->x = 0;
@@ -33,15 +33,16 @@ void cell_init_cell(cell *c) {
   c->acc[1] = 0.;
 }
 
+
+/**
+ * Initialize the grid: Allocate memory for the cells,
+ * initialize them, then distribute their position.
+ * Convention:
+ *    grid[0][0]       is lower left corner
+ *    grid[nxtot-1][0] is lower right corner
+ *    grid[0][nxtot-1] is upper left corner
+ */
 void cell_init_grid(void) {
-  /*----------------------------------------------------
-   * Initialize the grid: Allocate memory for the cells,
-   * initialize them, then distribute their position.
-   * Convention:
-   *    grid[0][0]       is lower left corner
-   *    grid[nxtot-1][0] is lower right corner
-   *    grid[0][nxtot-1] is upper left corner
-   *----------------------------------------------------*/
 
   log_extra("Initializing grid; ndim=%d, nx=%d", NDIM, pars.nx);
 
@@ -76,13 +77,14 @@ void cell_init_grid(void) {
 #endif
 }
 
+
+/**
+ * @brief enforce boundary conditions.
+ * This function only picks out the pairs of real
+ * and ghost cells in a row or column and then
+ * calls the function that actually copies the data.
+ */
 void cell_set_boundary(void) {
-  /* -------------------------------------------------------
-   * enforce boundary conditions.
-   * This function only picks out the pairs of real
-   * and ghost cells in a row or column and then
-   * calls the function that actually copies the data.
-   * ------------------------------------------------------- */
 
   debugmessage("Setting boundary conditions");
 
@@ -108,8 +110,8 @@ void cell_set_boundary(void) {
   for (int j = 0; j < pars.nx + BCTOT; j++) {
     for (int i = 0; i < BC; i++) {
       realL[i] = &(grid[BC + i][j]);
-      realR[i] = &(grid[pars.nx + i]
-                       [j]); /* = last index of a real cell  - BC + (i + 1) */
+      /* nx + i = last index of a real cell  - BC + (i + 1) */
+      realR[i] = &(grid[pars.nx + i][j]);
       ghostL[i] = &(grid[i][j]);
       ghostR[i] = &(grid[pars.nx + BC + i][j]);
     }
@@ -131,21 +133,22 @@ void cell_set_boundary(void) {
 #endif
 }
 
+
+/**
+ * @brief apply the boundary conditions from real to ghost cells
+ *
+ * realL:     array of pointers to real cells with lowest index
+ * realR:     array of pointers to real cells with highest index
+ * ghostL:    array of pointers to ghost cells with lowest index
+ * ghostR:    array of pointers to ghost cells with highest index
+ * dimension: dimension integer. 0 for x, 1 for y. Needed for
+ *            reflective boundary conditions.
+ *
+ * all arguments are arrays of size BC, defined in defines.h
+ * lowest array index is also lowest index of cell in grid
+ */
 void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
                         cell **ghostR, int dimension) {
-  /* ------------------------------------------------------------
-   * apply the boundary conditions from real to ghost cells
-   *
-   * realL:     array of pointers to real cells with lowest index
-   * realR:     array of pointers to real cells with highest index
-   * ghostL:    array of pointers to ghost cells with lowest index
-   * ghostR:    array of pointers to ghost cells with highest index
-   * dimension: dimension integer. 0 for x, 1 for y. Needed for
-   *            reflective boundary conditions.
-   *
-   * all arguments are arrays of size BC, defined in defines.h
-   * lowest array index is also lowest index of cell in grid
-   * ------------------------------------------------------------ */
 
   if (pars.boundary == 0) {
     /* periodic boundary conditions */
@@ -175,11 +178,12 @@ void cell_real_to_ghost(cell **realL, cell **realR, cell **ghostL,
   }
 }
 
+
+/**
+ * Copies the actual data needed for boundaries from a real
+ * cell to a ghost cell
+ */
 void cell_copy_boundary_data(cell *real, cell *ghost) {
-  /* ---------------------------------------------------------
-   * Copies the actual data needed for boundaries from a real
-   * cell to a ghost cell
-   * --------------------------------------------------------- */
 
   ghost->prim.rho = real->prim.rho;
   ghost->prim.u[0] = real->prim.u[0];
@@ -192,18 +196,18 @@ void cell_copy_boundary_data(cell *real, cell *ghost) {
   ghost->cons.E = real->cons.E;
 }
 
+
+/**
+ * @brief Copies the actual data needed for boundaries from a real cell to a
+ * ghost cell. Here for a reflective boundary condition, where we need to
+ * invert the velocities.
+ *
+ * @param cell* real: pointer to real cell from which we take data
+ * @param cell* ghost: pointer to ghost cell into which we copy data
+ * @param int dimension: in which dimension the reflection is supposed to be
+ */
 void cell_copy_boundary_data_reflective(cell *real, cell *ghost,
                                         int dimension) {
-  /* ---------------------------------------------------------
-   * Copies the actual data needed for boundaries from a real
-   * cell to a ghost cell. Here for a reflective boundary
-   * condition, where we need to invert the velocities.
-   *
-   * cell* real: pointer to real cell from which we take data
-   * cell* ghost: pointer to ghost cell into which we copy data
-   * int dimension: in which dimension the reflection is supposed to be
-   * --------------------------------------------------------- */
-
   ghost->prim.rho = real->prim.rho;
   ghost->prim.u[dimension] = -real->prim.u[dimension];
   ghost->prim.u[(dimension + 1) % 2] = real->prim.u[(dimension + 1) % 2];
@@ -215,10 +219,11 @@ void cell_copy_boundary_data_reflective(cell *real, cell *ghost,
   ghost->cons.E = real->cons.E;
 }
 
+
+/**
+ * reset the fluxes to zero in all cells in the grid
+ */
 void cell_reset_fluxes(void) {
-  /* ----------------------------------------------------
-   * reset the fluxes to zero in all cells in the grid
-   * ---------------------------------------------------- */
 
   debugmessage("Resetting fluxes to zero.");
 
@@ -238,11 +243,11 @@ void cell_reset_fluxes(void) {
 #endif
 }
 
+
+/**
+ * @brief Computes the primitive state from conserved states for all cells
+ */
 void cell_get_pstates_from_cstates(void) {
-  /* ---------------------------------------------
-   * Computes the primitive state from conserved
-   * states for all cells
-   * --------------------------------------------- */
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {
@@ -259,11 +264,11 @@ void cell_get_pstates_from_cstates(void) {
 #endif
 }
 
+
+/**
+ * Computes the conserve state from primitive states for all cells
+ */
 void cell_get_cstates_from_pstates(void) {
-  /* ---------------------------------------------
-   * Computes the conserve state from primitive
-   * states for all cells
-   * --------------------------------------------- */
 
 #if NDIM == 1
   for (int i = BC; i < pars.nx + BC; i++) {
@@ -280,11 +285,11 @@ void cell_get_cstates_from_pstates(void) {
 #endif
 }
 
+
+/**
+ * Compute the total "mass" currently on the grid.
+ */
 float cell_get_total_mass(void) {
-  /* -----------------------------------
-   * Compute the total "mass" currently
-   * on the grid.
-   * ----------------------------------- */
 
   float mtot = 0.f;
 
@@ -305,41 +310,42 @@ float cell_get_total_mass(void) {
 #endif
 }
 
+
+/**
+ * @brief Print out some quantity of the entire grid see cell_print_grid_part
+ * for options on field[]
+ */
 void cell_print_grid(char field[4]) {
-  /* -----------------------------------------------
-   * Print out some quantity of the entire grid
-   * see cell_print_grid_part for options on field[]
-   * ----------------------------------------------- */
 
   int limits[4] = {0, pars.nxtot, 0, pars.nxtot};
   cell_print_grid_part(field, limits);
 }
 
-void cell_print_grid_part(char field[4], const int *limits) {
-  /* ---------------------------------------------------------
-   * Print out the grid quantities. Select which
-   * quantity by field:
-   *  "ids": cell ID
-   *  "pos": cell position
-   *  "rho": density
-   *  "v_x": fluid velocity u_x
-   *  "v_y": fluid velocity u_x
-   *  "vsq": square of fluid velocity u_x^2 + uy^2
-   *  "pre": pressure
-   *  "frh": density flux
-   *  "fux": velocity / momentum flux in x
-   *  "fuy": velocity / momentum flux in y
-   *  "fpr": pressure flux
-   *  "ene": energy
-   *  "acx": acceleration in x direction
-   *  "acy": acceleration in y direction
-   *
-   *  limits: array of indices for the boundary of
-   *          what to print; i.e. [imin, imax, jmin, jmax]
-   *          values at grid indices imin, jmin are
-   *          included in the printout; imax, jmax are not.
-   * -------------------------------------------------------- */
 
+/**
+ * @brief Print out the grid quantities. Select which
+ * quantity by @param field:
+ *  "ids": cell ID
+ *  "pos": cell position
+ *  "rho": density
+ *  "v_x": fluid velocity u_x
+ *  "v_y": fluid velocity u_x
+ *  "vsq": square of fluid velocity u_x^2 + uy^2
+ *  "pre": pressure
+ *  "frh": density flux
+ *  "fux": velocity / momentum flux in x
+ *  "fuy": velocity / momentum flux in y
+ *  "fpr": pressure flux
+ *  "ene": energy
+ *  "acx": acceleration in x direction
+ *  "acy": acceleration in y direction
+ *
+ *  @param limits: array of indices for the boundary of
+ *          what to print; i.e. [imin, imax, jmin, jmax]
+ *          values at grid indices imin, jmin are
+ *          included in the printout; imax, jmax are not.
+ */
+void cell_print_grid_part(char field[4], const int *limits) {
 #if NDIM == 1
   int imin = limits[0];
   int imax = limits[1];
@@ -480,11 +486,12 @@ void cell_print_grid_part(char field[4], const int *limits) {
 #endif
 }
 
+
+/**
+ * @brief Compute the i and j value of a cell such that it can be addressed in the
+ * grid[] array
+ */
 void cell_get_ij(cell *c, int *i, int *j) {
-  /* ------------------------------------------------ */
-  /* Compute the i and j value of a cell such that */
-  /* it can be addressed in the grid[] array */
-  /* ------------------------------------------------ */
 
 #if NDIM == 1
 
@@ -499,13 +506,14 @@ void cell_get_ij(cell *c, int *i, int *j) {
 #endif
 }
 
+
+/**
+ * @brief get a string for the cell index. Gives a tuple if code
+ * is in 2D. Also correct for ghost boundary cells.
+ * if left/lower boundary: returns negative number in a
+ * string. If in upper/right boundary: return (nx+int)
+ */
 char *cell_get_index_string(cell *c) {
-  /* --------------------------------------------------------
-   * get a string for the cell index. Gives a tuple if code
-   * is in 2D. Also correct for ghost boundary cells.
-   * if left/lower boundary: returns negative number in a
-   * string. If in upper/right boundary: return (nx+int)
-   * ------------------------------------------------------- */
 
   char *output = malloc(MAX_LINE_SIZE * sizeof(char));
 

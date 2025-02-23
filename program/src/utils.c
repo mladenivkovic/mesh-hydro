@@ -11,12 +11,14 @@
 #include "params.h"
 #include "utils.h"
 
+
 extern params pars;
 
+
+/**
+ * Print a nice header
+ */
 void print_header(void) {
-  /*----------------------*/
-  /* Print a nice header  */
-  /*----------------------*/
   printf("===============================================================\n");
   printf("___  ___ _____ _____ _   _      _   ___   _____________ _____ \n");
   printf(
@@ -31,10 +33,11 @@ void print_header(void) {
   printf("===============================================================\n");
 }
 
+
+/**
+ * print compile time definitions
+ */
 void print_compile_defines(void) {
-  /* ----------------------------------- */
-  /* print compile time definitions      */
-  /* ----------------------------------- */
 
   char solver[80];
   char riemann[80];
@@ -55,10 +58,11 @@ void print_compile_defines(void) {
   log_message("Limiter:                     %s\n", limiter);
 }
 
+
+/**
+ * Get string names for the solver, riemann solver, and limiter in use.
+ */
 void utils_get_macro_strings(char *solver, char *riemann, char *limiter) {
-  /* ------------------------------------------------------------------------
-   * Get string names for the solver, riemann solver, and limiter in use.
-   * ------------------------------------------------------------------------ */
 
 #if SOLVER == ADVECTION_PWCONST
   strcpy(solver, "ADVECTION_PWCONST");
@@ -105,10 +109,11 @@ void utils_get_macro_strings(char *solver, char *riemann, char *limiter) {
 #endif
 }
 
+
+/**
+ * just prepends [LOG] to printing. Use like printf()
+ */
 void log_message(const char *format, ...) {
-  /*------------------------------------------------------
-   * just prepends [LOG] to printing. Use like printf()
-   *------------------------------------------------------*/
 
   if (pars.verbose < 1) {
     return;
@@ -132,12 +137,13 @@ void log_message(const char *format, ...) {
   }
 }
 
+
+/**
+ * if verbose is 3 or higher, write whatever you want to write to screen. Use
+ * it like you use printf(), except this function will add a newline by itself
+ * :)
+ */
 void debugmessage(const char *format, ...) {
-  /*---------------------------------------------------------------
-   * if verbose is 3 or higher, write whatever you want to write
-   * to screen. Use it like you use printf(), except this function
-   * will add a newline by itself :)
-   *---------------------------------------------------------------*/
 
   if (pars.verbose < 3) {
     return;
@@ -163,13 +169,13 @@ void debugmessage(const char *format, ...) {
   }
 }
 
+
+/**
+ * if verbose is 2 or higher, write whatever you want to write to screen. Use
+ * it like you use printf(), except this function will add a newline by itself
+ * :) .
+ */
 void log_extra(const char *format, ...) {
-  /*-----------------------------------------------
-   * if verbose is 2 or higher, write whatever you
-   * want to write to screen. Use it like you use
-   * printf(), except this function will add a
-   * newline by itself :) .
-   *-----------------------------------------------*/
 
   if (pars.verbose < 2) {
     return;
@@ -194,13 +200,12 @@ void log_extra(const char *format, ...) {
   }
 }
 
+
+/**
+ * Print a formatted error message to screen. Use it like you use printf(),
+ * except this function will add a newline by itself :) . Then it will exit.
+ */
 void throw_error(const char *format, ...) {
-  /*-----------------------------------------------
-   * Print a formatted error message to screen.
-   * Use it like you use printf(), except this
-   * function will add a newline by itself :) .
-   * Then it will exit.
-   *-----------------------------------------------*/
 
   printf("%-12s", "[ERROR]");
 
@@ -224,10 +229,11 @@ void throw_error(const char *format, ...) {
   exit(1);
 }
 
+
+/**
+ * prints "True" or "False"
+ */
 void printbool(int boolean) {
-  /*-------------------------------------*/
-  /* prints "True" or "False"            */
-  /*-------------------------------------*/
 
   if (boolean) {
     printf("true");
