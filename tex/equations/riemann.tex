@@ -26,7 +26,7 @@ For a hyperbolic system of conservation laws of the form
 the Riemann problem is defined as
 
 \begin{align}
-	\U(x, t=0) = 
+	\U(x, t=0) =
 		\begin{cases}
 			\U_L & \text{ if } x < 0\\
 			\U_R & \text{ if } x > 0\\
@@ -63,7 +63,7 @@ This is shown in figure \ref{fig:riemann-solution}
 \begin{figure}[H]
 	\includegraphics{./figures/riemann_solution.pdf}%
 	\caption{
-		The solution to the Riemann problem for Euler equations: 
+		The solution to the Riemann problem for Euler equations:
 		Three waves, (1), (2), and (3), arise from the origin as time evolves.
 		(2) is always a contact wave, (1) and (3) can be either rarefaction or shock waves in each case, depending on the initial conditions.\\
 		The initial states $\U_L$ and $\U_R$ are separated through the waves (1) and (3) from the two new arising ``star states'' $\U_L^*$ and $\U_R^*$, which themselves are separated by the contact wave (2).
@@ -134,14 +134,14 @@ A shock wave is a jump discontinuity too.
 If the \textbf{leftmost} wave (wave (1) in fig. \ref{fig:riemann-solution}) is a shock wave, we have
 
 \begin{align*}
-	\rho^*_L &= 
+	\rho^*_L &=
 		\frac{\frac{p^*}{p_L} + \frac{\gamma - 1}{\gamma+1}}{\frac{\gamma - 1}{\gamma+1} \frac{p^*}{p_L} + 1} \rho_L \\
-	u^* &= 
+	u^* &=
 		u_L - \frac{p^* - p_L}{\sqrt{\frac{p^* + B_L}{A_L}}}\\
 		& = u_L - f_L(p^*) \\
-	A_L &= 
+	A_L &=
 		\frac{2}{(\gamma + 1) \rho_L}\\
-	B_L &= 
+	B_L &=
 		\frac{\gamma - 1}{\gamma + 1} p_L
 \end{align*}
 
@@ -158,14 +158,14 @@ For a \textbf{right shock wave}, i.e. when wave (3) is a shock wave, we have the
 
 
 \begin{align*}
-	\rho^*_R &= 
+	\rho^*_R &=
 		\frac{\frac{p^*}{p_R} + \frac{\gamma - 1}{\gamma+1}}{\frac{\gamma - 1}{\gamma+1} \frac{p^*}{p_R} + 1} \rho_R \\
-	u^* &= 
+	u^* &=
 		u_R + \frac{p^* - p_R}{\sqrt{\frac{p^* + B_R}{A_R}}}\\
 		& = u_R + f_R(p^*) \\
-	A_R &= 
+	A_R &=
 		\frac{2}{(\gamma + 1) \rho_R}\\
-	B_R &= 
+	B_R &=
 		\frac{\gamma - 1}{\gamma + 1} p_R
 \end{align*}
 
@@ -174,7 +174,7 @@ and the shock speed is
 	S_R = u_R + a_R \left[\frac{\gamma + 1}{2 \gamma} \frac{p^*}{p_R} + \frac{\gamma - 1}{2\gamma} \right]^{\half}
 \end{align*}
 
-where $a_R$ is the sound speed in the left state $U_L$. $f_R$ is given in equation \ref{eq:riemann-pstar}.
+where $a_R$ is the sound speed in the right state $U_R$. $f_R$ is given in equation \ref{eq:riemann-pstar}.
 
 
 
@@ -200,9 +200,9 @@ The wave speeds of the head, $S_H$, and of the tail, $S_T$, are both given below
 If we have a \textbf{left-facing} rarefaction, i.e. if wave (1) is a rarefaction wave, we have
 
 \begin{align*}
-	\rho^*_L &= 
+	\rho^*_L &=
 		\rho_L \left( \frac{p^*}{p_L} \right) ^ \frac{1}{\gamma}\\
-	u^* &= 
+	u^* &=
 		u_L - \frac{2 a_L}{\gamma - 1} \left[ \left( \frac{p^*}{p_L} \right) ^ \frac{\gamma - 1}{2 \gamma} -1  \right]\\
 		& = u_L - f_L(p^*) \\
 \end{align*}
@@ -218,14 +218,14 @@ The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wav
 \end{align*}
 
 
-Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \leq \frac{x}{t} \leq S_{TL}$, is 
+Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \leq \frac{x}{t} \leq S_{TL}$, is
 
 \begin{align}
-	\rho_{\text{fan}, L} &= 
+	\rho_{\text{fan}, L} &=
 		\rho_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 } \label{eq:rho-rarefaction-fan-left}\\
-	u_{\text{fan}, L} &= 
+	u_{\text{fan}, L} &=
 		\frac{2}{\gamma + 1} \left[ \frac{\gamma - 1}{2} u_L + a_L + \frac{x}{t}  \right] \\
-	p_{\text{fan}, L} &= 
+	p_{\text{fan}, L} &=
 		p_L \left[ \frac{2}{\gamma + 1} + \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_L} \left(u_L - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1} \label{eq:pressure-rarefaction-fan-left}
 \end{align}
 
@@ -237,24 +237,24 @@ Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} 
 
 
 
-If we have a \textbf{right-facing rarefaction}, i.e. if wave (1) is a rarefaction wave, we have
+If we have a \textbf{right-facing rarefaction}, i.e. if wave (3) is a rarefaction wave, we have
 
 \begin{align*}
-	\rho^*_R &= 
+	\rho^*_R &=
 		\rho_R \left( \frac{p^*}{p_R} \right) ^ \frac{1}{\gamma}\\
-	u^* &= 
+	u^* &=
 		u_R - \frac{2 a_R}{\gamma - 1} \left[ 1 - \left( \frac{p^*}{p_R} \right) ^ \frac{\gamma - 1}{2 \gamma}  \right]\\
 		&= u_R + f_R(p^*)
 \end{align*}
 
-where $a_R$ is the sound speed in the left state $U_R$.
+where $a_R$ is the sound speed in the left state $\U_R$.
 $f_R$ is given in equation \ref{eq:riemann-pstar}.
 
 
 
 
 
-The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wave are
+The wave speeds of the head, $S_H$, and the tail, $S_T$, for the right facing wave are
 \begin{align*}
 	S_{HR} &= u_R + a_R\\
 	S_{TR} &= u^* + a^*_R\\
@@ -264,14 +264,14 @@ The wave speeds of the head, $S_H$, and the tail, $S_T$, for the left facing wav
 
 
 
-Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \leq \frac{x}{t} \leq S_{TL}$, is 
+Finally, the solution inside the rarefaction fan, i.e. in regions where $S_{HL} \geq \frac{x}{t} \geq S_{TL}$, is
 
 \begin{align}
-	\rho_{\text{fan}, R} &= 
+	\rho_{\text{fan}, R} &=
 		\rho_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2}{\gamma -1 } \label{eq:rho-rarefaction-fan-right}\\
-	u_{\text{fan}, R} &= 
+	u_{\text{fan}, R} &=
 		\frac{2}{\gamma + 1} \left[ \frac{\gamma - 1}{2} u_R - a_R + \frac{x}{t}  \right] \\
-	p_{\text{fan}, R} &= 
+	p_{\text{fan}, R} &=
 		p_R \left[ \frac{2}{\gamma + 1} - \frac{\gamma - 1}{\gamma + 1} \frac{1}{a_R} \left(u_R - \frac{x}{t}\right) \right] ^ \frac{2 \gamma}{\gamma -1} \label{eq:pressure-rarefaction-fan-right}
 \end{align}
 
@@ -305,7 +305,7 @@ and for the right wave (wave (3)):
 
 \begin{align}
 	p^* > p_R: && & \quad \text{ (3) is a shock wave} \\
-	p^* \leq p_R: && & \quad \text{ (3) is a rarefaction wave} 
+	p^* \leq p_R: && & \quad \text{ (3) is a rarefaction wave}
 \end{align}
 
 See \cite{toro} for more details.
@@ -332,19 +332,19 @@ By setting $u^*_L - u^*_R = 0$, which must hold, we get the equation
 	f(p, \mathbf{W}_L, \mathbf{W}_R) \equiv f_L(p, \mathbf{W}_L) + f_R(p, \mathbf{W}_R) + (u_R - u_L) = 0 \label{eq:riemann-pressure-equation}
 \end{align}
 
-with 
+with
 
 \begin{align}
-	f_{L,R} &= 
+	f_{L,R} &=
 		\begin{cases}
 			(p - p_{L,R}) \left[ \frac{A_{L,R}}{p + B_{L,R}} \right]^{\frac{1}{2}}
 				& ~\text{ if } ~ p > p_{L,R} ~ \quad \text{(shock)} \\
 			\frac{2 a_{L,R}}{\gamma - 1} \left[ \left( \frac{p}{p_{L,R}} \right)^ \frac{\gamma -1}{2 \gamma} - 1 \right]
 				& ~\text{ if } ~ p \leq p_{L,R} ~ \quad \text{(rarefaction)} \label{eq:riemann-pstar}\\
 		\end{cases} \\
-	A_{L,R} &= 
+	A_{L,R} &=
 		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
-	B_{L,R} &= 
+	B_{L,R} &=
 		\frac{\gamma - 1}{\gamma + 1} p_{L,R}
 \end{align}
 
@@ -400,16 +400,16 @@ The equation for the pressure in the star region \ref{eq:riemann-pstar} can't be
 Since we have the analytic function and the first derivative w.r.t. $p$ can be computed, i.e.
 
 \begin{align*}
-	\frac{\del f_{L,R}}{\del p} &= 
+	\frac{\del f_{L,R}}{\del p} &=
 		\begin{cases}
-			\left[ \frac{A_{L,R}}{p + B_{L,R}} \right]^{\frac{1}{2}} \left( 1 - \frac{1}{2} \frac{p - p_{L,R}}{p + B_{L,R}} \right) 
+			\left[ \frac{A_{L,R}}{p + B_{L,R}} \right]^{\frac{1}{2}} \left( 1 - \frac{1}{2} \frac{p - p_{L,R}}{p + B_{L,R}} \right)
 				& ~\text{ if } ~ p > p_{L,R} ~ \quad \text{(shock)} \\
 			\frac{a_{L,R}}{\gamma p_{L,R}}  \left( \frac{p}{p_{L,R}} \right)^ \frac{-(\gamma+1)}{2 \gamma}
 				& ~\text{ if } ~ p \leq p_{L,R} ~ \quad \text{(rarefaction)} \label{eq:riemann-pstar-dp}\\
 		\end{cases} \\
-	A_{L,R} &= 
+	A_{L,R} &=
 		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
-	B_{L,R} &= 
+	B_{L,R} &=
 		\frac{\gamma - 1}{\gamma + 1} p_{L,R}
 \end{align*}
 
@@ -421,16 +421,16 @@ Then, using the Newton-Raphson iteration, we can find the solution using the pre
 \end{align}
 
 
-we re-iterate until it converges, i.e. when the relative pressure change 
+we re-iterate until it converges, i.e. when the relative pressure change
 
 \begin{align}
-	\frac{|p_k - p_{k+1}|}{\frac{1}{2} | p_k + p_(k+1) | } < \epsilon
+	\frac{|p_k - p_{k+1}|}{\frac{1}{2} | p_k + p_{k+1} | } < \epsilon
 \end{align}
 
 where $\epsilon$ is some tolerance. Default value is set in \texttt{defines.h} as \texttt{\#define EPSILON\_ITER 1e-6}.
 
 
-We need to find a first guess for the pressure. 
+We need to find a first guess for the pressure.
 An ok way to do it is to take the average:
 \begin{align*}
 	p_0^* = \frac{1}{2} (p_L + p_R)
@@ -442,7 +442,7 @@ The implemented way is based on a linearised solution based on primitive variabl
 	p_0^* &= \max(\epsilon, p_{PV})
 \end{align*}
 
-Note that every step along the iteration, we must make sure that we didn't accidentally get negative pressures, and limit it to zero (or the tolerance $\epsilon$). 
+Note that every step along the iteration, we must make sure that we didn't accidentally get negative pressures, and limit it to zero (or the tolerance $\epsilon$).
 If it drops below zero, it might get stuck there, and then all hell breaks loose.
 (Seriously, you will get NANs because you're trying to take fractal powers of negative stuff.)
 
@@ -474,9 +474,9 @@ The big idea is to assume a priori that both the left and right waves are going 
 We get
 
 \begin{align}
-	\beta &\equiv 
+	\beta &\equiv
 		\frac{\gamma - 1}{2 \gamma} \\
-	u^* &= 
+	u^* &=
 		\frac{
 			\frac{2}{\gamma - 1} \left[\left(\frac{p_L}{p_R} \right) ^ \beta - 1\right]+ \frac{u_L}{a_L} \left(\frac{p_L}{p_R} \right) ^ \beta  + \frac{u_R}{a_R}
 		}{
@@ -492,8 +492,8 @@ We get
 Note that we may also write $p^*$ independently of $u^*$:
 
 \begin{align}
-	p^* = 
-		\left[ 
+	p^* =
+		\left[
 			\frac{ a_L + a_R - \frac{\gamma - 1}{2} (u_R - u_L)}{\frac{a_L}{p_L^\beta} + \frac{a_R}{p_R^\beta}}
 		\right] ^ \frac{1}{\beta}
 \end{align}
@@ -527,9 +527,9 @@ The equation for the pressure in the star region (eq. \ref{eq:riemann-pressure-e
 \begin{align}
 	f(p) &= (p - p_L) g_L(p) + (p - p_R) g_R(p) + u_R - u_L = 0 \label{eq:riemann-pressure-tsrs} \\
 	g_{L,R}(p) &= \left[ \frac{A_{L,R}}{p + B_{L,R}} \right] ^{\half} \\
-	A_{L,R} &= 
+	A_{L,R} &=
 		\frac{2}{(\gamma + 1) \rho_{L,R}}\\
-	B_{L,R} &= 
+	B_{L,R} &=
 		\frac{\gamma - 1}{\gamma + 1} p_{L,R}
 \end{align}
 
@@ -589,7 +589,7 @@ where $x/t = 0$ at the boundary of a cell, $i+\half$, and with
 		\frac{p_R - p_L  + \rho_L u_L (S_L - u_L) - \rho_R u_R (S_R - u_R)}
 			{\rho_L (S_L - u_L) - \rho_R (S_R - u_R) } \label{eq:hllc-sstar}\\
 	\U^*_{L,R} &=
-		\rho_{L,R} \frac{ S_{L,R} - u_{L,R}}{S_{L,R} - S^*} 
+		\rho_{L,R} \frac{ S_{L,R} - u_{L,R}}{S_{L,R} - S^*}
 		\begin{pmatrix}
 			1\\
 			S^*\\
@@ -614,7 +614,7 @@ A very simple, implemented one is:
 \begin{align}
 	S_L  &= u_L - a_L q_L \\
 	S_R  &= u_R + a_R q_R \\
-	q_{L,R} &= 
+	q_{L,R} &=
 		\begin{cases}
 			1	~~~~ & \text{ if } p^* \leq p_{L,R} ~~~~ \text{(rarefaction)}\\
 			\sqrt{1 + \frac{\gamma + 1}{2 \gamma} \left(\frac{p^*}{p_{L,R}} - 1 \right)}	~~~~ & \text{ if } p^* > p_{L,R} ~~~~ \text{(shock)}\\
@@ -673,53 +673,53 @@ There are three cases to consider:
 \begin{enumerate}
 
 	\item \textbf{The right state is a vacuum:}
-	
+
 		The vacuum front travels with the velocity
 		\begin{equation}
 			S_{vac, L} = u_L + \frac{2 a_L}{\gamma - 1}
 		\end{equation}
 		and left of it we have a left going rarefaction wave, i.e.
 		\begin{align}
-			\mathbf{W}_{L, \text{ with vacuum }} = 
+			\mathbf{W}_{L, \text{ with vacuum }} =
 				\begin{cases}
 					\mathbf{W_L} & \quad \text{ if } \frac{x}{t} \leq u_L - a_L \\
 					\mathbf{W_{L, \text{inside fan}}} & \quad \text{ if } u_L - a_L < \frac{x}{t} < S_{vac, L} \\
 					\mathbf{W_{vac}} & \quad \text{ if } \frac{x}{t} \geq S_{vac, L}\\
 				\end{cases}
 		\end{align}
-		
+
 	\item \textbf{The left state is a vacuum:}
-	
+
 		The vacuum front travels with the velocity
 		\begin{equation}
 			S_{vac, R} = u_R - \frac{2 a_R}{\gamma - 1}
 		\end{equation}
 		and right of it we have a right going rarefaction wave, i.e.
 		\begin{align}
-			\mathbf{W}_{R, \text{ with vacuum }} = 
+			\mathbf{W}_{R, \text{ with vacuum }} =
 				\begin{cases}
 					\mathbf{W_{vac}} & \quad \text{ if } \frac{x}{t} \leq S_{vac, R}\\
 					\mathbf{W_{R, \text{inside fan}}} & \quad \text{ if } S_{vac, R} < \frac{x}{t} <   u_R + a_R\\
 					\mathbf{W_R} & \quad \text{ if } \frac{x}{t} \geq u_R + a_R \\
 				\end{cases}
 		\end{align}
-		
+
 	\item \textbf{ Vacuum is being generated }
-	
+
 		In certain cases, with both the left and the right state being non-vacuum states, vacuum can be generated in regions of the solution.
 		Just think what might happen if the left state has high velocity towards the left, and the right state having a high velocity towards the right, leaving the center region empty.
 		The result is that we have a vacuum state emerging around the center, bounded by two vacuum fronts $S_{vac, L}$ on the left side and $S_{vac, R}$ on the right side.
 		The full solution is
 		\begin{align}
-			\mathbf{W} = 
+			\mathbf{W} =
 				\begin{cases}
 					\mathbf{W}_{L, \text{ with vacuum }} & \quad \text{ if } \frac{x}{t} \leq S_{vac, L}\\
 					\mathbf{W}_{vac} & \quad \text{ if } S_{vac, L} < \frac{x}{t} <  S_{vac, R}\\
 					\mathbf{W}_{R, \text{ with vacuum }} & \quad \text{ if } \frac{x}{t} \geq S_{vac, R} \\
 				\end{cases}
 		\end{align}
-		
-		
+
+
 		When do we have a vacuum generating condition?
 		Well, $S_{vac, L} \leq S_{vac, R}$ must hold, hence
 		\begin{align}

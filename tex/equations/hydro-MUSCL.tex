@@ -22,7 +22,7 @@ The MUSCL-Hanckock scheme in particular assumes a piecewise linear state reconst
 
 \begin{figure}[H]
 	\includegraphics[width=\textwidth]{./figures/piecewise_linear.pdf}%
-	\caption{	
+	\caption{
 		A piecewise linear representation of continuous data among cells.
 		\label{fig:piecewise-linear}
 		}
@@ -32,7 +32,7 @@ The MUSCL-Hanckock scheme in particular assumes a piecewise linear state reconst
 It solves the hyperbolic conservation law of the form
 
 \begin{equation*}
-	\DELDT{\U} + \DELDX{\F(\U))} = 0
+	\DELDT{\U} + \DELDX{\F(\U)} = 0
 \end{equation*}
 
 just like all other schemes so far using the explicit conservative formula
@@ -66,7 +66,7 @@ We now need to solve the so called \emph{Generalised Riemann Problem} with
 
 \begin{align}
 	\DELDT{\U} + \DELDX{\F(\U))} &= 0 \\
-	\U(x, 0) &= 
+	\U(x, 0) &=
 	\begin{cases}
 		\U_i(x), & \quad x < 0 \\
 		\U_{i+1}(x), & \quad x > 0 \\
@@ -80,7 +80,7 @@ In each cell, the extreme values are located at the cell boundaries.
 They are referred to as boundary extrapolated values, and are given by
 
 \begin{equation}
-	\U_i^L = \U_i^n - \frac{1}{2} \mathbf{s}_i; \quad 	\U_i^R = \U_i^n + \frac{1}{2} \mathbf{s}_i; 
+	\U_i^L = \U_i^n - \frac{1}{2} \mathbf{s}_i; \quad 	\U_i^R = \U_i^n + \frac{1}{2} \mathbf{s}_i;
 \end{equation}
 
 
@@ -98,7 +98,7 @@ Finally, with the evolved boundary extrapolated values, we can compute the fluxe
 
 \begin{align}
 	\U_L &= \overline{\U}_i^R\\
-	\U_R &= \overline{\U}_{i+1}^L 
+	\U_R &= \overline{\U}_{i+1}^L
 \end{align}
 
 and by sampling the solution at $x = 0$.
@@ -111,19 +111,19 @@ So in short, what we need to do is
 
 \begin{itemize}
 	\item 	Compute slope $\mathbf{s}_i$ for each cell
-	\item 	find evolved boundary extrapolated values using 
+	\item 	find evolved boundary extrapolated values using
 			\begin{align*}
 				\overline{\U}_i^L &= \U_i^L + \frac{1}{2} \frac{\Delta t}{\Delta x} \left( \F(\U_i^L) - \F(\U_i^R) \right)\\
 				\overline{\U}_i^R &= \U_i^R + \frac{1}{2} \frac{\Delta t}{\Delta x} \left( \F(\U_i^L) - \F(\U_i^R) \right)
 			\end{align*}
-	\item 	find fluxes $\F_{i + \half}$ as $\F(\U_{i+\half})$ with $\U_{i+\half}$ being the solution to the Riemann problem 
+	\item 	find fluxes $\F_{i + \half}$ as $\F(\U_{i+\half})$ with $\U_{i+\half}$ being the solution to the Riemann problem
 			\begin{align}
 				\U_L &= \overline{\U}_i^R\\
-				\U_R &= \overline{\U}_{i+1}^L 
+				\U_R &= \overline{\U}_{i+1}^L
 			\end{align}
 			at $ x = 0$
 
-	\item 	update the state using 
+	\item 	update the state using
 			\begin{equation}
 				\U_i^{n+1} = \U_i^n + \frac{\Delta t}{\Delta x} \left( \F_{i-\half} - \F_{i + \half} \right)
 			\end{equation}
@@ -137,7 +137,7 @@ A TVD version is obtained by using slope limiters, i.e. replacing the slope $\ma
 \begin{align*}
 	\overline{\mathbf{s}}_i &= \xi(r) \mathbf{s}_i \\
 	r &= \frac{\U_i - \U_{i-1}}{\U_{i+1} - \U_{i}} \quad\quad \text{for each component of }\U
-\end{align*} 
+\end{align*}
 
 some possible and implemented slope limiters $\xi(r)$ are given in section \ref{chap:implemented_limiters}.
 
@@ -172,7 +172,7 @@ Because we're doing dimensional splitting, it suffices to have only one storage 
 See section \ref{chap:dimensional-splitting} for details.
 
 We can afford to store $x_{i+\half}$ at cell $i$ because we have at least 2 extra virtual boundary cell which is used to apply boundary conditions, so the flux at $x_{-\half}$ will be stored in \verb|grid[BC-1]|, where \texttt{BC} is the number of boundary cells used, defined in \texttt{defines.h}.
- 
+
 
 
 
