@@ -54,7 +54,9 @@ int main(int argc, char* argv[]) {
   io_read_ic_type(&skiplines_ic);
 
   /* read in output times if necessary */
-  if (pars.use_toutfile) { io_read_toutfile(); }
+  if (pars.use_toutfile) {
+    io_read_toutfile();
+  }
 
   params_check();        /* check whether we can work with this setup. */
   params_init_derived(); /* process the parameters you got. */

@@ -591,8 +591,8 @@ int io_is_output_step(float t, float* dt, int step) {
     *dt
   );
 
-  if (pars.use_toutfile) { /* if we have a toutfile or dt_out in params is given
-                            */
+  /* if we have a toutfile or dt_out in params is given */
+  if (pars.use_toutfile) {
     if (pars.noutput >= pars.noutput_tot)
       return (0); /* final output will be dumped anyhow */
     float tnext = pars.outputtimes[pars.noutput];
@@ -616,8 +616,8 @@ int io_is_output_step(float t, float* dt, int step) {
       pars.tmax
     );
     *dt = pars.tmax - t;
-    return (0
-    ); /* write up as not output step because last output will be dumped */
+    /* write up as not output step because last output will be dumped */
+    return (0);
   }
 
   if (pars.foutput > 0) {

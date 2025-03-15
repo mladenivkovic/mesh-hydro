@@ -11,21 +11,19 @@
 #include "riemann.h"
 #include "utils.h"
 
+/**
+ * @brief Solve the Riemann problem posed by a left and right state.
+ * The HLLC solver gives you the fluxes directly, not the states.
+ *
+ * @param left:    left state of Riemann problem
+ * @param right:   right state of Riemann problem
+ * @param sol:     cstate where solution (conserved FLUX) will be written
+ * @param xovert:    x / t, point where solution shall be sampled
+ * @param dimension:   which fluid velocity dimension to use. 0: x, 1: y
+ */
 void riemann_solve_hllc(
   pstate* left, pstate* right, cstate* sol, float xovert, int dimension
 ) {
-  /* -------------------------------------------------------------------------
-   * Solve the Riemann problem posed by a left and right state.
-   * The HLLC solver gives you the fluxes directly, not the states.
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * cstate* sol:     cstate where solution (conserved FLUX) will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
-   * -------------------------------------------------------------------------
-   */
-
   if (riemann_has_vacuum(left, right, dimension)) {
     /* the vacuum solver wants a pstate as the argument for the solution.
      * so give him one, and later translate it back to the conserved flux. */
@@ -82,22 +80,22 @@ void riemann_solve_hllc_state(
   }
 }
 
+
+/**
+ * Get estimates for the left and right HLLC wave speed.
+ *
+ * @param left:   left state of Riemann problem
+ * @param right:  right state of Riemann problem
+ * @param SL:     left wave speed estimate
+ * @param SR:     right wave speed estimate
+ * @param Sstar:  contact wave speed estimate
+ * @param dim:    which fluid velocity dimension to use. 0: x, 1: y
+ */
 void riemann_compute_wave_speed_estimates(
   pstate* left, pstate* right, float* SL, float* SR, float* Sstar, int dim
 ) {
-  /*--------------------------------------------------------------------------------------------------------
-   * Get estimates for the left and right HLLC wave speed.
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float SL:        left wave speed estimate
-   * float SR:        right wave speed estimate
-   * float Sstar:     contact wave speed estimate
-   * int dim:         which fluid velocity dimension to use. 0: x, 1: y
-   * -------------------------------------------------------------------------------------------------------
-   */
 
-  /* Start by computint the simple primitive variable speed estimate */
+  /* Start by computing the simple primitive variable speed estimate */
   /* --------------------------------------------------------------- */
 
   float aL = gas_soundspeed(left);
@@ -176,15 +174,15 @@ void riemann_compute_wave_speed_estimates(
   *Sstar = ustar;
 }
 
-float qLR(float pstar, float pLR) {
-  /*-----------------------------------------------------
-   * Compute q_{L,R} needed for the wave speed estimate.
-   *
-   * pstar:   (estimated) pressure of the star state
-   * pLR:     left or right pressure, depending whether
-   *          you want q_L or q_R
-   * ------------------------------------------------- */
 
+/**
+ * Compute q_{L,R} needed for the wave speed estimate.
+ *
+ * pstar:   (estimated) pressure of the star state
+ * pLR:     left or right pressure, depending whether
+ *          you want q_L or q_R
+ */
+float qLR(float pstar, float pLR) {
   if (pstar > pLR) {
     /* shock relation */
     return (sqrtf(1. + 0.5 * (GAMMA + 1.) / GAMMA * (pstar / pLR - 1.)));
@@ -193,6 +191,20 @@ float qLR(float pstar, float pLR) {
   return (1.);
 }
 
+
+
+/**
+ * Compute the !conserved! star states of the solution of the riemann problem
+ *
+ * @param left:    left state of Riemann problem
+ * @param right:   right state of Riemann problem
+ * @param SL:        left wave speed estimate
+ * @param SR:        right wave speed estimate
+ * @param Sstar:     contact wave speed estimate
+ * @param UstarL:  left star conserved state (will be written to)
+ * @param UstarR:  right star conserved state (will be written to)
+ * @param dim:         along which dimension are we working
+ */
 void riemann_hllc_compute_star_cstates(
   pstate* left,
   pstate* right,
@@ -204,18 +216,6 @@ void riemann_hllc_compute_star_cstates(
   int     dim
 ) {
 
-  /*----------------------------------------------------------------------------
-   * Compute the !conserved! star states of the solution of the riemann problem
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float SL:        left wave speed estimate
-   * float SR:        right wave speed estimate
-   * float Sstar:     contact wave speed estimate
-   * cstate* UstarL:  left star conserved state (will be written to)
-   * cstate* UstarR:  right star conserved state (will be written to)
-   * int dim:         along which dimension are we working
-   *------------------------------------------------------------------------- */
 
   float SLMUL = SL - left->u[dim];
   float SRMUR = SR - right->u[dim];
@@ -249,6 +249,21 @@ void riemann_hllc_compute_star_cstates(
                            (Sstar + right->p / (right->rho * SRMUR)));
 }
 
+
+/**
+ * Compute the solution of the riemann problem at given time t and x,
+ * specified as xovert = x/t Directly returns the flux at x/t, not the state
+ * like other Riemann solvers!
+ *
+ * @param left:    left state of Riemann problem
+ * @param right:   right state of Riemann problem
+ * @param SL:        left wave speed estimate
+ * @param SR:        right wave speed estimate
+ * @param Sstar:     contact wave speed estimate
+ * @param sol:     cstate where solution (conserved FLUX) will be written
+ * @param xovert:    x / t, point where solution shall be sampled
+ * @param dim:         which fluid velocity direction to use. 0: x, 1: y
+ */
 void riemann_sample_hllc_solution(
   pstate* left,
   pstate* right,
@@ -259,20 +274,6 @@ void riemann_sample_hllc_solution(
   float   xovert,
   int     dim
 ) {
-  /*--------------------------------------------------------------------------------------------------
-   * Compute the solution of the riemann problem at given time t and x,
-   *specified as xovert = x/t Directly returns the flux at x/t, not the state
-   *like other Riemann solvers!
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float SL:        left wave speed estimate
-   * float SR:        right wave speed estimate
-   * float Sstar:     contact wave speed estimate
-   * cstate* sol:     cstate where solution (conserved FLUX) will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dim:         which fluid velocity direction to use. 0: x, 1: y
-   *--------------------------------------------------------------------------------------------------*/
 
   /* -------------------------------------------- */
   /* compute left and right star conserved states */
