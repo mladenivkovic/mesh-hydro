@@ -13,19 +13,19 @@
 
 extern params pars;
 
+/**
+ * computes the star region pressure and velocity given the left and right
+ * pstates.
+ *
+ * @param left:    left state of Riemann problem
+ * @param right:   right state of Riemann problem
+ * @param pstar:    where pressure of star region will be written
+ * @param ustar:    where velocity of star region will be written
+ * @param dim:         which fluid velocity dimensionto use. 0: x, 1: y
+ */
 void riemann_compute_star_states(
   pstate* left, pstate* right, float* pstar, float* ustar, int dim
 ) {
-  /* ------------------------------------------------------------------------------------------
-   * computes the star region pressure and velocity given the left and right
-   *pstates.
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * float* pstar:    where pressure of star region will be written
-   * float* ustar:    where velocity of star region will be written
-   * int dim:         which fluid velocity dimensionto use. 0: x, 1: y
-   *------------------------------------------------------------------------------------------*/
 
   float AL = 2. / GP1 / left->rho;
   float AR = 2. / GP1 / right->rho;
@@ -43,7 +43,9 @@ void riemann_compute_star_states(
               - 0.125 * delta_u * (left->rho + right->rho) * (aL + aR);
   pguess = ppv;
 
-  if (pguess < SMALLP) { pguess = SMALLP; }
+  if (pguess < SMALLP) {
+    pguess = SMALLP;
+  }
 
   /* Newton-Raphson iteration */
   int niter = 0;
@@ -81,10 +83,11 @@ void riemann_compute_star_states(
    * dim); */
 }
 
+
+/**
+ * Left/Right part of the pressure function
+ */
 float fp(float pstar, pstate* s, float A, float B, float a) {
-  /* -----------------------------------------------------*/
-  /* Left/Right part of the pressure function             */
-  /*------------------------------------------------------*/
 
   if (pstar > s->p) {
     /* we have a shock situation */
@@ -94,10 +97,11 @@ float fp(float pstar, pstate* s, float A, float B, float a) {
   return 2. * a / GM1 * (powf(pstar / s->p, BETA) - 1.);
 }
 
+
+/**
+ * First derivative of Left/Right part of the pressure function
+ */
 float dfpdp(float pstar, pstate* s, float A, float B, float a) {
-  /*---------------------------------------------------------------*/
-  /* First derivative of Left/Right part of the pressure function  */
-  /*---------------------------------------------------------------*/
 
   if (pstar > s->p) {
     /* we have a shock situation */
