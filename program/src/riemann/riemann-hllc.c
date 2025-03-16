@@ -25,8 +25,8 @@ void riemann_solve_hllc(
   pstate* left, pstate* right, cstate* sol, float xovert, int dimension
 ) {
   if (riemann_has_vacuum(left, right, dimension)) {
-    /* the vacuum solver wants a pstate as the argument for the solution.
-     * so give him one, and later translate it back to the conserved flux. */
+    /* the vacuum solver wants a pstate as the argument for the solution. */
+    /* so give him one, and later translate it back to the conserved flux. */
     pstate pstate_sol;
     gas_init_pstate(&pstate_sol);
     riemann_compute_vacuum_solution(
@@ -36,9 +36,9 @@ void riemann_solve_hllc(
 
   } else {
 
-    float SL    = 0;
-    float SR    = 0;
-    float Sstar = 0;
+    float SL    = 0.;
+    float SR    = 0.;
+    float Sstar = 0.;
     riemann_compute_wave_speed_estimates(
       left, right, &SL, &SR, &Sstar, dimension
     );
@@ -48,21 +48,20 @@ void riemann_solve_hllc(
   }
 }
 
+
+/**
+ * Solve the Riemann problem posed by a left and right state
+ * Return the state at xovert := x/t instead of the flux
+ *
+ * @param left:    left state of Riemann problem
+ * @param right:   right state of Riemann problem
+ * @param sol:     cstate where solution (conserved FLUX) will be written
+ * @param xovert:    x / t, point where solution shall be sampled
+ * @param dimension:   which fluid velocity dimension to use. 0: x, 1: y
+ */
 void riemann_solve_hllc_state(
   pstate* left, pstate* right, pstate* sol, float xovert, int dimension
 ) {
-  /* -------------------------------------------------------------------------
-   * Solve the Riemann problem posed by a left and right state
-   * Return the state at xovert := x/t instead of the flux
-   *
-   * pstate* left:    left state of Riemann problem
-   * pstate* right:   right state of Riemann problem
-   * cstate* sol:     cstate where solution (conserved FLUX) will be written
-   * float xovert:    x / t, point where solution shall be sampled
-   * int dimension:   which fluid velocity dimension to use. 0: x, 1: y
-   * -------------------------------------------------------------------------
-   */
-
   if (riemann_has_vacuum(left, right, dimension)) {
     /* the vacuum solver wants a pstate as the argument for the solution.
      * so give him one, and later translate it back to the conserved flux. */
@@ -105,7 +104,9 @@ void riemann_compute_wave_speed_estimates(
   float PPV  = 0.5 * (left->p + right->p)
               + 0.5 * (left->u[dim] - right->u[dim]) * temp;
 
-  if (PPV < 0) { PPV = SMALLP; }
+  if (PPV < 0.) {
+    PPV = SMALLP;
+  }
 
   float pstar = PPV;
   float ustar = 0.5 * (left->u[dim] + right->u[dim])
@@ -252,17 +253,18 @@ void riemann_hllc_compute_star_cstates(
 
 /**
  * Compute the solution of the riemann problem at given time t and x,
- * specified as xovert = x/t Directly returns the flux at x/t, not the state
- * like other Riemann solvers!
+ * specified as xovert = x/t
+ * !! Directly returns the flux at x/t, not the state
+ * like other Riemann solvers!!
  *
  * @param left:    left state of Riemann problem
  * @param right:   right state of Riemann problem
- * @param SL:        left wave speed estimate
- * @param SR:        right wave speed estimate
- * @param Sstar:     contact wave speed estimate
+ * @param SL:      left wave speed estimate
+ * @param SR:      right wave speed estimate
+ * @param Sstar:   contact wave speed estimate
  * @param sol:     cstate where solution (conserved FLUX) will be written
- * @param xovert:    x / t, point where solution shall be sampled
- * @param dim:         which fluid velocity direction to use. 0: x, 1: y
+ * @param xovert:  x / t, point where solution shall be sampled
+ * @param dim:     which fluid velocity direction to use. 0: x, 1: y
  */
 void riemann_sample_hllc_solution(
   pstate* left,

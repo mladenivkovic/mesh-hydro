@@ -51,12 +51,13 @@ void solver_step(const float* t, float* dt, int step, int* write_output) {
 #endif
 }
 
+
+/**
+ * Do everything that needs to be done before
+ * we can compute the fluxes, the timestep, and
+ * finally advance the simulation
+ */
 void solver_init_step(void) {
-  /* ---------------------------------------------
-   * Do everything that needs to be done before
-   * we can compute the fluxes, the timestep, and
-   * finally advance the simulation
-   * --------------------------------------------- */
 
   debugmessage("Called solver_init_step");
   cell_reset_fluxes();
@@ -64,14 +65,15 @@ void solver_init_step(void) {
   cell_set_boundary();
 }
 
+
+/**
+ * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
+ * and store it in cell i.
+ * BUT: Start with the first boundary cell, such that even the
+ * first real cell can access F_{i-1/2} by accessing the
+ * neighbour at i-1
+ */
 void solver_compute_fluxes(float* dt, int dimension) {
-  /* ------------------------------------------------------------
-   * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
-   * and store it in cell i.
-   * BUT: Start with the first boundary cell, such that even the
-   * first real cell can access F_{i-1/2} by accessing the
-   * neighbour at i-1
-   * ----------------------------------------------------------- */
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
@@ -89,22 +91,20 @@ void solver_compute_fluxes(float* dt, int dimension) {
 #elif NDIM == 2
 
   if (dimension == 0) {
-    for (int i = BC - 1; i < pars.nx + BC; i++) {
-      for (int j = BC - 1; j < pars.nx + BC; j++) {
+    for (int j = BC - 1; j < pars.nx + BC; j++) {
+      for (int i = BC - 1; i < pars.nx + BC; i++) {
         left  = &(grid[i][j]);
         right = &(grid[i + 1][j]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d",
-         * i, j); */
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
   } else if (dimension == 1) {
-    for (int i = BC - 1; i < pars.nx + BC; i++) {
-      for (int j = BC - 1; j < pars.nx + BC; j++) {
+    for (int j = BC - 1; j < pars.nx + BC; j++) {
+      for (int i = BC - 1; i < pars.nx + BC; i++) {
         left  = &(grid[i][j]);
         right = &(grid[i][j + 1]);
-        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d",
-         * i, j); */
+        /* debugmessage("Calling solver_compute_cell_pair_flux for cell %d %d", i, j); */
         solver_compute_cell_pair_flux(left, right, dt, dimension);
       }
     }
@@ -113,21 +113,22 @@ void solver_compute_fluxes(float* dt, int dimension) {
 #endif /* ndim */
 }
 
+
+/**
+ * Compute the net flux for a given cell w.r.t. a specific cell pair
+ * @param left:  pointer to cell which stores the left state
+ * @param right: pointer to cell which stores the right state
+ * @param dt:    current time step
+ * @param dim:   integer along which dimension to advect. 0: x. 1: y.
+ *
+ * Here, we just solve the Riemann problem between the left and right
+ * primitive states, and sample the solution at x = x/t = 0, because
+ * that is where we set the initial boundary in the local coordinate
+ * system between the left and right cell.
+ */
 void solver_compute_cell_pair_flux(
   cell* left, cell* right, const float* dt, int dim
 ) {
-  /* --------------------------------------------------------------------
-   * Compute the net flux for a given cell w.r.t. a specific cell pair
-   * left:  pointer to cell which stores the left state
-   * right: pointer to cell which stores the right state
-   * dt:    current time step
-   * dim:   integer along which dimension to advect. 0: x. 1: y.
-   *
-   * Here, we just solve the Riemann problem between the left and right
-   * primitive states, and sample the solution at x = x/t = 0, because
-   * that is where we set the initial boundary in the local coordinate
-   * system between the left and right cell.
-   * -------------------------------------------------------------------- */
 
 #if RIEMANN == HLLC
   /* the HLLC solver gives us the flux directly. */

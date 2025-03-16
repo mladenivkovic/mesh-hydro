@@ -317,8 +317,8 @@ float cell_get_total_mass(void) {
 
 
 /**
- * @brief Print out some quantity of the entire grid see cell_print_grid_part
- * for options on field[]
+ * @brief Print out some quantity of the entire grid
+ * see cell_print_grid_part for options on field[]
  */
 void cell_print_grid(char field[4]) {
 

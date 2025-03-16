@@ -214,7 +214,7 @@ void solver_get_hydro_dt(float* dt, int step) {
 
 #endif /* NDIM == 2*/
 
-  if (pars.force_dt > 0) {
+  if (pars.force_dt > 0.) {
     if (*dt > pars.force_dt) {
       *dt = pars.force_dt;
     } else {
