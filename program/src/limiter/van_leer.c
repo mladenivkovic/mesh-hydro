@@ -10,23 +10,24 @@
 
 extern params pars;
 
+/**
+ * compute the actual flux limiter phi(r)
+ * for the van Leer limiter
+ */
 float limiter_phi_of_r(float r) {
-  /* -----------------------------------------
-   * compute the actual flux limiter phi(r)
-   * for the van Leer limiter
-   * ----------------------------------------- */
 
-  float phi = (r + fabsf(r)) / (1 + fabsf(r));
+  float phi = (r + fabsf(r)) / (1. + fabsf(r));
   return (phi);
 }
 
-float limiter_xi_of_r(float r) {
-  /* -----------------------------------------
-   * compute the actual slope limiter phi(r)
-   * for the van Leer limiter
-   * ----------------------------------------- */
 
-  float xi = 0;
+/**
+ * compute the actual slope limiter phi(r)
+ * for the van Leer limiter
+ */
+float limiter_xi_of_r(float r) {
+
+  float xi = 0.;
 
   if (r > 0.) {
     xi        = (2. * r) / (1. + r);

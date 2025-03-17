@@ -12,19 +12,20 @@
 
 extern params pars;
 
+/**
+ * compute the actual flux limiter phi(r) for
+ * the minmod limiter
+ */
 float limiter_phi_of_r(float r) {
-  /*--------------------------------------------
-   * compute the actual flux limiter phi(r) for
-   * the minmod limiter
-   * -------------------------------------------*/
   return (minmod(1., r));
 }
 
+
+/**
+ * Compute the actual slope limiter xi(r) for
+ * the minmod limiter
+ */
 float limiter_xi_of_r(float r) {
-  /* -------------------------------------------
-   * Compute the actual slope limiter xi(r) for
-   * the minmod limiter
-   * -------------------------------------------*/
 
   float xi = 0;
   if (r > 0.) { xi = r; }
@@ -34,15 +35,16 @@ float limiter_xi_of_r(float r) {
 
     /* xi = min(1, xiR) */
     xi = 1.;
-    if (xiR < xi) { xi = xiR; }
+    if (xiR < 1.) { xi = xiR; }
   }
   return (xi);
 }
 
+
+/**
+ * Computes the minmod() operator on a and b
+ */
 float minmod(float a, float b) {
-  /* ----------------------------------------------
-   * Computes the minmod() operator on a and b
-   * ---------------------------------------------- */
 
   if (a * b <= 0.0) { return (0.0); }
 

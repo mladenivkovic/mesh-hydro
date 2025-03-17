@@ -81,7 +81,7 @@ void solver_get_advection_dt(float* dt) {
   }
 #else
   /* in this case, all velocities are the same and constant. */
-  umax = fabs(grid[BC].prim.u[0]);
+  umax = fabsf(grid[BC].prim.u[0]);
 #endif
 
   *dt = pars.ccfl * pars.dx / umax;
@@ -94,16 +94,16 @@ void solver_get_advection_dt(float* dt) {
 #ifndef ADVECTION_KEEP_VELOCITY_CONSTANT
   for (int i = BC; i <= pars.nx + BC; i++) {
     for (int j = BC; j <= pars.nx + BC; j++) {
-      float uxabs = fabs(grid[i][j].prim.u[0]);
+      float uxabs = fabsf(grid[i][j].prim.u[0]);
       if (uxabs > uxmax) { uxmax = uxabs; }
-      float uyabs = fabs(grid[i][j].prim.u[1]);
+      float uyabs = fabsf(grid[i][j].prim.u[1]);
       if (uyabs > uymax) { uymax = uyabs; }
     }
   }
 #else
   /* in this case, all velocities are the same and constant. */
-  uxmax = fabs(grid[BC][BC].prim.u[0]);
-  uymax = fabs(grid[BC][BC].prim.u[1]);
+  uxmax = fabsf(grid[BC][BC].prim.u[0]);
+  uymax = fabsf(grid[BC][BC].prim.u[1]);
 #endif
 
   float uxdx = uxmax / pars.dx; /* ux_max / dx */
@@ -190,6 +190,7 @@ void solver_get_hydro_dt(float* dt, int step) {
 
   *dt = pars.ccfl * pars.dx / umax;
 
+
 #elif NDIM == 2
 
   float uxmax = 0;
@@ -197,15 +198,16 @@ void solver_get_hydro_dt(float* dt, int step) {
 
   for (int i = BC; i < pars.nx + BC; i++) {
     for (int j = BC; j < pars.nx + BC; j++) {
-      float uxabs = fabs(grid[i][j].prim.u[0]);
+      float uxabs = fabsf(grid[i][j].prim.u[0]);
       float a     = gas_soundspeed(&grid[i][j].prim);
       float S     = uxabs + a;
       if (S > uxmax) { uxmax = S; }
-      float uyabs = fabs(grid[i][j].prim.u[1]);
+      float uyabs = fabsf(grid[i][j].prim.u[1]);
       S           = uyabs + a;
       if (S > uymax) { uymax = S; }
     }
   }
+
 
   float uxdx = uxmax / pars.dx; /* ux_max / dx */
   float uydy = uymax / pars.dx; /* uy_max / dy */

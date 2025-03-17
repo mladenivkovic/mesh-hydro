@@ -16,10 +16,10 @@
 
 extern params pars;
 
+/**
+ * Main routine for the actual hydro step
+ */
 void solver_step(const float* t, float* dt, int step, int* write_output) {
-  /* -------------------------------------------------------
-   * Main routine for the actual hydro step
-   * ------------------------------------------------------- */
 
   solver_init_step();
   solver_get_hydro_dt(dt, step);
@@ -78,29 +78,30 @@ void solver_step(const float* t, float* dt, int step, int* write_output) {
 #endif
 }
 
-void solver_init_step(void) {
-  /* ---------------------------------------------
-   * Do everything that needs to be done before
-   * we can compute the fluxes, the timestep, and
-   * finally advance the simulation
-   * --------------------------------------------- */
 
+/**
+ * Do everything that needs to be done before
+ * we can compute the fluxes, the timestep, and
+ * finally advance the simulation
+ */
+void solver_init_step(void) {
   debugmessage("Called solver_init_step");
   cell_reset_fluxes();
   cell_get_pstates_from_cstates();
   cell_set_boundary();
 }
 
+
+/**
+ * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
+ * and store it in cell i.
+ * BUT: Start with the first boundary cell, such that even the
+ * first real cell can access F_{i-1/2} by accessing the
+ * neighbour at i-1
+ * However, we first need to pre-compute the intermediate
+ * boundary extrapolated states for every cell individually.
+ */
 void solver_compute_fluxes(float* dt, int dimension) {
-  /* ------------------------------------------------------------
-   * Compute the flux F_{i+1/2} (or G_{i+1/2} if dimension == 1)
-   * and store it in cell i.
-   * BUT: Start with the first boundary cell, such that even the
-   * first real cell can access F_{i-1/2} by accessing the
-   * neighbour at i-1
-   * However, we first need to pre-compute the intermediate
-   * boundary extrapolated states for every cell individually.
-   * ----------------------------------------------------------- */
 
   debugmessage("Called solver_compute_fluxes; dimension = %d", dimension);
 
@@ -152,20 +153,19 @@ void solver_compute_fluxes(float* dt, int dimension) {
 #endif /* ndim */
 }
 
+/**
+ * For the MUSCL-Hancock scheme, we need to first compute the slopes for each
+ * conserved variable and each cell, and then compute the updated boundary
+ * extrapolated values. Only then can we correctly compute the intercell
+ * fluxes.
+ * This function first computes the fluxes, and then computes the updated
+ * intermediate state for each cell, and stores them in the cell.
+ *
+ * @param c:       pointer to cell to work with
+ * @param dthalf:  Delta t / 2
+ * @param dim:     along which dimension we are working
+ */
 void solver_prepare_flux_computation(cell* c, float dthalf, int dim) {
-  /* ---------------------------------------------------------------------------
-   * For the MUSCL-Hancock scheme, we need to first compute the slopes for each
-   * conserved variable and each cell, and then compute the updated boundary
-   * extrapolated values. Only then can we correctly compute the intercell
-   * fluxes.
-   * This function first computes the fluxes, and then computes the updated
-   * intermediate state for each cell, and stores them in the cell.
-   *
-   * cell* c:       pointer to cell to work with
-   * float dthalf:  Delta t / 2
-   * int dim:       along which dimension we are working
-   * ---------------------------------------------------------------------------
-   */
 
   /* first get the slope */
   cstate slope;
@@ -213,26 +213,26 @@ void solver_prepare_flux_computation(cell* c, float dthalf, int dim) {
   c->URmid.E = c->cons.E + dtdxhalf * (FL.E - FR.E) + 0.5 * slope.E;
 }
 
+
+/**
+ * Compute the flux F_{i+1/2} for a given cell w.r.t. a specific cell pair
+ *
+ * Here, we just solve the Riemann problem  with U_L = U^R_{i,BEXT},
+ * U_R = U^L_{i+1, BEXT}, where
+ *    U^R_{i,BEXT} is the intermediate right extrapolated boundary value of
+ * cell i U^L_{i+1, BEXT}  is the intermediate left extrapolated boundary
+ * value of cell i+1 and then sample the solution at x = x/t = 0, because that
+ * is where we set the initial boundary in the local coordinate system between
+ * the left and right cell.
+ *
+ * @param left:  pointer to cell which stores the left state
+ * @param right: pointer to cell which stores the right state
+ * @param dt:   current time step
+ * @param dim:     integer along which dimension to advect. 0: x. 1: y.
+ */
 void solver_compute_cell_pair_flux(
   cell* left, cell* right, const float* dt, int dim
 ) {
-  /* ---------------------------------------------------------------------------
-   * Compute the flux F_{i+1/2} for a given cell w.r.t. a specific cell pair
-   *
-   * Here, we just solve the Riemann problem  with U_L = U^R_{i,BEXT},
-   * U_R = U^L_{i+1, BEXT}, where
-   *    U^R_{i,BEXT} is the intermediate right extrapolated boundary value of
-   * cell i U^L_{i+1, BEXT}  is the intermediate left extrapolated boundary
-   * value of cell i+1 and then sample the solution at x = x/t = 0, because that
-   * is where we set the initial boundary in the local coordinate system between
-   * the left and right cell.
-   *
-   * cell* left:  pointer to cell which stores the left state
-   * cell* right: pointer to cell which stores the right state
-   * float* dt:   current time step
-   * int dim:     integer along which dimension to advect. 0: x. 1: y.
-   * ---------------------------------------------------------------------------
-   */
 
   pstate WL;
   gas_init_pstate(&WL);
